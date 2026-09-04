@@ -1,0 +1,79 @@
+package git.shin.animevsub.ui.components.account
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import git.shin.animevsub.ui.theme.AccentMain
+import git.shin.animevsub.ui.theme.DarkSurface
+import git.shin.animevsub.ui.theme.TextGrey
+import git.shin.animevsub.ui.theme.TextPrimary
+import git.shin.animevsub.ui.utils.tvFocusScale
+
+@Composable
+fun SettingsToggle(
+  label: String,
+  description: String? = null,
+  icon: ImageVector? = null,
+  checked: Boolean,
+  onCheckedChange: (Boolean) -> Unit
+) {
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .tvFocusScale()
+      .clickable { onCheckedChange(!checked) }
+      .padding(horizontal = 16.dp, vertical = 8.dp),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    if (icon != null) {
+      Icon(
+        imageVector = icon,
+        contentDescription = null,
+        tint = AccentMain,
+        modifier = Modifier.size(22.dp)
+      )
+      Spacer(modifier = Modifier.width(16.dp))
+    }
+    Column(modifier = Modifier.weight(1f)) {
+      Text(
+        text = label,
+        color = TextPrimary,
+        fontSize = 15.sp
+      )
+      if (description != null) {
+        Text(
+          text = description,
+          color = TextGrey,
+          fontSize = 12.sp,
+          lineHeight = 16.sp,
+          modifier = Modifier.padding(top = 2.dp)
+        )
+      }
+    }
+    Switch(
+      checked = checked,
+      onCheckedChange = onCheckedChange,
+      colors = SwitchDefaults.colors(
+        checkedThumbColor = AccentMain,
+        checkedTrackColor = AccentMain.copy(alpha = 0.3f),
+        uncheckedThumbColor = TextGrey,
+        uncheckedTrackColor = DarkSurface
+      )
+    )
+  }
+}

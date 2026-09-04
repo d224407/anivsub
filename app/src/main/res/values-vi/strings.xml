@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AnimeVsub</string>
+
+    <!-- Bottom Navigation -->
+    <string name="home">Trang chủ</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_search">Tìm kiếm</string>
+    <string name="nav_news">Tin tức</string>
+    <string name="nav_notification">Th.báo</string>
+    <string name="nav_account">Tôi</string>
+    <string name="account">Tài khoản</string>
+    <string name="notifications">Thông báo</string>
+
+    <!-- Home -->
+    <string name="catalog">Mục lục</string>
+    <string name="schedule">Lịch chiếu</string>
+    <string name="rankings">Bảng xếp hạng</string>
+    <string name="nominate">Đề xuất</string>
+    <string name="this_season">Mùa này</string>
+    <string name="top">Top</string>
+    <string name="coming_soon">Sắp chiếu</string>
+    <string name="last_updated">Mới cập nhật</string>
+    <string name="today">Hôm nay</string>
+    <string name="yesterday">Hôm qua</string>
+    <string name="history_date_format">%1$d thg %2$d</string>
+    <string name="tomorrow">Ngày mai</string>
+    <string name="upcoming">Sắp chiếu</string>
+    <string name="view_all">Xem tất cả</string>
+
+    <!-- Search -->
+    <string name="search_hint">Tìm kiếm anime…</string>
+    <string name="search_history">Lịch sử tìm kiếm</string>
+    <string name="clear_history">Xóa</string>
+    <string name="no_results">Không tìm thấy kết quả</string>
+    <string name="view_all_results">Xem tất cả kết quả</string>
+
+    <!-- Detail -->
+    <string name="episodes">Tập phim</string>
+    <string name="description">Mô tả</string>
+    <string name="related">Liên quan</string>
+    <string name="status_label">Trạng thái</string>
+    <string name="genre_label">Thể loại</string>
+    <string name="studio_label">Studio</string>
+    <string name="country_label">Quốc gia</string>
+    <string name="language_label">Ngôn ngữ</string>
+    <string name="year_label">Năm</string>
+    <string name="views_label">Lượt xem</string>
+    <string name="followers_label">Người theo dõi</string>
+    <string name="duration_label">Thời lượng</string>
+    <string name="watch_now">Xem ngay</string>
+    <string name="add_to_playlist">Thêm vào danh sách phát</string>
+    <string name="episode_label">Tập %1$s</string>
+    <string name="ep_label">Tập %1$s</string>
+    <string name="views_count">%1$s lượt xem</string>
+    <string name="author_label">Tác giả</string>
+    <string name="studio_prefix">Sản xuất bởi %1$s</string>
+    <string name="rating_count">%1$s người đánh giá</string>
+    <string name="share">Chia sẻ</string>
+    <string name="save_label">Lưu</string>
+    <string name="episodes_title">Tập</string>
+    <string name="total_episodes">%1$s tập</string>
+    <string name="full_series">Trọn bộ</string>
+    <string name="recommended_for_you">Đề xuất cho bạn</string>
+    <string name="trailer_title">Trailer</string>
+    <string name="other_name">Tên khác</string>
+    <string name="updated_to_episode">Cập nhật tới tập %1$s</string>
+    <string name="no_episodes">Chưa có tập phim</string>
+    <string name="unknown">không rõ</string>
+    <string name="schedule_update_format">Tập mới chiếu vào %1$s %2$s %3$s</string>
+    <string name="today_text">hôm nay</string>
+    <string name="sunday_text">Chủ Nhật</string>
+    <string name="day_of_week_format">thứ %1$s</string>
+    <string name="next_week_text">tuần sau</string>
+    <string name="this_week_text">tuần này</string>
+    <string name="season_list">Danh sách Season</string>
+    <string name="select_episode">Chọn tập phim</string>
+    <string name="toggle_view_mode">Chế độ xem</string>
+    <string name="search_episode_hint">Tìm tên tập hoặc số tập…</string>
+    <string name="no_episodes_found">Không tìm thấy tập phim nào</string>
+    <string name="error_loading_episodes">Lỗi tải tập phim</string>
+    <string name="release_time_format">Bắt đầu lúc %1$s</string>
+
+    <!-- Player -->
+    <string name="server_high">Cao</string>
+    <string name="server_low">Thấp</string>
+    <string name="server_label">Máy chủ phát</string>
+    <string name="watch_on">Xem trên</string>
+    <string name="next_episode">Tập tiếp theo</string>
+    <string name="previous_episode">Tập trước</string>
+    <string name="next_ep">Tiếp</string>
+    <string name="previous_ep">Trước</string>
+    <string name="now_playing">Đang phát</string>
+    <string name="playback_speed">Tốc độ phát</string>
+    <string name="quality">Chất lượng phát</string>
+    <string name="quality_auto">Tự động</string>
+    <string name="auto_next_hint">Sắp chuyển tập tiếp theo…</string>
+    <string name="auto_next_now_playing">Đang phát tập tiếp theo: %1$s</string>
+    <string name="playback_speed_changed">Tốc độ phát: %1$sx</string>
+    <string name="report_bug">Báo lỗi</string>
+    <string name="feedback">Phản hồi</string>
+    <string name="skip_intro">Bỏ qua Opening</string>
+    <string name="skip_outro">Bỏ qua Ending</string>
+    <plurals name="seconds_remaining">
+        <item quantity="other">%1$d giây</item>
+    </plurals>
+    <string name="brightness">Độ sáng</string>
+    <string name="volume">Âm lượng</string>
+    <string name="speed_up_pill">Tốc độ %1$sx</string>
+    <string name="double_tap_skip">Tua khi chạm đúp</string>
+    <string name="long_press_speed">Tốc độ khi nhấn giữ</string>
+    <string name="seconds_unit">%1$ds</string>
+    <string name="video_aspect_zoom">Chế độ phóng to</string>
+    <string name="video_aspect_fit">Chế độ mặc định</string>
+    <string name="video_aspect_zoom_format">Phóng to: %1$.2fx</string>
+    <string name="video_aspect_original">Nguyên bản</string>
+    <string name="video_aspect_zoom_fill">Đã phóng to lấp đầy màn hình</string>
+
+    <!-- Account -->
+    <string name="login">Đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="history">Lịch sử</string>
+    <string name="follow">Theo dõi</string>
+    <string name="followed">Đã theo dõi</string>
+    <string name="unfollowed">Đã bỏ theo dõi</string>
+    <string name="follow_error">Có lỗi xảy ra, vui lòng thử lại</string>
+    <string name="share_message">Xem phim %1$s tại AnimeVsub: %2$s</string>
+    <string name="share_title">Chia sẻ phim</string>
+    <string name="settings">Cài đặt</string>
+    <string name="about">Giới thiệu</string>
+    <string name="playlists">Danh sách phát</string>
+    <string name="edit_profile">Sửa hồ sơ</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="login_required">Cần đăng nhập để sử dụng tính năng này</string>
+    <string name="personal">Cá nhân</string>
+    <string name="general">Chung</string>
+    <string name="login_note">Để đăng ký hoặc khôi phục mật khẩu, vui lòng truy cập website của chúng tôi.</string>
+
+    <!-- Settings -->
+    <string name="player_settings">Cài đặt trình phát</string>
+    <string name="auto_next">Tự động phát tập tiếp theo</string>
+    <string name="auto_skip">Tự động bỏ qua Intro/Ending</string>
+    <string name="app_language">Ngôn ngữ ứng dụng</string>
+    <string name="language_auto">Mặc định hệ thống</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="japanese">Tiếng Nhật</string>
+    <string name="chinese">Tiếng Trung</string>
+    <string name="language_settings">Ngôn ngữ</string>
+    <string name="infinite_scroll">Cuộn vô hạn</string>
+    <string name="movie_mode">Chế độ phim</string>
+    <string name="show_comments">Hiển thị bình luận</string>
+    <string name="gesture_controls">Điều khiển cử chỉ</string>
+    <string name="volume_gesture">Vuốt để chỉnh âm lượng</string>
+    <string name="brightness_gesture">Vuốt để chỉnh độ sáng</string>
+    <string name="sync_mode">Đồng bộ tiến trình</string>
+    <string name="sync_mode_description">Chế độ đồng bộ</string>
+    <string name="sync_mode_full">Đồng bộ hai chiều</string>
+    <string name="sync_mode_upload_only">Chỉ tải lên</string>
+    <string name="sync_mode_none">Đã tắt</string>
+
+    <!-- Rankings -->
+    <string name="ranking_day">Ngày</string>
+    <string name="ranking_month">Tháng</string>
+    <string name="ranking_season">Mùa</string>
+    <string name="ranking_year">Năm</string>
+    <string name="rank_day">Ngày</string>
+    <string name="rank_month">Tháng</string>
+    <string name="rank_season">Mùa</string>
+    <string name="rank_year">Năm</string>
+    <string name="rank_voted">Bình chọn nhiều</string>
+    <string name="error_no_ranking_types">Không tìm thấy loại bảng xếp hạng</string>
+
+    <!-- General -->
+    <string name="retry">Thử lại</string>
+    <string name="error_occurred">Đã xảy ra lỗi</string>
+    <string name="language_label_short">Ngôn ngữ</string>
+    <string name="loading">Đang tải…</string>
+    <string name="no_internet">Không có kết nối mạng</string>
+    <string name="cancel">Hủy</string>
+    <string name="ok">OK</string>
+    <string name="save">Lưu</string>
+    <string name="delete">Xóa</string>
+    <string name="create">Tạo</string>
+    <string name="version">Phiên bản %1$s</string>
+    <string name="about_description">AnimeVsub là ứng dụng xem phim anime miễn phí. Xem anime yêu thích của bạn với phụ đề tiếng Việt.</string>
+    <string name="developer">Nhà phát triển</string>
+    <string name="developer_name">Tachibana Shin</string>
+    <string name="source_code">Mã nguồn</string>
+    <string name="license">Giấy phép</string>
+    <string name="category">Danh mục</string>
+    <string name="no_servers_found">Không tìm thấy server nào</string>
+    <string name="mit_license">Giấy phép MIT</string>
+    <string name="coming_soon_desc">Sắp ra mắt…</string>
+    <string name="back">Quay lại</string>
+    <string name="million_suffix">Tr</string>
+    <string name="thousand_suffix">N</string>
+    <string name="made_with_love">Được làm với ❤️ cho người hâm mộ anime</string>
+
+    <!-- News -->
+    <string name="news">Tin tức</string>
+    <string name="no_news">Không có tin tức</string>
+
+    <!-- Notification -->
+    <string name="no_playlists">Không tìm thấy danh sách phát</string>
+    <string name="no_notifications">Không có thông báo</string>
+    <string name="no_system_notifications">Không có thông báo hệ thống</string>
+    <string name="mark_read">Đánh dấu đã đọc</string>
+    <string name="delete_notification">Xóa thông báo</string>
+    <string name="clear_all_notifications">Xóa tất cả thông báo</string>
+    <string name="notification_type_general">Thông báo</string>
+    <string name="notification_type_app_update">Cập nhật ứng dụng</string>
+    <string name="notification_type_maintenance">Bảo trì</string>
+    <string name="notification_type_promotion">Khuyến mãi</string>
+    <string name="notification_type_feature">Tính năng mới</string>
+    <string name="notification_type_bugfix">Sửa lỗi</string>
+    <string name="notification_type_security">Bảo mật</string>
+    <plurals name="notification_count">
+        <item quantity="other">%d thông báo</item>
+    </plurals>
+    <string name="time_just_now">Vừa xong</string>
+    <string name="time_minutes_ago">%dp trước</string>
+    <string name="time_hours_ago">%dg trước</string>
+    <string name="time_days_ago">%dng trước</string>
+    <string name="time_weeks_ago">%dt trước</string>
+    <string name="tab_api">API</string>
+    <string name="tab_database">Database</string>
+    <string name="tab_system">Hệ thống</string>
+    <string name="no_history">Chưa có lịch sử xem</string>
+    <string name="no_follows">Chưa theo dõi phim nào</string>
+    <string name="history_subtitle">%1$s tập %2$s</string>
+
+    <!-- Playlist -->
+    <string name="create_playlist">Tạo danh sách phát</string>
+    <string name="playlist_name">Tên danh sách phát</string>
+    <string name="public_playlist">Công khai</string>
+    <string name="empty_playlist">Danh sách phát trống</string>
+    <string name="added_to_playlist">Đã thêm vào %1$s</string>
+    <string name="removed_from_playlist">Đã xóa khỏi %1$s</string>
+    <plurals name="video_count">
+        <item quantity="other">%1$d video</item>
+    </plurals>
+    <string name="delete_playlist">Xóa playlist</string>
+    <string name="rename_playlist">Đổi tên playlist</string>
+    <string name="edit_description">Sửa mô tả</string>
+    <string name="update_success">Cập nhật thành công</string>
+    <string name="delete_success">Xóa thành công</string>
+    <string name="remove_from_playlist">Xóa khỏi playlist này</string>
+    <string name="add_to_other_playlist">Thêm vào playlist khác</string>
+    <string name="sort_by">Sắp xếp theo</string>
+    <string name="newest_added">Mới thêm</string>
+    <string name="oldest_added">Cũ nhất</string>
+    <string name="playlist_not_found">Không tìm thấy playlist</string>
+    <string name="confirm_delete_playlist">Bạn có chắc chắn muốn xóa playlist này không?</string>
+
+    <!-- Category/Filter -->
+    <string name="filter">Bộ lọc</string>
+    <string name="filters">Bộ lọc</string>
+    <string name="filter_title">Bộ lọc</string>
+    <string name="filter_group_format">Bộ lọc: %1$s</string>
+    <string name="more">Thêm</string>
+    <string name="restored_progress">Đã khôi phục tiến trình xem %1$d:%2$02d</string>
+    <string name="check_update">Kiểm tra cập nhật</string>
+    <string name="update_available">Có phiên bản mới</string>
+    <string name="update_message">Phiên bản mới (%1$s) đã sẵn sàng. Bạn có muốn cập nhật ngay không?</string>
+    <string name="update_now">Cập nhật ngay</string>
+    <string name="no_update">Bạn đang sử dụng phiên bản mới nhất</string>
+    <string name="checking_update">Đang kiểm tra cập nhật…</string>
+    <string name="update_failed">Lỗi khi kiểm tra cập nhật</string>
+    <string name="update_downloading_title">Đang tải cập nhật AnimeVsub</string>
+    <string name="update_downloading_description">Phiên bản mới đang được tải xuống…</string>
+    <string name="session_expired">Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</string>
+
+    <string name="sleep_timer">Hẹn giờ ngủ</string>
+    <string name="sleep_timer_off">Tắt</string>
+    <string name="sleep_timer_minutes">%1$d phút</string>
+    <string name="sleep_timer_set">Sẽ tạm dừng sau %1$d phút</string>
+    <string name="sleep_timer_remaining">Tạm dừng sau %1$s</string>
+    <string name="sleep_timer_end_of_episode">Khi hết tập này</string>
+    <string name="sleep_timer_active">Hẹn giờ ngủ đang bật</string>
+    <string name="sleep_timer_custom">Tùy chỉnh</string>
+    <string name="sleep_timer_custom_title">Tùy chỉnh hẹn giờ ngủ</string>
+    <string name="sleep_timer_custom_hint">Phút (1–1440)</string>
+
+    <string name="remind_me_to_take_a_break">Nhắc tôi tạm dừng xem</string>
+    <string name="remind_me_when_its_bedtime">Nhắc tôi khi đến giờ đi ngủ</string>
+    <string name="reminder_frequency">Tần suất nhắc</string>
+    <string name="reminder_every_format">Sau mỗi %1$s</string>
+    <string name="bedtime_reminder_schedule">Thời gian biểu: %1$s – %2$s</string>
+    <string name="wait_until_i_finish_video_to_show_reminder">Chờ tôi xem xong video rồi mới hiển thị lời nhắc</string>
+    <string name="reminder_title">Lời nhắc</string>
+    <string name="take_a_break_message">Đã đến lúc tạm dừng xem rồi!</string>
+    <string name="bedtime_message">Đã đến giờ đi ngủ rồi!</string>
+    <string name="dismiss">Bỏ qua</string>
+    <string name="settings_capital">CÀI ĐẶT</string>
+    <string name="select_time">Chọn thời gian</string>
+
+    <!-- Comments -->
+    <string name="comments_title">Bình luận</string>
+    <string name="comment_hint">Viết bình luận…</string>
+    <string name="reply_hint">Trả lời %1$s…</string>
+    <string name="post_comment">Gửi</string>
+    <string name="cancel_comment">Hủy</string>
+    <string name="view_replies">Xem %1$d phản hồi</string>
+    <string name="view_more_replies">Xem thêm phản hồi</string>
+    <string name="view_more_comments">Xem thêm bình luận</string>
+    <string name="no_comments">Chưa có bình luận nào. Hãy là người đầu tiên!</string>
+    <string name="just_now">Vừa xong</string>
+    <string name="minutes_ago">%1$d phút trước</string>
+    <string name="hours_ago">%1$d giờ trước</string>
+    <string name="days_ago">%1$d ngày trước</string>
+    <string name="months_ago">%1$d tháng trước</string>
+    <string name="years_ago">%1$d năm trước</string>
+    <string name="reply_label">Trả lời</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="edited">đã chỉnh sửa</string>
+    <string name="report">Báo cáo</string>
+    <string name="report_feedback_subject">Báo lỗi/Góp ý: %1$s (ID: %2$s)</string>
+    <string name="report_success">Báo cáo thành công</string>
+    <string name="report_error">Gửi báo cáo thất bại</string>
+    <string name="pinned">Đã ghim</string>
+    <string name="global_pinned">Đã ghim</string>
+
+    <!-- Cloudflare -->
+    <string name="cloudflare_bypass_title">Vượt qua Cloudflare</string>
+    <string name="close">Đóng</string>
+    <string name="reload">Tải lại</string>
+    <string name="forward">Tiếp theo</string>
+    <string name="stop">Dừng</string>
+    <string name="done">Xong</string>
+    <string name="login_not_success">Đăng nhập chưa thành công. Vui lòng thử lại sau khi đã đăng nhập trên website.</string>
+
+    <!-- Main Activity -->
+    <string name="authentication_prompt_title">Xác thực</string>
+    <string name="authentication_prompt_message">Phiên làm việc của bạn có thể đã hết hạn. Bạn có muốn thử lại hoặc đăng xuất không?</string>
+    <string name="app_inactive_title">Bảo trì</string>
+    <string name="app_inactive_message">Ứng dụng hiện đang tạm ngưng hoạt động. Vui lòng quay lại sau.</string>
+    <string name="notification_settings">Cài đặt thông báo</string>
+    <string name="enable_notifications">Bật thông báo</string>
+    <string name="enable_background_sync">Bật đồng bộ nền</string>
+    <string name="notify_sync_interval">Khoảng cách đồng bộ API</string>
+    <string name="db_notify_sync_interval">Khoảng cách đồng bộ DB</string>
+    <string name="auto_sync_notify">Tự động đồng bộ thông báo</string>
+    <string name="minutes_label">%1$d phút</string>
+    <string name="sort_oldest">Cũ nhất</string>
+    <string name="sort_newest">Mới nhất</string>
+    <string name="new_notification_title">Cập nhật Anime mới</string>
+    <string name="new_notification_message">%1$s - %2$s</string>
+    <!-- Donation -->
+    <string name="donation_title">Lời tâm sự từ nhà phát triển</string>
+    <string name="donation_description">Ứng dụng đã được duy trì %1$d năm và vẫn luôn miễn phí. Điều này gây áp lực tài chính rất lớn lên các nhà phát triển để duy trì server và các tính năng mới.</string>
+    <string name="donation_message">Nếu bạn yêu thích ứng dụng, hãy ủng hộ chúng mình một ly cà phê nhé! ❤️</string>
+    <string name="donation_bank_info">Ngân hàng: %1$s\nSTK: %2$s\nChủ TK: %3$s</string>
+    <string name="donation_got_it">Tôi đã hiểu</string>
+    <string name="donation_qr_saved">Đã lưu mã QR vào thư viện ảnh!</string>
+    <string name="donation_save_error">Lỗi khi lưu ảnh: %1$s</string>
+    <string name="donation_qr_desc">Mã QR ủng hộ</string>
+    <string name="donation_save_qr">Lưu mã QR</string>
+
+    <!-- Developer Options -->
+    <string name="developer_options_title">Tùy chọn nhà phát triển</string>
+    <string name="history_sync_interval">Khoảng cách đồng bộ tiến trình</string>
+    <string name="seconds_label">%1$d giây</string>
+    <string name="hide_donation_popups">Ẩn thông báo ủng hộ (7 ngày)</string>
+    <string name="unlock_developer_options">Mở khóa tùy chọn nhà phát triển</string>
+    <string name="enter_password_to_continue">Vui lòng nhập mật khẩu để tiếp tục</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="wrong_password">Mật khẩu không đúng</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="developer_step_count">Bạn còn %1$d bước nữa để trở thành nhà phát triển.</string>
+    <string name="developer_mode_already_enabled">Không cần đâu, bạn đã là nhà phát triển rồi.</string>
+    <string name="developer_mode_enabled">Bạn hiện đã là nhà phát triển!</string>
+
+    <string name="screen_transition">Hiệu ứng chuyển màn hình</string>
+    <string name="transition_none">Không có</string>
+    <string name="transition_slide">Trượt (Mặc định)</string>
+    <string name="transition_fade">Mờ dần</string>
+    <string name="transition_zoom">Phóng to</string>
+    <string name="transition_system">Mặc định hệ thống</string>
+    <string name="dynamic_color">Màu sắc năng động</string>
+    <string name="dynamic_color_desc">Sử dụng tông màu từ hình nền (Android 12+)</string>
+    <string name="app_icon">Biểu tượng ứng dụng</string>
+    <string name="app_icon_default">Mặc định</string>
+    <string name="app_icon_old">Cổ điển</string>
+    <string name="app_icon_vibrant">Rực rỡ</string>
+    <string name="app_icon_rainbow">Cầu vồng</string>
+    <string name="app_icon_neon">Neon</string>
+    <string name="app_icon_ai">AI Gradient</string>
+    <string name="custom_shortcut">Lối tắt tùy chỉnh</string>
+    <string name="continue_watching_widget_title">Xem tiếp</string>
+    <string name="continue_watching_widget_desc">Xem nhanh bộ phim đang xem dở</string>
+    <string name="history_widget_title">Lịch sử xem</string>
+    <string name="history_widget_desc">Xem các bộ phim bạn đã xem gần đây</string>
+    <string name="latest_updated_widget_title">Mới cập nhật</string>
+    <string name="latest_updated_widget_desc">Xem các bộ phim mới cập nhật</string>
+    <string name="no_anime_watched">Chưa có phim đang xem</string>
+    <string name="tap_to_open_app">Nhấn để mở ứng dụng</string>
+
+    <!-- Gemini AI -->
+    <string name="ai_features">Tính năng AI</string>
+    <string name="ai_provider">Nhà cung cấp AI</string>
+    <string name="ai_provider_gemini">Google Gemini</string>
+    <string name="ai_provider_openai">OpenAI</string>
+    <string name="ai_provider_claude">Anthropic Claude</string>
+    <string name="gemini_api_key">Gemini API Key</string>
+    <string name="gemini_api_key_hint">Nhập mã API của bạn tại đây…</string>
+    <string name="openai_api_key">OpenAI API Key</string>
+    <string name="openai_api_key_hint">sk-…</string>
+    <string name="openai_model">OpenAI Model</string>
+    <string name="openai_endpoint">OpenAI Endpoint (tùy chọn)</string>
+    <string name="openai_endpoint_hint">https://api.openai.com/v1</string>
+    <string name="claude_api_key">Claude API Key</string>
+    <string name="claude_api_key_hint">sk-ant-...</string>
+    <string name="claude_model">Claude Model</string>
+    <string name="claude_endpoint">Claude Endpoint (tùy chọn)</string>
+    <string name="claude_endpoint_hint">https://api.anthropic.com/v1</string>
+    <string name="get_api_key">Lấy API Key</string>
+    <string name="test_api_key">Kiểm tra kết nối</string>
+    <string name="api_key_valid">API Key hợp lệ!</string>
+    <string name="api_key_invalid">API Key không hợp lệ hoặc có lỗi xảy ra</string>
+    <string name="api_key_test_success">✓ Thành công! Kết nối OK với model: %1$s</string>
+    <string name="api_key_test_success_with_response">✓ Thành công! Kết nối OK với model: %1$s\nPhản hồi: %2$s</string>
+    <string name="api_key_test_error">✗ Lỗi: %1$s</string>
+    <string name="gemini_guide_title">Cách lấy Gemini API Key</string>
+    <string name="gemini_guide_content">1. Truy cập Google AI Studio (aistudio.google.com)\n2. Đăng nhập bằng tài khoản Google của bạn\n3. Nhấp vào \"Get API key\"\n4. Tạo API key mới trong một dự án mới\n5. Sao chép mã và dán vào đây.</string>
+    <string name="ai_summary_title">Tóm tắt gần đây</string>
+    <string name="ai_summary_enabled">Tóm tắt thông báo bằng AI</string>
+    <string name="ai_summary_desc">Tóm tắt các thông báo mới nhất đã nhận được trên thiết bị</string>
+    <string name="ai_recap_enabled">Recap nội dung phim</string>
+    <string name="ai_recap_title">Tóm tắt nội dung</string>
+    <string name="ai_recap_not_loaded">Nhấn để xem AI tóm tắt các tập trước</string>
+    <string name="ai_recap_desc">Hiển thị tóm tắt ngắn gọn các tập trước ở màn hình chi tiết</string>
+    <string name="ai_episode_summary">Tóm tắt AI</string>
+    <string name="ai_episode_summary_desc">Tóm tắt tập hiện tại cho đến thời điểm này</string>
+    <string name="ai_generating_summary">Đang tạo tóm tắt…</string>
+    <string name="ai_summary_failed">Không thể tạo tóm tắt</string>
+    <string name="ai_summary_at_timestamp">Tóm tắt tại %1$s</string>
+    <string name="prevent_screen_recording">Chống quay chụp màn hình</string>
+    <string name="prevent_screen_recording_desc">Vô hiệu hóa tính năng chụp ảnh và quay video màn hình để bảo vệ nội dung</string>
+    <string name="ai_chat_title">Trợ lý AI</string>
+    <string name="ai_chat_placeholder">Hỏi bất cứ điều gì về bộ anime này…</string>
+    <string name="send">Gửi</string>
+    <string name="ai_chat_error">Không thể nhận phản hồi. Vui lòng thử lại.</string>
+    <string name="prefetch_suggestion_text">Video giật? Nhấn để bật tải trước URL</string>
+
+    <!-- Video Buffer Settings -->
+    <string name="video_buffer_settings">Cài đặt bộ đệm video</string>
+    <string name="min_buffer_ms">Bộ đệm tối thiểu</string>
+    <string name="max_buffer_ms">Bộ đệm tối đa</string>
+    <string name="buffer_for_playback_ms">Bộ đệm để phát</string>
+    <string name="buffer_for_playback_after_rebuffer_ms">Bộ đệm sau khi khựng</string>
+    <string name="prioritize_time_over_size">Ưu tiên thời gian tải hơn kích thước</string>
+    <string name="prioritize_time_over_size_desc">Tiếp tục tải dữ liệu kể cả khi video đang tạm dừng</string>
+
+    <!-- Swipe Gestures -->
+    <string name="swipe_up_to_fullscreen">Vuốt lên để phát toàn màn hình</string>
+    <string name="swipe_down_to_minimize">Vuốt xuống để thu nhỏ</string>
+    <string name="release_to_fullscreen">Thả để vào toàn màn hình</string>
+    <string name="release_to_minimize">Thả để thu nhỏ</string>
+
+    <!-- DNS Settings -->
+    <string name="network_settings">Cài đặt mạng</string>
+    <string name="dns_mode">DNS qua HTTPS (DoH)</string>
+    <string name="dns_system">Mặc định hệ thống</string>
+    <string name="dns_google">Google DNS</string>
+    <string name="dns_cloudflare">Cloudflare DNS</string>
+    <string name="dns_quad9">Quad9 DNS</string>
+    <string name="dns_custom">DNS tùy chỉnh</string>
+    <string name="custom_dns_url">URL DoH tùy chỉnh</string>
+    <string name="custom_dns_url_hint">https://example.com/dns-query</string>
+    <string name="dns_info_webview">Bật DNS trong WebView</string>
+    <string name="dns_info_desc">Sử dụng DoH đã chọn cho trình duyệt nội bộ và các yêu cầu</string>
+    <string name="open_system_dns_settings">Mở cài đặt Private DNS của hệ thống</string>
+</resources>

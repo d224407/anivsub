@@ -1,0 +1,118 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_call:
+    secrets:
+      PAT_TOKEN:
+        required: true
+      GOOGLE_SERVICES:
+        required: true
+      GOOGLE_SERVICES_DEV:
+        required: true
+      SUPABASE_URL:
+        required: true
+      SUPABASE_KEY:
+        required: true
+      KEYSTORE_BASE64:
+        required: true
+      KEYSTORE_ALIAS:
+        required: true
+      KEYSTORE_PASSWORD:
+        required: true
+    outputs:
+      build_debug_success:
+        description: "Outcome of the Build Debug APK step (success/failure)"
+        value: ${{ jobs.ci.outputs.build_debug_success }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    outputs:
+      build_debug_success: ${{ steps.build_debug.outcome }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+        with:
+          submodules: recursive
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Add swap space
+        run: |
+          sudo swapoff /mnt/swapfile 2>/dev/null || true
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@main
+        with:
+          java-version: '25'
+          distribution: 'jetbrains'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-disabled: true
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Write google-services.json
+        run: echo $'${{ secrets.GOOGLE_SERVICES }}' > app/google-services.json
+
+      - name: Write local.properties
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_KEY }}
+          PASSWORD_UNLOCK_DEVELOPER: ${{ secrets.PASSWORD_UNLOCK_DEVELOPER }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          printf '\nSUPABASE_URL=%s\nSUPABASE_KEY=%s\nPASSWORD_UNLOCK_DEVELOPER=%s\n' "$URL" "$KEY" "$PASSWORD_UNLOCK_DEVELOPER" >> local.properties
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
+          SHA256=$(keytool -list -v -keystore release.keystore -alias "$KEYSTORE_ALIAS" -storepass "$KEYSTORE_PASSWORD" 2>/dev/null | grep "SHA256: " | awk '{print $2}')
+          echo "RELEASE_CERT_SHA256=$SHA256" >> local.properties
+          rm release.keystore
+
+      - name: Build Debug APK
+        id: build_debug
+        continue-on-error: true
+        run: |
+          ./gradlew clean
+          ./gradlew assembleDebug 2>&1 | tee build_full.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@main
+        with:
+          name: build-full-log
+          path: build_full.log
+
+      - name: Sign APK
+        if: always()
+        uses: r0adkll/sign-android-release@master
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/debug
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEYSTORE_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEYSTORE_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "35.0.0"
+
+      - name: Upload APK
+        if: always()
+        uses: actions/upload-artifact@main
+        with:
+          name: debug-apk-signed
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}

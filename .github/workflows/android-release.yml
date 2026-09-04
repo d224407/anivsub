@@ -1,0 +1,161 @@
+name: Android Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/android-ci.yml
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      GOOGLE_SERVICES_DEV: ${{ secrets.GOOGLE_SERVICES_DEV }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
+  release:
+    needs: ci
+    if: needs.ci.outputs.build_debug_success == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+        with:
+          submodules: recursive
+          token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Add swap space
+        run: |
+          sudo swapoff /mnt/swapfile 2>/dev/null || true
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "lts/*"
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@main
+        with:
+          java-version: '25'
+          distribution: 'jetbrains'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-cleanup: always
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Write google-services.json
+        run: echo $'${{ secrets.GOOGLE_SERVICES }}' > app/google-services.json
+
+      - name: Write local.properties
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_KEY }}
+          PASSWORD_UNLOCK_DEVELOPER: ${{ secrets.PASSWORD_UNLOCK_DEVELOPER }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          printf '\nSUPABASE_URL=%s\nSUPABASE_KEY=%s\nPASSWORD_UNLOCK_DEVELOPER=%s\n' "$URL" "$KEY" "$PASSWORD_UNLOCK_DEVELOPER" >> local.properties
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
+          SHA256=$(keytool -list -v -keystore release.keystore -alias "$KEYSTORE_ALIAS" -storepass "$KEYSTORE_PASSWORD" 2>/dev/null | grep "SHA256: " | awk '{print $2}')
+          echo "RELEASE_CERT_SHA256=$SHA256" >> local.properties
+          rm release.keystore
+
+      - name: Install semantic-release dependencies
+        continue-on-error: true
+        run: |
+          npm install -D semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/git \
+            @semantic-release/github \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            semantic-release-export-data
+
+      - name: Get next version
+        id: semantic
+        continue-on-error: true
+        uses: cycjimmy/semantic-release-action@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          dry_run: true
+
+      - name: Update Gradle Version
+        if: steps.semantic.outputs.new_release_published == 'true'
+        continue-on-error: true
+        run: |
+          sed -i "s/versionName=.*/versionName=${{ steps.semantic.outputs.new_release_version }}/" gradle.properties
+          sed -i "s/versionCode=.*/versionCode=${{ github.run_number }}/" gradle.properties
+
+      - name: Build Release Bundle (AAB)
+        id: build_aab
+        continue-on-error: true
+        run: |
+          ./gradlew :app:bundleRelease 2>&1 | tee build_aab.log
+
+      - name: Build Release APK
+        id: build_apk
+        continue-on-error: true
+        run: |
+          ./gradlew :app:assembleRelease 2>&1 | tee build_apk.log
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@main
+        with:
+          name: build-logs
+          path: |
+            build_aab.log
+            build_apk.log
+
+      - name: Sign AAB
+        if: always()
+        uses: r0adkll/sign-android-release@master
+        id: sign_aab
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEYSTORE_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEYSTORE_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "35.0.0"
+
+      - name: Sign APK
+        if: always()
+        uses: r0adkll/sign-android-release@master
+        id: sign_apk
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEYSTORE_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEYSTORE_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "35.0.0"
+
+      - name: Run Semantic Release
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

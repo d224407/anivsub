@@ -1,0 +1,9 @@
+package git.shin.animevsub.data.remote.api_hidden
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class EpisodeProgress(
+    val current: String,
+    val total: String
+)

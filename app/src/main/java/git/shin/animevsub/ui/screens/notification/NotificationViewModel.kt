@@ -1,0 +1,258 @@
+package git.shin.animevsub.ui.screens.notification
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import git.shin.animevsub.R
+import git.shin.animevsub.data.local.PreferencesManager
+import git.shin.animevsub.data.local.SystemNotificationStore
+import git.shin.animevsub.data.model.DbNotificationCount
+import git.shin.animevsub.data.model.DbNotificationItem
+import git.shin.animevsub.data.model.NotificationData
+import git.shin.animevsub.data.model.SystemNotification
+import git.shin.animevsub.data.repository.AnimeRepository
+import git.shin.animevsub.data.repository.NotificationDatabaseRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+sealed class NotificationUiEvent {
+  data class ShowToast(val messageRes: Int? = null, val message: String? = null) : NotificationUiEvent()
+}
+
+data class NotificationUiState(
+  val isLoading: Boolean = true,
+  val isRefreshing: Boolean = false,
+  val data: NotificationData? = null,
+  val dbNotifications: List<DbNotificationItem> = emptyList(),
+  val dbNotificationCount: DbNotificationCount? = null,
+  val systemNotifications: List<SystemNotification> = emptyList(),
+  val isSyncing: Boolean = false,
+  val error: String? = null,
+  val isLoggedIn: Boolean = false,
+  val isAuthReady: Boolean = false,
+  val dbPage: Int = 1,
+  val hasMoreDb: Boolean = true,
+  val isLoadingDb: Boolean = false,
+  val autoSync: Boolean = PreferencesManager.DEFAULT_AUTO_SYNC_NOTIFY,
+  val searchQuery: String = "",
+  val isAscending: Boolean = false
+)
+
+@HiltViewModel
+class NotificationViewModel @Inject constructor(
+  private val repository: AnimeRepository,
+  private val notificationDbRepository: NotificationDatabaseRepository,
+  private val preferencesManager: PreferencesManager,
+  private val systemNotificationStore: SystemNotificationStore
+) : ViewModel() {
+
+  private val _uiState = MutableStateFlow(NotificationUiState())
+  val uiState: StateFlow<NotificationUiState> = _uiState.asStateFlow()
+
+  private val _uiEvent = MutableSharedFlow<NotificationUiEvent>()
+  val uiEvent: SharedFlow<NotificationUiEvent> = _uiEvent.asSharedFlow()
+
+  init {
+    viewModelScope.launch {
+      launch {
+        repository.isLoggedIn.collect { loggedIn ->
+          _uiState.update { it.copy(isLoggedIn = loggedIn, isAuthReady = true) }
+          if (loggedIn) {
+            loadNotifications()
+            loadDbNotifications(isRefreshing = true)
+          } else {
+            _uiState.update {
+              it.copy(
+                isLoading = false,
+                data = null,
+                dbNotifications = emptyList(),
+                dbNotificationCount = null
+              )
+            }
+          }
+        }
+      }
+
+      launch {
+        repository.notifications.collect { data ->
+          _uiState.update { it.copy(data = data) }
+        }
+      }
+
+      launch {
+        notificationDbRepository.dbNotifications.collect { items ->
+          _uiState.update { it.copy(dbNotifications = items) }
+        }
+      }
+
+      launch {
+        notificationDbRepository.dbNotificationCount.collect { count ->
+          _uiState.update { it.copy(dbNotificationCount = count) }
+        }
+      }
+
+      launch {
+        repository.autoSyncNotify.collect { enabled ->
+          _uiState.update { it.copy(autoSync = enabled) }
+        }
+      }
+
+      launch {
+        systemNotificationStore.notifications.collect { notifications ->
+          _uiState.update { it.copy(systemNotifications = notifications) }
+        }
+      }
+    }
+  }
+
+  fun loadNotifications(isRefreshing: Boolean = false) {
+    viewModelScope.launch {
+      _uiState.update {
+        it.copy(
+          isLoading = !isRefreshing,
+          isRefreshing = isRefreshing,
+          error = null
+        )
+      }
+      repository.getNotifications()
+        .onSuccess {
+          _uiState.update {
+            it.copy(
+              isLoading = false,
+              isRefreshing = false,
+              error = null
+            )
+          }
+        }
+        .onFailure { e ->
+          _uiState.update {
+            it.copy(
+              isLoading = false,
+              isRefreshing = false,
+              error = e.message
+            )
+          }
+        }
+    }
+  }
+
+  private var loadDbJob: Job? = null
+
+  fun loadDbNotifications(isRefreshing: Boolean = false) {
+    if (_uiState.value.isLoadingDb && !isRefreshing) return
+
+    loadDbJob?.cancel()
+    loadDbJob = viewModelScope.launch {
+      _uiState.update { it.copy(isLoadingDb = true, isRefreshing = isRefreshing) }
+      try {
+        val state = _uiState.value
+        val currentPage = if (isRefreshing) 1 else state.dbPage
+        notificationDbRepository.queryNotify(
+          page = currentPage,
+          query = state.searchQuery.ifBlank { null },
+          asc = state.isAscending
+        )
+          .onSuccess { items ->
+            _uiState.update {
+              it.copy(
+                dbPage = if (items.isEmpty()) currentPage else currentPage + 1,
+                hasMoreDb = items.isNotEmpty()
+              )
+            }
+          }
+      } finally {
+        _uiState.update { it.copy(isLoadingDb = false, isRefreshing = false) }
+      }
+    }
+  }
+
+  fun startSync() {
+    viewModelScope.launch {
+      repository.startSyncNotifications()
+    }
+  }
+
+  fun refresh() {
+    loadNotifications(isRefreshing = true)
+    loadDbNotifications(isRefreshing = true)
+  }
+
+  fun retry() {
+    loadNotifications()
+    loadDbNotifications()
+  }
+
+  fun onTrigger(trigger: git.shin.animevsub.data.model.Trigger) {
+    viewModelScope.launch {
+      repository.onTrigger(trigger)
+        .onFailure { e ->
+          _uiEvent.emit(
+            if (e.message != null) {
+              NotificationUiEvent.ShowToast(message = e.message)
+            } else {
+              NotificationUiEvent.ShowToast(messageRes = R.string.error_occurred)
+            }
+          )
+        }
+    }
+  }
+
+  fun deleteDbNotification(season: String, chapId: String? = null) {
+    viewModelScope.launch {
+      notificationDbRepository.deleteNotify(season, chapId)
+        .onFailure { e ->
+          _uiEvent.emit(NotificationUiEvent.ShowToast(message = e.message))
+        }
+    }
+  }
+
+  fun markSystemNotificationAsRead(id: String) {
+    viewModelScope.launch {
+      systemNotificationStore.markAsRead(id)
+    }
+  }
+
+  fun deleteSystemNotification(id: String) {
+    viewModelScope.launch {
+      systemNotificationStore.delete(id)
+    }
+  }
+
+  fun clearSystemNotifications() {
+    viewModelScope.launch {
+      systemNotificationStore.clearAll()
+    }
+  }
+
+  private var searchJob: Job? = null
+
+  fun onSearchQueryChanged(query: String) {
+    _uiState.update { it.copy(searchQuery = query) }
+    searchJob?.cancel()
+    searchJob = viewModelScope.launch {
+      delay(500.milliseconds)
+      loadDbNotifications(isRefreshing = true)
+    }
+  }
+
+  fun toggleOrder() {
+    _uiState.update { it.copy(isAscending = !it.isAscending) }
+    loadDbNotifications(isRefreshing = true)
+  }
+
+  fun setAutoSync(enabled: Boolean) {
+    viewModelScope.launch {
+      preferencesManager.setAutoSyncNotify(enabled)
+      _uiState.update { it.copy(autoSync = enabled) }
+    }
+  }
+}
