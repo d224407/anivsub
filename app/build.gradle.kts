@@ -115,5 +115,9 @@ dependencies {
   val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
   implementation(composeBom)
 
+  // Hilt
+  implementation("com.google.dagger:hilt-android:2.60.1")
+  ksp("com.google.dagger:hilt-android-compiler:2.60.1")
+
   // ... (rest of the dependencies remain unchanged)
 }
