@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.local
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -15,9 +14,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
 class PreferencesManager(private val context: Context) {
   companion object {
     const val DEFAULT_AUTO_NEXT = true
@@ -66,13 +63,11 @@ class PreferencesManager(private val context: Context) {
     const val DEFAULT_LAST_ACTIVE_CHECK = 0L
     const val DEFAULT_DNS_MODE = "cloudflare"
     const val DEFAULT_CUSTOM_DNS_URL = "https://dns.google/dns-query"
-
     const val DNS_MODE_SYSTEM = "system"
     const val DNS_MODE_GOOGLE = "google"
     const val DNS_MODE_CLOUDFLARE = "cloudflare"
     const val DNS_MODE_QUAD9 = "quad9"
     const val DNS_MODE_CUSTOM = "custom"
-
     private val AUTO_NEXT_KEY = booleanPreferencesKey("auto_next")
     private val AUTO_SKIP_KEY = booleanPreferencesKey("auto_skip")
     private val VOLUME_GESTURE_KEY = booleanPreferencesKey("volume_gesture")
@@ -121,7 +116,6 @@ class PreferencesManager(private val context: Context) {
     private val DNS_MODE_KEY = stringPreferencesKey("dns_mode")
     private val CUSTOM_DNS_URL_KEY = stringPreferencesKey("custom_dns_url")
   }
-
   val autoNext: Flow<Boolean> = context.dataStore.data.map { it[AUTO_NEXT_KEY] ?: DEFAULT_AUTO_NEXT }
   val autoSkip: Flow<Boolean> = context.dataStore.data.map { it[AUTO_SKIP_KEY] ?: DEFAULT_AUTO_SKIP }
   val volumeGesture: Flow<Boolean> = context.dataStore.data.map { it[VOLUME_GESTURE_KEY] ?: DEFAULT_VOLUME_GESTURE }
@@ -131,12 +125,10 @@ class PreferencesManager(private val context: Context) {
   val longPressSpeed: Flow<Float> = context.dataStore.data.map { it[LONG_PRESS_SPEED_KEY] ?: DEFAULT_LONG_PRESS_SPEED }
   val autoSyncNotify: Flow<Boolean> =
     context.dataStore.data.map { it[AUTO_SYNC_NOTIFY_KEY] ?: DEFAULT_AUTO_SYNC_NOTIFY }
-
   val notifyInterval: Flow<Int> = context.dataStore.data.map { it[NOTIFY_INTERVAL_KEY] ?: DEFAULT_NOTIFY_INTERVAL }
   val dbNotifyInterval: Flow<Int> = context.dataStore.data.map { it[DB_NOTIFY_INTERVAL_KEY] ?: DEFAULT_DB_NOTIFY_INTERVAL }
   val enableBackgroundSync: Flow<Boolean> = context.dataStore.data.map { it[ENABLE_BACKGROUND_SYNC_KEY] ?: DEFAULT_ENABLE_BACKGROUND_SYNC }
   val enableNotifications: Flow<Boolean> = context.dataStore.data.map { it[ENABLE_NOTIFICATIONS_KEY] ?: DEFAULT_ENABLE_NOTIFICATIONS }
-
   val breakReminderEnabled: Flow<Boolean> = context.dataStore.data.map { it[BREAK_REMINDER_ENABLED_KEY] ?: DEFAULT_BREAK_REMINDER_ENABLED }
   val breakReminderInterval: Flow<Int> = context.dataStore.data.map { it[BREAK_REMINDER_INTERVAL_KEY] ?: DEFAULT_BREAK_REMINDER_INTERVAL }
   val bedtimeReminderEnabled: Flow<Boolean> = context.dataStore.data.map { it[BEDTIME_REMINDER_ENABLED_KEY] ?: DEFAULT_BEDTIME_REMINDER_ENABLED }
@@ -164,16 +156,13 @@ class PreferencesManager(private val context: Context) {
   val geminiModel: Flow<String> = context.dataStore.data.map { it[GEMINI_MODEL_KEY] ?: DEFAULT_GEMINI_MODEL }
   val flagSecure: Flow<Boolean> = context.dataStore.data.map { it[FLAG_SECURE_KEY] ?: DEFAULT_FLAG_SECURE }
   val preferredServer: Flow<String> = context.dataStore.data.map { it[PREFERRED_SERVER_KEY] ?: DEFAULT_PREFERRED_SERVER }
-
   val minBufferMs: Flow<Int> = context.dataStore.data.map { it[MIN_BUFFER_MS_KEY] ?: DEFAULT_MIN_BUFFER_MS }
   val maxBufferMs: Flow<Int> = context.dataStore.data.map { it[MAX_BUFFER_MS_KEY] ?: DEFAULT_MAX_BUFFER_MS }
   val bufferForPlaybackMs: Flow<Int> = context.dataStore.data.map { it[BUFFER_FOR_PLAYBACK_MS_KEY] ?: DEFAULT_BUFFER_FOR_PLAYBACK_MS }
   val bufferForPlaybackAfterRebufferMs: Flow<Int> = context.dataStore.data.map { it[BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS_KEY] ?: DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS }
   val prioritizeTimeOverSize: Flow<Boolean> = context.dataStore.data.map { it[PRIORITIZE_TIME_OVER_SIZE_KEY] ?: DEFAULT_PRIORITIZE_TIME_OVER_SIZE }
-
   val dnsMode: Flow<String> = context.dataStore.data.map { it[DNS_MODE_KEY] ?: DEFAULT_DNS_MODE }
   val customDnsUrl: Flow<String> = context.dataStore.data.map { it[CUSTOM_DNS_URL_KEY] ?: DEFAULT_CUSTOM_DNS_URL }
-
   val searchHistory: Flow<List<String>> = context.dataStore.data.map { preferences ->
     val json = preferences[SEARCH_HISTORY_KEY] ?: return@map emptyList()
     try {
@@ -183,192 +172,145 @@ class PreferencesManager(private val context: Context) {
       emptyList()
     }
   }
-
   val lastActiveCheck: Flow<Long> = context.dataStore.data.map { it[LAST_ACTIVE_CHECK_KEY] ?: DEFAULT_LAST_ACTIVE_CHECK }
   suspend fun setDoubleTapSkip(value: Int) {
     context.dataStore.edit { it[DOUBLE_TAP_SKIP_KEY] = value }
   }
-
   suspend fun setLongPressSpeed(value: Float) {
     context.dataStore.edit { it[LONG_PRESS_SPEED_KEY] = value }
   }
-
   suspend fun setLastActiveCheck(value: Long) {
     context.dataStore.edit { it[LAST_ACTIVE_CHECK_KEY] = value }
   }
-
   suspend fun setAutoNext(value: Boolean) {
     context.dataStore.edit { it[AUTO_NEXT_KEY] = value }
   }
-
   suspend fun setAutoSkip(value: Boolean) {
     context.dataStore.edit { it[AUTO_SKIP_KEY] = value }
   }
-
   suspend fun setVolumeGesture(value: Boolean) {
     context.dataStore.edit { it[VOLUME_GESTURE_KEY] = value }
   }
-
   suspend fun setBrightnessGesture(value: Boolean) {
     context.dataStore.edit { it[BRIGHTNESS_GESTURE_KEY] = value }
   }
-
   suspend fun setAutoSyncNotify(value: Boolean) {
     context.dataStore.edit { it[AUTO_SYNC_NOTIFY_KEY] = value }
   }
-
   suspend fun setNotifyInterval(value: Int) {
     context.dataStore.edit { it[NOTIFY_INTERVAL_KEY] = value }
   }
-
   suspend fun setDbNotifyInterval(value: Int) {
     context.dataStore.edit { it[DB_NOTIFY_INTERVAL_KEY] = value }
   }
-
   suspend fun setEnableBackgroundSync(value: Boolean) {
     context.dataStore.edit { it[ENABLE_BACKGROUND_SYNC_KEY] = value }
   }
-
   suspend fun setEnableNotifications(value: Boolean) {
     context.dataStore.edit { it[ENABLE_NOTIFICATIONS_KEY] = value }
   }
-
   suspend fun setBreakReminderEnabled(value: Boolean) {
     context.dataStore.edit { it[BREAK_REMINDER_ENABLED_KEY] = value }
   }
-
   suspend fun setBreakReminderInterval(value: Int) {
     context.dataStore.edit { it[BREAK_REMINDER_INTERVAL_KEY] = value }
   }
-
   suspend fun setBedtimeReminderEnabled(value: Boolean) {
     context.dataStore.edit { it[BEDTIME_REMINDER_ENABLED_KEY] = value }
   }
-
   suspend fun setBedtimeReminderStartTime(minutes: Long) {
     context.dataStore.edit { it[BEDTIME_REMINDER_START_TIME_KEY] = minutes }
   }
-
   suspend fun setBedtimeReminderEndTime(minutes: Long) {
     context.dataStore.edit { it[BEDTIME_REMINDER_END_TIME_KEY] = minutes }
   }
-
   suspend fun setBedtimeReminderWaitFinish(value: Boolean) {
     context.dataStore.edit { it[BEDTIME_REMINDER_WAIT_FINISH_KEY] = value }
   }
-
   suspend fun setAppLanguage(value: String) {
     context.dataStore.edit { it[APP_LANGUAGE_KEY] = value }
   }
-
   suspend fun setLastDonationAlert(value: Long) {
     context.dataStore.edit { it[LAST_DONATION_ALERT_KEY] = value }
   }
-
   suspend fun setDeveloperMode(value: Boolean) {
     context.dataStore.edit { it[DEVELOPER_MODE_KEY] = value }
   }
-
   suspend fun setHideDonationPopup(value: Boolean) {
     context.dataStore.edit { it[HIDE_DONATION_POPUP_KEY] = value }
   }
-
   suspend fun setScreenTransition(value: String) {
     context.dataStore.edit { it[SCREEN_TRANSITION_KEY] = value }
   }
-
   suspend fun setDynamicColor(value: Boolean) {
     context.dataStore.edit { it[DYNAMIC_COLOR_KEY] = value }
   }
-
   suspend fun setAppIcon(value: String) {
     context.dataStore.edit { it[APP_ICON_KEY] = value }
   }
-
   suspend fun setHistorySyncInterval(value: Int) {
     context.dataStore.edit { it[HISTORY_SYNC_INTERVAL_KEY] = value }
   }
-
   suspend fun setAiSummaryEnabled(value: Boolean) {
     context.dataStore.edit { it[AI_SUMMARY_ENABLED_KEY] = value }
   }
-
   suspend fun setAiRecapEnabled(value: Boolean) {
     context.dataStore.edit { it[AI_RECAP_ENABLED_KEY] = value }
   }
-
   suspend fun setAiProvider(value: String) {
     context.dataStore.edit { it[AI_PROVIDER_KEY] = value }
   }
-
   suspend fun setOpenaiApiKey(value: String) {
     context.dataStore.edit { it[OPENAI_API_KEY_KEY] = value }
   }
-
   suspend fun setOpenaiModel(value: String) {
     context.dataStore.edit { it[OPENAI_MODEL_KEY] = value }
   }
-
   suspend fun setOpenaiEndpoint(value: String) {
     context.dataStore.edit { it[OPENAI_ENDPOINT_KEY] = value }
   }
-
   suspend fun setClaudeApiKey(value: String) {
     context.dataStore.edit { it[CLAUDE_API_KEY_KEY] = value }
   }
-
   suspend fun setClaudeModel(value: String) {
     context.dataStore.edit { it[CLAUDE_MODEL_KEY] = value }
   }
-
   suspend fun setClaudeEndpoint(value: String) {
     context.dataStore.edit { it[CLAUDE_ENDPOINT_KEY] = value }
   }
-
   suspend fun setGeminiApiKey(value: String) {
     context.dataStore.edit { it[GEMINI_API_KEY_KEY] = value }
   }
-
   suspend fun setGeminiModel(value: String) {
     context.dataStore.edit { it[GEMINI_MODEL_KEY] = value }
   }
-
   suspend fun setFlagSecure(value: Boolean) {
     context.dataStore.edit { it[FLAG_SECURE_KEY] = value }
   }
-
   suspend fun setPreferredServer(value: String) {
     context.dataStore.edit { it[PREFERRED_SERVER_KEY] = value }
   }
-
   suspend fun setMinBufferMs(value: Int) {
     context.dataStore.edit { it[MIN_BUFFER_MS_KEY] = value }
   }
-
   suspend fun setMaxBufferMs(value: Int) {
     context.dataStore.edit { it[MAX_BUFFER_MS_KEY] = value }
   }
-
   suspend fun setBufferForPlaybackMs(value: Int) {
     context.dataStore.edit { it[BUFFER_FOR_PLAYBACK_MS_KEY] = value }
   }
-
   suspend fun setBufferForPlaybackAfterRebufferMs(value: Int) {
     context.dataStore.edit { it[BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS_KEY] = value }
   }
-
   suspend fun setPrioritizeTimeOverSize(value: Boolean) {
     context.dataStore.edit { it[PRIORITIZE_TIME_OVER_SIZE_KEY] = value }
   }
-
   suspend fun setDnsMode(value: String) {
     context.dataStore.edit { it[DNS_MODE_KEY] = value }
   }
-
   suspend fun setCustomDnsUrl(value: String) {
     context.dataStore.edit { it[CUSTOM_DNS_URL_KEY] = value }
   }
-
   suspend fun addSearchHistory(query: String) {
     context.dataStore.edit { preferences ->
       val currentHistory = searchHistory.first().toMutableList()
@@ -380,7 +322,6 @@ class PreferencesManager(private val context: Context) {
       preferences[SEARCH_HISTORY_KEY] = Json.encodeToString(currentHistory.toList())
     }
   }
-
   suspend fun clearSearchHistory() {
     context.dataStore.edit { preferences ->
       preferences.remove(SEARCH_HISTORY_KEY)

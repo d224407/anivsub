@@ -1,11 +1,9 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.model
-
+import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.remote.SegmentDataInterceptor
 import git.shin.animevsub.data.remote.SegmentUrlInterceptor
 import kotlinx.serialization.Serializable
 import java.time.Instant
-
 @Serializable
 data class AnimeCard(
   val animeId: String,
@@ -22,19 +20,16 @@ data class AnimeCard(
   val genre: List<CategoryLink> = emptyList(),
   val timeRelease: Long? = null
 )
-
 @Serializable
 data class CategoryLink(
   val name: String,
   val filters: List<SelectedFilter> = emptyList()
 )
-
 @Serializable
 data class Season(
   val id: String,
   val name: String
 )
-
 /**
  * Represents a Season displayed on the UI.
  * Can be a real season from the API or a "Virtual Season" split from a very long season.
@@ -46,7 +41,6 @@ data class DisplaySeason(
   val range: IntRange? = null, // Index range of chapters in the real season (if virtual)
   val isVirtual: Boolean = false
 )
-
 data class HomeData(
   val thisSeason: List<AnimeCard>,
   val carousel: List<AnimeCard>,
@@ -55,13 +49,11 @@ data class HomeData(
   val nominate: List<AnimeCard>,
   val hotUpdate: List<AnimeCard>
 )
-
 data class ExternalPlatform(
   val href: String,
   val name: String,
   val logo: String?
 )
-
 data class AnimeDetail(
   val name: String,
   val othername: String?,
@@ -87,52 +79,44 @@ data class AnimeDetail(
   val extra: Map<String, String> = emptyMap(),
   val externalPlatforms: List<ExternalPlatform> = emptyList()
 )
-
 @Serializable
 data class ChapterInfo(
   val id: String,
   val name: String,
   val extra: Map<String, String> = emptyMap()
 )
-
 data class ServerInfo(
   val name: String,
   val extra: Map<String, String> = emptyMap()
 )
-
 data class PlayerData(
   val link: String,
   val type: String,
   val headers: Map<String, String>? = null,
   val isContent: Boolean = false
 )
-
 class PlayerConfig(
   val playerData: PlayerData,
   val server: ServerInfo,
   val segmentUrlInterceptor: SegmentUrlInterceptor?,
   val segmentDataInterceptor: SegmentDataInterceptor?
 )
-
 data class ChapterData(
   val chaps: List<ChapterInfo>,
   val update: Triple<Int, Int, Int>?,
   val image: String,
   val poster: String
 )
-
 data class ScheduleDay(
   val date: Long,
   val items: List<AnimeCard>
 )
-
 data class SearchSuggestion(
   val animeId: String,
   val image: String,
   val name: String,
   val status: String
 )
-
 data class CategoryPage(
   val items: List<AnimeCard>,
   val totalPages: Int,
@@ -140,7 +124,6 @@ data class CategoryPage(
   val name: String = "",
   val title: String = ""
 )
-
 @Serializable
 data class User(
   val avatar: String? = null,
@@ -149,14 +132,12 @@ data class User(
   val sex: String? = null,
   val username: String
 )
-
 @Serializable
 data class Trigger(
   val id: String,
   val name: String? = null,
   val extra: Map<String, String> = emptyMap()
 )
-
 @Serializable
 data class NotificationItem(
   val id: String,
@@ -171,13 +152,11 @@ data class NotificationItem(
   @Serializable(with = InstantSerializer::class) val createdAt: Instant? = null,
   val closeTrigger: Trigger? = null
 )
-
 @Serializable
 data class FilterOption(
   val id: String,
   val name: String
 )
-
 data class FilterGroup(
   val id: String,
   val name: String,
@@ -185,7 +164,6 @@ data class FilterGroup(
   val isMultiple: Boolean = false,
   val default: String? = null
 )
-
 @Serializable
 data class SelectedFilter(
   val groupId: String,
@@ -194,7 +172,6 @@ data class SelectedFilter(
   val include: Boolean = true,
   val exclude: Boolean = false
 )
-
 @Serializable
 data class DoubleRange(
   val start: Double,
@@ -205,7 +182,6 @@ data class DoubleRange(
   operator fun contains(value: Double): Boolean = value in start..end
   operator fun contains(value: Long): Boolean = value.toDouble() in start..end
 }
-
 @Serializable
 data class InOutroEpisode(
   val intro: DoubleRange,

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.anime
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.ui.utils.shimmerEffect
-
 @Composable
 fun ScheduleItemSkeleton(modifier: Modifier = Modifier) {
   Row(
@@ -72,7 +70,6 @@ fun ScheduleItemSkeleton(modifier: Modifier = Modifier) {
     }
   }
 }
-
 @Composable
 fun ScheduleLoadingSkeleton(modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxSize()) {
@@ -92,7 +89,6 @@ fun ScheduleLoadingSkeleton(modifier: Modifier = Modifier) {
         )
       }
     }
-
     // List placeholder
     Column {
       repeat(3) {

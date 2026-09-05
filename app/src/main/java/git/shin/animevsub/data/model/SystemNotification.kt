@@ -1,34 +1,25 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.model
-
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
-
 @Serializable
 enum class SystemNotificationType {
   @SerialName("general")
   GENERAL,
-
   @SerialName("app_update")
   APP_UPDATE,
-
   @SerialName("maintenance")
   MAINTENANCE,
-
   @SerialName("promotion")
   PROMOTION,
-
   @SerialName("feature")
   FEATURE,
-
   @SerialName("bugfix")
   BUGFIX,
-
   @SerialName("security")
   SECURITY
 }
-
 @Serializable
 data class SystemNotification(
   val id: String,

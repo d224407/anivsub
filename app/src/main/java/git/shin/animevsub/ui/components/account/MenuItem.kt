@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.account
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,6 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.tvFocusScale
-
 @Composable
 fun MenuItem(
   icon: ImageVector,

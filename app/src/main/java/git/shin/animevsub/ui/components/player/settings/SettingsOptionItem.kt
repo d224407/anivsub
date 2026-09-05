@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player.settings
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.MainColor
-
 @Composable
 fun SettingsOptionItem(title: String, isSelected: Boolean, onClick: () -> Unit) {
   Row(

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player
-
+import kotlin.time.Duration.Companion.milliseconds
 // import androidx.compose.material.icons.filled.Cast
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -160,13 +159,10 @@ import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.roundToInt
-
 private const val PLAYBACK_START_TIMEOUT_MS = 15_000L
-
 // import androidx.mediarouter.media.MediaRouter
 // import androidx.mediarouter.app.MediaRouteChooserDialog
 // import androidx.mediarouter.app.MediaRouteControllerDialog
-
 @OptIn(ExperimentalMaterial3Api::class)
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
@@ -218,9 +214,7 @@ fun VideoPlayer(
   val scope = rememberCoroutineScope()
   val screenState = rememberScreenState()
   val isTV = screenState.isTV
-
   val focusRequester = remember(isTV) { if (isTV) FocusRequester() else null }
-
   val preferencesManager = remember { PreferencesManager(context) }
   val volumeGestureEnabled by preferencesManager.volumeGesture.collectAsState(
     initial = kotlinx.coroutines.runBlocking { preferencesManager.volumeGesture.first() }
@@ -240,7 +234,6 @@ fun VideoPlayer(
   val flagSecureEnabled by preferencesManager.flagSecure.collectAsState(
     initial = kotlinx.coroutines.runBlocking { preferencesManager.flagSecure.first() }
   )
-
   val minBufferMs by preferencesManager.minBufferMs.collectAsState(
     initial = kotlinx.coroutines.runBlocking { preferencesManager.minBufferMs.first() }
   )
@@ -256,73 +249,56 @@ fun VideoPlayer(
   val prioritizeTimeOverSize by preferencesManager.prioritizeTimeOverSize.collectAsState(
     initial = kotlinx.coroutines.runBlocking { preferencesManager.prioritizeTimeOverSize.first() }
   )
-
   val playerData = playerConfig?.playerData
   val currentOnPlaybackFailed by rememberUpdatedState(onPlaybackFailed)
-
   var isPlaying by remember { mutableStateOf(true) }
   var isBuffering by remember { mutableStateOf(false) }
 //  var isFirstFrameRendered by remember(playerData) { mutableStateOf(false) }
   var playbackSpeed by remember { mutableFloatStateOf(1f) }
   var originalSpeedBeforeLongPress by remember { mutableFloatStateOf(1f) }
   var isLongPressing by remember { mutableStateOf(false) }
-
   var videoZoomScale by remember { mutableFloatStateOf(1f) }
   var videoOffset by remember { mutableStateOf(Offset.Zero) }
   var isInteractingWithZoom by remember { mutableStateOf(false) }
   var containerSize by remember { mutableStateOf(IntSize.Zero) }
   var snapJob by remember { mutableStateOf<Job?>(null) }
-
   var swipeScale by remember { mutableFloatStateOf(1f) }
-
   var showEpisodeSideMenu by remember { mutableStateOf(false) }
   var showServerSideMenu by remember { mutableStateOf(false) }
   var showSettingsBottomSheet by remember { mutableStateOf(false) }
   var showSettingsSideMenu by remember { mutableStateOf(false) }
   var settingsSubMenu by remember { mutableStateOf<String?>(null) }
-
   var showSpeedMenu by remember { mutableStateOf(false) }
   var showQualityMenu by remember { mutableStateOf(false) }
-
   val anyMenuVisible = showEpisodeSideMenu || showServerSideMenu || showSettingsSideMenu || showSettingsBottomSheet || showSpeedMenu || showQualityMenu
-
   data class QualityInfo(val label: String, val group: Tracks.Group, val trackIndex: Int)
-
   var availableQualities by remember { mutableStateOf<List<QualityInfo>>(emptyList()) }
   var selectedQualityLabel by remember { mutableStateOf("Auto") }
-
   var notificationText by remember { mutableStateOf("") }
   val view = LocalView.current
-
   var isAutoNexting by remember(playerData) { mutableStateOf(false) }
   // (isLoading || isBuffering
   SideEffect {
     view.keepScreenOn = isPlaying || isBuffering || isAutoNexting || isLoading
   }
-
   DisposableEffect(Unit) {
     onDispose {
       view.keepScreenOn = false
     }
   }
-
   var showNotification by remember { mutableStateOf(false) }
   var notificationIcon by remember { mutableStateOf(Icons.Default.SkipNext) }
   var isNotificationClickable by remember { mutableStateOf(false) }
-
   var showSkipNotification by remember { mutableStateOf(false) }
   var skipNotificationText by remember { mutableStateOf("") }
   var skipTargetTime by remember { mutableDoubleStateOf(0.0) }
   var skipRemainingSeconds by remember { mutableIntStateOf(0) }
-
   var gestureIcon by remember { mutableStateOf(Icons.AutoMirrored.Filled.VolumeUp) }
   var gestureText by remember { mutableStateOf("") }
   var showGestureIndicator by remember { mutableStateOf(false) }
-
   var showDoubleTapIndicator by remember { mutableStateOf(false) }
   var doubleTapSide by remember { mutableStateOf("right") }
   var doubleTapText by remember { mutableStateOf("") }
-
   var currentTime by remember { mutableLongStateOf(0L) }
   var duration by remember { mutableLongStateOf(0L) }
   var bufferedPosition by remember { mutableLongStateOf(0L) }
@@ -330,10 +306,8 @@ fun VideoPlayer(
   var isDragging by remember { mutableStateOf(false) }
   var isSeeking by remember { mutableStateOf(false) }
   var dragTime by remember { mutableLongStateOf(0L) }
-
   val exoPlayer = remember {
     val minBufferMsVal = maxOf(minBufferMs, maxOf(bufferForPlaybackMs, bufferForPlaybackAfterRebufferMs))
-
     val loadControl = DefaultLoadControl.Builder()
       .setBufferDurationsMs(
         minBufferMsVal,
@@ -347,20 +321,17 @@ fun VideoPlayer(
       .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
       .setUsage(C.USAGE_MEDIA)
       .build()
-
     ExoPlayer.Builder(context)
       .setLoadControl(loadControl)
       .build().apply {
         playWhenReady = true
         setAudioAttributes(audioAttributes, true)
-
         onExoPlayerCreated(this)
         addListener(object : Player.Listener {
           override fun onPlaybackStateChanged(playbackState: Int) {
             isBuffering = playbackState == Player.STATE_BUFFERING
             isPlaying = (playbackState == Player.STATE_READY || playbackState == Player.STATE_BUFFERING) && playWhenReady
             onPlayingStateChange(isPlaying)
-
             if (playbackState == Player.STATE_READY) {
               duration = this@apply.duration.coerceAtLeast(0L)
               pendingRestorePosition?.let { restorePosition ->
@@ -372,7 +343,6 @@ fun VideoPlayer(
                   seekTo(safePosition)
                   currentTime = safePosition
                   pendingRestorePosition = null
-
                   val minutes = (safePosition / 1000 / 60).toInt()
                   val seconds = ((safePosition / 1000) % 60).toInt()
                   notificationText = context.getString(R.string.restored_progress, minutes, seconds)
@@ -386,7 +356,6 @@ fun VideoPlayer(
                 }
               }
             }
-
             if (playbackState == Player.STATE_ENDED) {
               val hasNext = onVideoEnded()
               if (autoNextEnabled && hasNext) {
@@ -395,20 +364,17 @@ fun VideoPlayer(
               }
             }
           }
-
           override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
             val state = this@apply.playbackState
             isPlaying = (state == Player.STATE_READY || state == Player.STATE_BUFFERING) && playWhenReady
             onPlayingStateChange(isPlaying)
           }
-
           override fun onPlayerError(error: PlaybackException) {
             isPlaying = false
             isBuffering = false
             onPlayingStateChange(false)
             currentOnPlaybackFailed(error.message ?: "Playback failed")
           }
-
           override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
             if (!timeline.isEmpty) {
               val window = androidx.media3.common.Timeline.Window()
@@ -418,15 +384,12 @@ fun VideoPlayer(
               }
             }
           }
-
 //        override fun onRenderedFirstFrame() {
 //          isFirstFrameRendered = true
 //        }
-
           override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
             playbackSpeed = playbackParameters.speed
           }
-
           override fun onTracksChanged(tracks: Tracks) {
             val qualities = mutableListOf<QualityInfo>()
             tracks.groups.forEach { group ->
@@ -458,7 +421,6 @@ fun VideoPlayer(
         })
       }
   }
-
   LaunchedEffect(isDragging, showDoubleTapIndicator) {
     if (isDragging || showDoubleTapIndicator) {
       isSeeking = true
@@ -469,7 +431,6 @@ fun VideoPlayer(
   }
   var isControlsVisible by remember { mutableStateOf(true) }
   val speeds = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
-
   LaunchedEffect(isAutoNexting) {
     if (isAutoNexting) {
       notificationText = context.getString(R.string.auto_next_hint)
@@ -497,7 +458,6 @@ fun VideoPlayer(
 //      showNotification = false
 //    }
 //  }
-
   LaunchedEffect(currentTime, introRange, outroRange, autoSkipEnabled) {
     val currentSeconds = currentTime / 1000.0
     if (introRange != null && currentSeconds in introRange) {
@@ -528,7 +488,6 @@ fun VideoPlayer(
       showSkipNotification = false
     }
   }
-
   LaunchedEffect(exoPlayer) {
     while (true) {
       if (!isDragging) {
@@ -539,7 +498,6 @@ fun VideoPlayer(
       delay(500.milliseconds.milliseconds)
     }
   }
-
   LaunchedEffect(
     isControlsVisible,
     isDragging,
@@ -558,7 +516,6 @@ fun VideoPlayer(
       isControlsVisible = false
     }
   }
-
   LaunchedEffect(isFullScreen) {
     swipeScale = 1f
     val activity = findActivity(context) ?: return@LaunchedEffect
@@ -574,11 +531,9 @@ fun VideoPlayer(
       controller.show(WindowInsetsCompat.Type.systemBars())
     }
   }
-
   // Track the current URI to avoid reloading the same content
   var loadedUri by remember { mutableStateOf<android.net.Uri?>(null) }
   var loadedEpisodeId by remember { mutableStateOf<String?>(null) }
-
   LaunchedEffect(playerConfig, currentEpisode?.id) {
     if (playerData == null || playerData.link.isEmpty()) {
       exoPlayer.stop()
@@ -588,7 +543,6 @@ fun VideoPlayer(
       pendingRestorePosition = null
       return@LaunchedEffect
     }
-
     val httpDataSourceFactory =
       if (playerConfig.segmentUrlInterceptor != null || playerConfig.segmentDataInterceptor != null) {
         TransformableDataSourceFactory(
@@ -601,10 +555,8 @@ fun VideoPlayer(
       } else {
         DefaultHttpDataSource.Factory().setDefaultRequestProperties(playerData.headers ?: emptyMap())
       }
-
     val dataSourceFactory: DataSource.Factory =
       DefaultDataSource.Factory(context, httpDataSourceFactory)
-
     val newUri = if (playerData.isContent && playerData.type.lowercase() == "hls") {
       val tempFile = File(context.cacheDir, "temp_playlist.m3u8")
       tempFile.writeText(playerData.link)
@@ -612,13 +564,11 @@ fun VideoPlayer(
     } else {
       playerData.link.toUri()
     }
-
     if (loadedUri != newUri || loadedEpisodeId != currentEpisode?.id || playerData.isContent) {
       currentTime = 0L
       duration = 0L
       bufferedPosition = 0L
       pendingRestorePosition = if (initialPosition > 0 && syncMode == 0) initialPosition else null
-
       if (playerData.type.lowercase() == "hls") {
         exoPlayer.setMediaSource(
           HlsMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(newUri))
@@ -626,21 +576,16 @@ fun VideoPlayer(
       } else {
         exoPlayer.setMediaItem(MediaItem.fromUri(newUri))
       }
-
       exoPlayer.prepare()
 //      exoPlayer.play()
-
       loadedUri = newUri
       loadedEpisodeId = currentEpisode?.id
     }
   }
-
   LaunchedEffect(playerConfig, currentEpisode?.id, errorMessage) {
     if (playerData == null || playerData.link.isEmpty() || errorMessage != null) return@LaunchedEffect
-
     val watchedEpisodeId = currentEpisode?.id
     delay(PLAYBACK_START_TIMEOUT_MS.milliseconds.milliseconds)
-
     if (
       playerConfig == playerConfig &&
       currentEpisode?.id == watchedEpisodeId &&
@@ -653,24 +598,20 @@ fun VideoPlayer(
       currentOnPlaybackFailed("Playback timed out")
     }
   }
-
   LaunchedEffect(currentTime, duration) {
     if (duration > 0 && currentTime > 0 && syncMode != 2) {
       onProgressUpdate(currentTime, duration)
     }
   }
-
   DisposableEffect(Unit) {
     onDispose {
       exoPlayer.release()
       findActivity(context)?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
   }
-
   LaunchedEffect(isTV || !isControlsVisible) {
     focusRequester?.requestFocus()
   }
-
   Box(
     modifier = (if (isFullScreen) Modifier.fillMaxSize() else modifier)
       .background(Color.Black)
@@ -688,7 +629,6 @@ fun VideoPlayer(
                     isControlsVisible = !isControlsVisible
                     true
                   }
-
                   KeyEvent.KEYCODE_DPAD_LEFT -> {
                     val newPos = (exoPlayer.currentPosition - 10000).coerceAtLeast(0)
                     exoPlayer.seekTo(newPos)
@@ -701,7 +641,6 @@ fun VideoPlayer(
                     }
                     true
                   }
-
                   KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val newPos = (exoPlayer.currentPosition + 10000).coerceAtMost(exoPlayer.duration)
                     exoPlayer.seekTo(newPos)
@@ -714,7 +653,6 @@ fun VideoPlayer(
                     }
                     true
                   }
-
                   KeyEvent.KEYCODE_BACK -> {
                     if (isControlsVisible) {
                       isControlsVisible = false
@@ -723,7 +661,6 @@ fun VideoPlayer(
                       false
                     }
                   }
-
                   else -> false
                 }
               } else {
@@ -746,7 +683,6 @@ fun VideoPlayer(
           }
           var pastTouchSlop = false
           val touchSlop = viewConfiguration.touchSlop
-
           val down = awaitFirstDown(requireUnconsumed = false)
           snapJob?.cancel()
           // We don't set isInteractingWithZoom = true here to avoid hiding UI on simple tap
@@ -755,11 +691,9 @@ fun VideoPlayer(
               val event = awaitPointerEvent()
               val canceled = event.changes.any { it.isConsumed }
               if (canceled) break
-
               if (event.changes.size > 1) {
                 val zoomChange = event.calculateZoom()
                 val panChange = event.calculatePan()
-
                 if (!pastTouchSlop) {
                   val centroidSize = event.calculateCentroidSize(useCurrent = false)
                   val zoomMotion = abs(1 - zoomChange) * centroidSize
@@ -768,15 +702,12 @@ fun VideoPlayer(
                     isInteractingWithZoom = true
                   }
                 }
-
                 if (pastTouchSlop) {
                   videoZoomScale = (videoZoomScale * zoomChange).coerceIn(0.75f, 3.0f)
-
                   if (videoZoomScale > 1f) {
                     val newOffset = videoOffset + panChange
                     var maxX = (containerSize.width * (videoZoomScale - 1f)) / 2f
                     var maxY = (containerSize.height * (videoZoomScale - 1f)) / 2f
-
                     val videoSize = exoPlayer.videoSize
                     if (videoSize.width > 0 && videoSize.height > 0) {
                       val videoAspect = videoSize.width.toFloat() / videoSize.height.toFloat()
@@ -789,7 +720,6 @@ fun VideoPlayer(
                         if (actualVideoWidth * videoZoomScale <= containerSize.width) maxX = 0f
                       }
                     }
-
                     videoOffset = Offset(
                       newOffset.x.coerceIn(-maxX.coerceAtLeast(0f), maxX.coerceAtLeast(0f)),
                       newOffset.y.coerceIn(-maxY.coerceAtLeast(0f), maxY.coerceAtLeast(0f))
@@ -805,7 +735,6 @@ fun VideoPlayer(
                 val maxEdgeSize = 30.dp.toPx()
                 val edgeSize = (size.width * 0.2f).coerceAtMost(maxEdgeSize)
                 val isEdgeTouch = down.position.x < edgeSize || down.position.x > size.width - edgeSize
-
                 if (!pastTouchSlop) {
                   if (isEdgeTouch && abs(panChange.y) > abs(panChange.x) * 1.5f) {
                     break
@@ -815,12 +744,10 @@ fun VideoPlayer(
                     isInteractingWithZoom = true
                   }
                 }
-
                 if (pastTouchSlop && panChange != Offset.Zero) {
                   val newOffset = videoOffset + panChange
                   var maxX = (containerSize.width * (videoZoomScale - 1f)) / 2f
                   var maxY = (containerSize.height * (videoZoomScale - 1f)) / 2f
-
                   val videoSize = exoPlayer.videoSize
                   if (videoSize.width > 0 && videoSize.height > 0) {
                     val videoAspect = videoSize.width.toFloat() / videoSize.height.toFloat()
@@ -833,7 +760,6 @@ fun VideoPlayer(
                       if (actualVideoWidth * videoZoomScale <= containerSize.width) maxX = 0f
                     }
                   }
-
                   videoOffset = Offset(
                     newOffset.x.coerceIn(-maxX.coerceAtLeast(0f), maxX.coerceAtLeast(0f)),
                     newOffset.y.coerceIn(-maxY.coerceAtLeast(0f), maxY.coerceAtLeast(0f))
@@ -842,7 +768,6 @@ fun VideoPlayer(
                 }
               }
             } while (event.changes.any { it.pressed })
-
             // Snap logic on release with animation
             val videoSize = exoPlayer.videoSize
             if (videoSize.width > 0 && videoSize.height > 0) {
@@ -853,13 +778,10 @@ fun VideoPlayer(
               } else {
                 containerSize.width / (containerSize.height * videoAspect)
               }
-
               var targetScale = videoZoomScale
               var targetOffset = videoOffset
-
               val distToFit = abs(videoZoomScale - fitScale)
               val distToOriginal = abs(videoZoomScale - 1f)
-
               if (distToFit < 0.15f && (distToFit < distToOriginal || videoZoomScale > 1.03f)) {
                 targetScale = fitScale
                 val maxX = (containerSize.width * (targetScale - 1f)) / 2f
@@ -872,7 +794,6 @@ fun VideoPlayer(
                 targetScale = 1.0f
                 targetOffset = Offset.Zero
               }
-
               if (targetScale != videoZoomScale || targetOffset != videoOffset) {
                 isInteractingWithZoom = true
                 snapJob = scope.launch {
@@ -908,26 +829,21 @@ fun VideoPlayer(
         awaitEachGesture {
           val down = awaitFirstDown(requireUnconsumed = false)
           if (anyMenuVisible || isFullScreen) return@awaitEachGesture
-
           val touchSlop = viewConfiguration.touchSlop
           var dragStarted = false
           var dragDeltaY = 0f
-
           do {
             val event = awaitPointerEvent()
             if (event.changes.any { it.isConsumed }) break
             if (event.changes.size > 1) break
             if (isFullScreen) break
-
             val change = event.changes.first()
             if (change.pressed) {
               dragDeltaY = change.position.y - down.position.y
-
               if (!dragStarted && abs(dragDeltaY) > touchSlop) {
                 if (dragDeltaY > 0) break
                 dragStarted = true
               }
-
               if (dragStarted) {
                 val progress = (-dragDeltaY / (size.height * 0.3f)).coerceIn(0f, 1f)
                 swipeScale = 1f + progress * 0.3f
@@ -938,15 +854,12 @@ fun VideoPlayer(
                   context.getString(R.string.swipe_up_to_fullscreen)
                 }
                 showGestureIndicator = true
-
                 change.consume()
               }
             }
           } while (event.changes.any { it.pressed })
-
           if (dragStarted) {
             showGestureIndicator = false
-
             if (-dragDeltaY >= size.height * 0.3f) {
               onFullScreenChange(true)
               swipeScale = 1f
@@ -971,17 +884,13 @@ fun VideoPlayer(
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         var volumeAccumulator = 0f
         var brightnessAccumulator = 0f
-
         awaitEachGesture {
           val down = awaitFirstDown(requireUnconsumed = false)
           if (anyMenuVisible || !isFullScreen) return@awaitEachGesture
-
           val yRatio = down.position.y / size.height
           if (yRatio !in 0.2f..0.8f) return@awaitEachGesture
-
           var dragStarted = false
           val touchSlop = viewConfiguration.touchSlop
-
           do {
             val event = awaitPointerEvent()
             if (event.changes.any { it.isConsumed }) {
@@ -992,13 +901,11 @@ fun VideoPlayer(
             val maxEdgeSize = 100.dp.toPx()
             val edgeSize = (size.width * 0.2f).coerceAtMost(maxEdgeSize)
             val isEdgeTouch = down.position.x < edgeSize || down.position.x > size.width - edgeSize
-
             if (event.changes.size > 1 || (videoZoomScale > 1.05f && !isEdgeTouch)) {
               dragStarted = false
               showGestureIndicator = false
               break
             }
-
             val change = event.changes.first()
             if (change.pressed) {
               val dragAmountY = change.position.y - down.position.y
@@ -1022,11 +929,9 @@ fun VideoPlayer(
                   }
                 }
               }
-
               if (dragStarted) {
                 val deltaY = change.position.y - change.previousPosition.y
                 val isLeftSide = down.position.x < size.width / 2
-
                 if (isLeftSide && brightnessGestureEnabled) {
                   activity?.let {
                     brightnessAccumulator -= deltaY / size.height
@@ -1043,7 +948,6 @@ fun VideoPlayer(
                   // Increase sensitivity slightly: 0.7 of screen height for full volume range
                   volumeAccumulator -= (deltaY / (size.height * 0.7f) * maxVolume)
                   val newVolumeInt = volumeAccumulator.roundToInt().coerceIn(0, maxVolume)
-
                   if (newVolumeInt != oldVolumeInt) {
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolumeInt, 0)
                   }
@@ -1071,7 +975,6 @@ fun VideoPlayer(
           val initialY = down.position.y
           var longPressTriggered = false
           val touchSlop = viewConfiguration.touchSlop
-
           val longPressJob = scope.launch {
             delay(500.milliseconds.milliseconds)
             longPressTriggered = true
@@ -1080,10 +983,8 @@ fun VideoPlayer(
             exoPlayer.setPlaybackSpeed(longPressSpeedValue)
             isLongPressing = true
           }
-
           var seekingStarted = false
           var basePositionForSeeking = 0L
-
           do {
             val event = awaitPointerEvent()
             if (event.changes.any { it.isConsumed }) {
@@ -1102,14 +1003,12 @@ fun VideoPlayer(
               }
             }
             val change = event.changes.first()
-
             if (!longPressTriggered) {
               val dragDistance = abs(change.position.x - initialX) + abs(change.position.y - initialY)
               if (dragDistance > touchSlop) {
                 longPressJob.cancel()
               }
             }
-
             if (isLongPressing || longPressTriggered) {
               if (isLongPressing) {
                 val dragAmountX = change.position.x - initialX
@@ -1118,7 +1017,6 @@ fun VideoPlayer(
                   isDragging = true
                   basePositionForSeeking = exoPlayer.currentPosition
                 }
-
                 if (seekingStarted) {
                   val screenWidth = size.width.toFloat()
                   // Swipe across full screen = 2 minutes seek
@@ -1129,7 +1027,6 @@ fun VideoPlayer(
               change.consume()
             }
           } while (event.changes.any { it.pressed })
-
           longPressJob.cancel()
           if (isLongPressing || longPressTriggered) {
             if (isLongPressing) {
@@ -1211,7 +1108,6 @@ fun VideoPlayer(
         contentScale = ContentScale.Crop
       )
     }
-
     Box(modifier = Modifier.fillMaxSize()) {
       AnimatedVisibility(
         visible = isControlsVisible && errorMessage == null && !isInPipMode,
@@ -1224,7 +1120,6 @@ fun VideoPlayer(
             .background(Color.Black.copy(alpha = 0.5f))
         )
       }
-
       AnimatedVisibility(
         visible = (isControlsVisible || isDragging) && !isInPipMode,
         enter = fadeIn() + slideInVertically { -it },
@@ -1292,7 +1187,6 @@ fun VideoPlayer(
           }
         }
       }
-
       if (errorMessage != null && !isInPipMode) {
         Column(
           modifier = Modifier
@@ -1389,7 +1283,6 @@ fun VideoPlayer(
           }
         }
       }
-
       if (isDragging) {
         Box(
           modifier = Modifier
@@ -1405,7 +1298,6 @@ fun VideoPlayer(
           )
         }
       }
-
       if (showGestureIndicator) {
         GestureIndicator(
           icon = gestureIcon,
@@ -1413,7 +1305,6 @@ fun VideoPlayer(
           modifier = Modifier.align(Alignment.Center)
         )
       }
-
       if (showDoubleTapIndicator) {
         DoubleTapIndicator(
           side = doubleTapSide,
@@ -1423,7 +1314,6 @@ fun VideoPlayer(
           )
         )
       }
-
       if ((isLongPressing || (videoZoomScale > 1.01f && isInteractingWithZoom)) && !isDragging) {
         val labelText = when {
           isLongPressing -> "${longPressSpeedValue}x"
@@ -1451,7 +1341,6 @@ fun VideoPlayer(
             }
           }
         }
-
         Box(
           modifier = Modifier
             .align(Alignment.TopCenter)
@@ -1476,7 +1365,6 @@ fun VideoPlayer(
           }
         }
       }
-
       if (showSkipNotification) {
         SkipNotification(
           text = skipNotificationText,
@@ -1494,7 +1382,6 @@ fun VideoPlayer(
             )
         )
       }
-
       AnimatedVisibility(
         visible = showNotification,
         enter = fadeIn() + slideInVertically { -it },
@@ -1529,7 +1416,6 @@ fun VideoPlayer(
           }
         }
       }
-
       AnimatedVisibility(
         visible = (isControlsVisible || isSeeking) && errorMessage == null && !isInPipMode,
         enter = fadeIn() + slideInVertically { it },
@@ -1578,7 +1464,6 @@ fun VideoPlayer(
               }
             }
           }
-
           Slider(
             value = (if (isDragging) dragTime else currentTime).toFloat(),
             onValueChange = {
@@ -1676,7 +1561,6 @@ fun VideoPlayer(
             },
             modifier = Modifier.height(24.dp)
           )
-
           if ((isControlsVisible || isDragging) && isFullScreen) {
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -1780,7 +1664,6 @@ fun VideoPlayer(
           }
         }
       }
-
       PlayerSideMenu(visible = showEpisodeSideMenu, onDismiss = { showEpisodeSideMenu = false }) {
         EpisodeSelectorContent(
           displaySeasons = displaySeasons,

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -33,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-
 @Composable
 fun DoubleTapIndicator(
   side: String,
@@ -44,7 +42,6 @@ fun DoubleTapIndicator(
   val alpha = remember { Animatable(0f) }
   val scale = remember { Animatable(0.8f) }
   val scope = rememberCoroutineScope()
-
   LaunchedEffect(side) {
     scope.launch {
       alpha.snapTo(0f)
@@ -56,7 +53,6 @@ fun DoubleTapIndicator(
       scale.animateTo(1.2f, tween(800, easing = FastOutSlowInEasing))
     }
   }
-
   Box(
     modifier = modifier
       .fillMaxHeight()

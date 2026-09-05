@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -74,7 +73,6 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.system.exitProcess
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   // ... rest of activity ...
@@ -88,7 +86,6 @@ class MainActivity : ComponentActivity() {
       "neon" to ComponentName(this, "git.shin.animevsub.MainActivityNeon"),
       "ai" to ComponentName(this, "git.shin.animevsub.MainActivityAi")
     )
-
     aliases.forEach { (name, component) ->
       val state = if (name == iconName) {
         PackageManager.COMPONENT_ENABLED_STATE_ENABLED
@@ -98,43 +95,33 @@ class MainActivity : ComponentActivity() {
       pm.setComponentEnabledSetting(component, state, PackageManager.DONT_KILL_APP)
     }
   }
-
   suspend fun createCustomShortcut(uri: Uri) {
     withContext(Dispatchers.IO) {
       val inputStream = contentResolver.openInputStream(uri)
       val bitmap = BitmapFactory.decodeStream(inputStream)
-
       if (ShortcutManagerCompat.isRequestPinShortcutSupported(this@MainActivity)) {
         val intent = Intent(this@MainActivity, MainActivity::class.java).apply {
           action = Intent.ACTION_MAIN
         }
-
         val pinShortcutInfo = ShortcutInfoCompat.Builder(this@MainActivity, "custom_icon_${System.currentTimeMillis()}")
           .setShortLabel(getString(R.string.app_name))
           .setIcon(IconCompat.createWithBitmap(bitmap))
           .setIntent(intent)
           .build()
-
         ShortcutManagerCompat.requestPinShortcut(this@MainActivity, pinShortcutInfo, null)
       }
     }
   }
-
   @Inject
   lateinit var updateManager: UpdateManager
-
   @Inject
   lateinit var cloudflareManager: CloudflareManager
-
   @Inject
   lateinit var animeRepository: AnimeRepository
-
   @Inject
   lateinit var preferencesManager: PreferencesManager
-
   private val _isInPipMode = MutableStateFlow(false)
   val isInPipMode = _isInPipMode.asStateFlow()
-
   companion object {
     const val ACTION_MEDIA_CONTROL = "media_control"
     const val EXTRA_CONTROL_TYPE = "control_type"
@@ -142,7 +129,6 @@ class MainActivity : ComponentActivity() {
     const val CONTROL_TYPE_PAUSE = 2
     const val CONTROL_TYPE_NEXT = 3
   }
-
   private val pipReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
       if (intent?.action != ACTION_MEDIA_CONTROL) return
@@ -156,13 +142,10 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
-
   enum class PipEvent { PLAY, PAUSE, NEXT }
   private val _pipEvent = MutableSharedFlow<PipEvent>()
   val pipEvent = _pipEvent.asSharedFlow()
-
   private var isPipPlaying = false
-
   @SuppressLint("AppBundleLocaleChanges")
   override fun attachBaseContext(newBase: Context) {
     val prefs = PreferencesManager(newBase)
@@ -171,12 +154,10 @@ class MainActivity : ComponentActivity() {
         prefs.appLanguage.first()
       }
     }.getOrDefault("auto")
-
     if (lang == "auto") {
       super.attachBaseContext(newBase)
       return
     }
-
     val locale = Locale.Builder().setLanguage(lang).build()
     Locale.setDefault(locale)
     val config = Configuration(newBase.resources.configuration)
@@ -184,9 +165,7 @@ class MainActivity : ComponentActivity() {
     val context = newBase.createConfigurationContext(config)
     super.attachBaseContext(context)
   }
-
   private val intentFlow = MutableStateFlow<Intent?>(null)
-
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -207,9 +186,7 @@ class MainActivity : ComponentActivity() {
       var isAppActive by remember { mutableStateOf(true) }
       val pipMode by isInPipMode.collectAsState()
       var showDonationDialog by remember { mutableStateOf(false) }
-
       val currentIntent by intentFlow.collectAsState()
-
       var hasNotificationPermission by remember {
         mutableStateOf(
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -222,36 +199,29 @@ class MainActivity : ComponentActivity() {
           }
         )
       }
-
       val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
       ) { isGranted ->
         hasNotificationPermission = isGranted
       }
-
       val appLanguage by preferencesManager.appLanguage.collectAsState(initial = null)
       val dynamicColor by preferencesManager.dynamicColor.collectAsState(initial = false)
-
       LaunchedEffect(appLanguage) {
         appLanguage?.let { lang ->
           val currentConfigLang = resources.configuration.locales[0].language
           val systemLang = Locale.getDefault().language
           val targetLang = if (lang == "auto") systemLang else lang
-
           if (targetLang != currentConfigLang) {
             recreate()
           }
         }
       }
-
       LaunchedEffect(Unit) {
         if (!hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-
         git.shin.animevsub.utils.AnimeVsubFirebaseMessagingService.subscribeToTopics()
       }
-
       LaunchedEffect(Unit) {
         val lastDonation = preferencesManager.lastDonationAlert.first()
         val hideDonation = preferencesManager.hideDonationPopup.first()
@@ -259,7 +229,6 @@ class MainActivity : ComponentActivity() {
         if (!hideDonation && currentTime - lastDonation > 7 * 24 * 60 * 60 * 1000L) {
           showDonationDialog = true
         }
-
         val lastCheck = preferencesManager.lastActiveCheck.first()
         launch {
           combine(
@@ -272,15 +241,12 @@ class MainActivity : ComponentActivity() {
               WorkManager.getInstance(applicationContext).cancelUniqueWork("NotificationSync")
               return@collectLatest
             }
-
             // Minimum interval allowed by WorkManager is 15 minutes
             val syncInterval = interval.coerceAtLeast(15).toLong()
-
             val syncRequest = PeriodicWorkRequestBuilder<NotificationSyncWorker>(
               syncInterval, TimeUnit.MINUTES,
               5, TimeUnit.MINUTES
             ).build()
-
             WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
               "NotificationSync",
               ExistingPeriodicWorkPolicy.UPDATE,
@@ -288,7 +254,6 @@ class MainActivity : ComponentActivity() {
             )
           }
         }
-
         if (currentTime - lastCheck > 24 * 60 * 60 * 1000) {
           updateManager.checkAppActive().onSuccess { active ->
             isAppActive = active
@@ -302,19 +267,16 @@ class MainActivity : ComponentActivity() {
             // or false if we want strict control.
           }
         }
-
         updateManager.checkForUpdate().onSuccess { info ->
           if (info.isNewer) {
             updateInfo.value = info
           }
         }
       }
-
       AnimeVsubTheme(dynamicColor = dynamicColor) {
         Surface(modifier = Modifier.fillMaxSize()) {
           if (isAppActive) {
             val navController = rememberNavController()
-
             LaunchedEffect(currentIntent) {
               currentIntent?.let { intent ->
                 when (intent.action) {
@@ -326,7 +288,6 @@ class MainActivity : ComponentActivity() {
                       intentFlow.value = null
                     }
                   }
-
                   "OPEN_ANIME" -> {
                     val animeId = intent.getStringExtra("animeId")
                     if (animeId != null) {
@@ -334,12 +295,10 @@ class MainActivity : ComponentActivity() {
                       intentFlow.value = null
                     }
                   }
-
                   "OPEN_FROM_NOTIFICATION" -> {
                     val deepLink = intent.getStringExtra("deep_link")
                     val animeId = intent.getStringExtra("animeId")
                     val chapterId = intent.getStringExtra("chapterId")
-
                     when {
                       deepLink == "settings" -> {
                         navController.navigate(Screen.Settings.route)
@@ -366,7 +325,6 @@ class MainActivity : ComponentActivity() {
                 }
               }
             }
-
             AnimeVsubAppUI(
               animeRepository = animeRepository,
               windowSize = windowSize,
@@ -385,7 +343,6 @@ class MainActivity : ComponentActivity() {
               }
             )
           }
-
           updateInfo.value?.let { info ->
             UpdateDialog(
               info = info,
@@ -396,7 +353,6 @@ class MainActivity : ComponentActivity() {
               }
             )
           }
-
           bypassUrl?.let { url ->
             CloudflareBypassDialog(
               url = url,
@@ -415,7 +371,6 @@ class MainActivity : ComponentActivity() {
               }
             )
           }
-
           if (showDonationDialog) {
             DonationDialog(
               onDismiss = {
@@ -430,13 +385,11 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
-
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
     setIntent(intent)
     intentFlow.value = intent
   }
-
   override fun onPictureInPictureModeChanged(
     isInPictureInPictureMode: Boolean,
     newConfig: Configuration
@@ -444,7 +397,6 @@ class MainActivity : ComponentActivity() {
     super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     _isInPipMode.value = isInPictureInPictureMode
   }
-
   override fun onUserLeaveHint() {
     super.onUserLeaveHint()
     if (isPipPlaying && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -457,7 +409,6 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
-
   override fun onDestroy() {
     super.onDestroy()
     try {
@@ -466,16 +417,13 @@ class MainActivity : ComponentActivity() {
       // Ignored
     }
   }
-
   fun updatePipParams(isPlaying: Boolean? = null, action: (PictureInPictureParams.Builder) -> Unit) {
     if (isPlaying != null) {
       isPipPlaying = isPlaying
     }
     val builder = PictureInPictureParams.Builder()
-
     val actions = mutableListOf<RemoteAction>()
     val intent = Intent(ACTION_MEDIA_CONTROL).setPackage(packageName)
-
     if (isPipPlaying) {
       actions.add(
         RemoteAction(
@@ -506,7 +454,6 @@ class MainActivity : ComponentActivity() {
       )
     }
     builder.setActions(actions)
-
     // Add Next button if not playing or playing
     actions.add(
       RemoteAction(
@@ -522,7 +469,6 @@ class MainActivity : ComponentActivity() {
       )
     )
     builder.setActions(actions)
-
     action(builder)
     setPictureInPictureParams(builder.build())
   }

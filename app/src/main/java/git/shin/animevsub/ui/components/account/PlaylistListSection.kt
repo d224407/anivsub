@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.account
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.tvFocusScale
-
 @Composable
 fun PlaylistListSection(
   playlists: List<Playlist>,
@@ -52,7 +50,6 @@ fun PlaylistListSection(
       fontWeight = FontWeight.Medium,
       modifier = Modifier.padding(bottom = 8.dp)
     )
-
     if (isLoading) {
       Column {
         repeat(3) {
@@ -78,14 +75,12 @@ fun PlaylistListSection(
     }
   }
 }
-
 @Composable
 fun PlaylistItemRow(
   playlist: Playlist,
   onClick: () -> Unit
 ) {
   val displayName = playlist.name.ifBlank { "<" + stringResource(R.string.unknown) + ">" }
-
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -119,7 +114,6 @@ fun PlaylistItemRow(
     )
   }
 }
-
 @Composable
 fun PlaylistSkeletonItem() {
   Row(

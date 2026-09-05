@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player.settings
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,6 @@ import git.shin.animevsub.R
 import git.shin.animevsub.data.model.ServerInfo
 import git.shin.animevsub.ui.theme.MainColor
 import java.util.Locale
-
 @Composable
 fun SettingsSideMenuContent(
   servers: List<ServerInfo>,
@@ -81,7 +79,6 @@ fun SettingsSideMenuContent(
     } catch (_: Exception) {
     }
   }
-
   Column(
     modifier = Modifier
       .fillMaxSize()

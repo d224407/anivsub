@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.common
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -26,7 +25,6 @@ import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @Composable
 fun SectionHeader(
   title: String,

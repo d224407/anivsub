@@ -1,15 +1,12 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.model
-
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.Serializable
-
 @Serializable
 enum class VoteType {
   UP,
   DOWN,
   NONE
 }
-
 @Serializable
 data class Comment(
   val id: String,
@@ -34,14 +31,12 @@ data class Comment(
   val hideReason: String? = null,
   val triggers: List<Trigger> = emptyList()
 )
-
 @Serializable
 data class CommentBadge(
   val name: String,
   val icon: String,
   val color: String
 )
-
 @Serializable
 data class CommentResponse(
   val success: Boolean,
@@ -51,7 +46,6 @@ data class CommentResponse(
   val hasMore: Boolean = false,
   val error: String? = null
 )
-
 @Serializable
 data class ReplyResponse(
   val success: Boolean,
@@ -61,7 +55,6 @@ data class ReplyResponse(
   val hasMore: Boolean = false,
   val error: String? = null
 )
-
 @Serializable
 data class PostCommentResponse(
   val success: Boolean,
@@ -70,7 +63,6 @@ data class PostCommentResponse(
   val pending: Boolean = false,
   val error: String? = null
 )
-
 @Serializable
 data class VoteResponse(
   val success: Boolean,
@@ -78,7 +70,6 @@ data class VoteResponse(
   val votesDown: Int = 0,
   val error: String? = null
 )
-
 @Serializable
 data class EditCommentResponse(
   val success: Boolean,
@@ -88,7 +79,6 @@ data class EditCommentResponse(
   val pending: Boolean = false,
   val error: String? = null
 )
-
 @Serializable
 data class ActionResponse(
   val success: Boolean,

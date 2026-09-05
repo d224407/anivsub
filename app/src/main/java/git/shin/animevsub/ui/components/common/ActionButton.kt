@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.common
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @Composable
 fun ActionButton(
   icon: ImageVector,
@@ -50,7 +48,6 @@ fun ActionButton(
       modifier = Modifier.size(20.dp)
     )
     Spacer(modifier = Modifier.width(6.dp))
-
     Text(
       text = label,
       color = if (enabled) TextPrimary else TextPrimary.copy(alpha = 0.38f),

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -97,7 +96,6 @@ import git.shin.animevsub.ui.theme.TextPrimary
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
 @Composable
 fun AnimeVsubAppUI(
   animeRepository: AnimeRepository,
@@ -110,11 +108,8 @@ fun AnimeVsubAppUI(
   val scope = rememberCoroutineScope()
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentDestination = navBackStackEntry?.destination
-
   val transitionType by animeRepository.screenTransition.collectAsState(initial = "system")
-
   var showAuthPrompt by remember { mutableStateOf(false) }
-
   LaunchedEffect(Unit) {
     animeRepository.authEvent.collect { event ->
       when (event) {
@@ -124,14 +119,12 @@ fun AnimeVsubAppUI(
       }
     }
   }
-
   val notificationUiState by notificationViewModel.uiState.collectAsState()
   val unreadCount = if (notificationUiState.autoSync) {
     notificationUiState.dbNotificationCount?.notifyCount ?: 0
   } else {
     notificationUiState.data?.items?.size ?: 0
   }
-
   val bottomNavItems = listOf(
     BottomNavItem(Screen.Home, R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home),
     BottomNavItem(Screen.Search, R.string.nav_search, Icons.Filled.Search, Icons.Outlined.Search),
@@ -149,7 +142,6 @@ fun AnimeVsubAppUI(
     ),
     BottomNavItem(Screen.Account, R.string.nav_account, Icons.Filled.Person, Icons.Outlined.Person)
   )
-
   val hideBottomBar = currentDestination?.route?.let { route ->
     route.startsWith("detail") ||
       route == Screen.Rankings.route ||
@@ -162,11 +154,9 @@ fun AnimeVsubAppUI(
       route == Screen.Playlists.route ||
       route.startsWith("playlist")
   } ?: false
-
   val configuration = LocalConfiguration.current
   val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
   val useNavRail = isLandscape || windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
-
   Row(modifier = Modifier.fillMaxSize()) {
     AnimatedVisibility(
       visible = useNavRail && !hideBottomBar,
@@ -182,7 +172,6 @@ fun AnimeVsubAppUI(
           val selected = currentDestination?.hierarchy?.any {
             it.route == item.screen.route
           } == true
-
           NavigationRailItem(
             icon = {
               BadgedBox(
@@ -230,7 +219,6 @@ fun AnimeVsubAppUI(
         }
       }
     }
-
     Scaffold(
       containerColor = DarkBackground,
       bottomBar = {
@@ -248,7 +236,6 @@ fun AnimeVsubAppUI(
               val selected = currentDestination?.hierarchy?.any {
                 it.route == item.screen.route
               } == true
-
               NavigationBarItem(
                 icon = {
                   BadgedBox(
@@ -308,12 +295,10 @@ fun AnimeVsubAppUI(
               initialOffsetX = { it },
               animationSpec = tween(300)
             ) + fadeIn(animationSpec = tween(300))
-
             "fade" -> fadeIn(animationSpec = tween(300))
             "zoom" -> scaleIn(initialScale = 0.8f, animationSpec = tween(300)) + fadeIn(
               animationSpec = tween(300)
             )
-
             "none" -> EnterTransition.None
             else -> fadeIn(animationSpec = tween(300))
           }
@@ -324,12 +309,10 @@ fun AnimeVsubAppUI(
               targetOffsetX = { -it },
               animationSpec = tween(300)
             ) + fadeOut(animationSpec = tween(300))
-
             "fade" -> fadeOut(animationSpec = tween(300))
             "zoom" -> scaleOut(targetScale = 1.2f, animationSpec = tween(300)) + fadeOut(
               animationSpec = tween(300)
             )
-
             "none" -> ExitTransition.None
             else -> fadeOut(animationSpec = tween(300))
           }
@@ -340,12 +323,10 @@ fun AnimeVsubAppUI(
               initialOffsetX = { -it },
               animationSpec = tween(300)
             ) + fadeIn(animationSpec = tween(300))
-
             "fade" -> fadeIn(animationSpec = tween(300))
             "zoom" -> scaleIn(initialScale = 1.2f, animationSpec = tween(300)) + fadeIn(
               animationSpec = tween(300)
             )
-
             "none" -> EnterTransition.None
             else -> fadeIn(animationSpec = tween(300))
           }
@@ -356,12 +337,10 @@ fun AnimeVsubAppUI(
               targetOffsetX = { it },
               animationSpec = tween(300)
             ) + fadeOut(animationSpec = tween(300))
-
             "fade" -> fadeOut(animationSpec = tween(300))
             "zoom" -> scaleOut(targetScale = 0.8f, animationSpec = tween(300)) + fadeOut(
               animationSpec = tween(300)
             )
-
             "none" -> ExitTransition.None
             else -> fadeOut(animationSpec = tween(300))
           }
@@ -385,7 +364,6 @@ fun AnimeVsubAppUI(
             windowSize = windowSize
           )
         }
-
         composable(Screen.Search.route) {
           SearchScreen(
             onNavigateToDetail = { animeId, chapterId ->
@@ -394,7 +372,6 @@ fun AnimeVsubAppUI(
             windowSizeClass = windowSize
           )
         }
-
         composable(Screen.Schedule.route) {
           val isFromBottomNav = bottomNavItems.any { it.screen == Screen.Schedule }
           ScheduleScreen(
@@ -408,7 +385,6 @@ fun AnimeVsubAppUI(
             }
           )
         }
-
         composable(Screen.Notification.route) {
           NotificationScreen(
             onNavigateToDetail = { animeId, chapterId ->
@@ -425,7 +401,6 @@ fun AnimeVsubAppUI(
             }
           )
         }
-
         composable(Screen.Account.route) {
           AccountScreen(
             onNavigateToLogin = { navController.navigate(Screen.Login.route) },
@@ -442,7 +417,6 @@ fun AnimeVsubAppUI(
             }
           )
         }
-
         composable(
           route = Screen.AnimeDetail.route,
           arguments = listOf(
@@ -473,7 +447,6 @@ fun AnimeVsubAppUI(
             isInPipMode = isInPipMode
           )
         }
-
         composable(
           route = Screen.Rankings.route,
           arguments = listOf(
@@ -491,7 +464,6 @@ fun AnimeVsubAppUI(
             windowSize = windowSize
           )
         }
-
         composable(
           route = Screen.Category.route,
           arguments = listOf(
@@ -506,19 +478,16 @@ fun AnimeVsubAppUI(
             windowSize = windowSize
           )
         }
-
         composable(Screen.Login.route) {
           LoginScreen(
             onNavigateBack = { navController.popBackStack() }
           )
         }
-
         composable(Screen.About.route) {
           AboutScreen(
             onNavigateBack = { navController.popBackStack() }
           )
         }
-
         composable(Screen.History.route) {
           HistoryScreen(
             onNavigateBack = { navController.popBackStack() },
@@ -527,7 +496,6 @@ fun AnimeVsubAppUI(
             }
           )
         }
-
         composable(Screen.Follow.route) {
           FollowScreen(
             onNavigateBack = { navController.popBackStack() },
@@ -537,13 +505,11 @@ fun AnimeVsubAppUI(
             }
           )
         }
-
         composable(Screen.Settings.route) {
           SettingsScreen(
             onNavigateBack = { navController.popBackStack() }
           )
         }
-
         composable(
           route = Screen.Playlist.route,
           arguments = listOf(
@@ -557,7 +523,6 @@ fun AnimeVsubAppUI(
             }
           )
         }
-
         composable(Screen.Playlists.route) {
           PlaylistsScreen(
             onBack = { navController.popBackStack() },
@@ -568,7 +533,6 @@ fun AnimeVsubAppUI(
         }
       }
     }
-
     if (showAuthPrompt) {
       AlertDialog(
         onDismissRequest = { showAuthPrompt = false },

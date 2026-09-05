@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.notification.components
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +23,6 @@ import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextSecondary
-
 @Composable
 fun LoginRequiredScreen(onNavigateToLogin: () -> Unit) {
   Box(

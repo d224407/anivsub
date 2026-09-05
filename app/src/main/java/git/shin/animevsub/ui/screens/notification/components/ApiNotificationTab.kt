@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.notification.components
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +14,6 @@ import git.shin.animevsub.ui.components.anime.NotificationListSkeleton
 import git.shin.animevsub.ui.components.status.ErrorScreen
 import git.shin.animevsub.ui.screens.notification.NotificationUiState
 import androidx.compose.foundation.lazy.itemsIndexed
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApiNotificationTab(
@@ -31,7 +29,6 @@ fun ApiNotificationTab(
     modifier = Modifier.fillMaxSize()
   ) {
     val items = uiState.data?.items ?: emptyList()
-
     if (uiState.isLoading && !uiState.isRefreshing && items.isEmpty()) {
       NotificationListSkeleton()
     } else if (uiState.error != null && items.isEmpty()) {

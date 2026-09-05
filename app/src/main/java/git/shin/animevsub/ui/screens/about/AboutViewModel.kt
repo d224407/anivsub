@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.about
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import javax.inject.Inject
-
 data class AboutUiState(
   val isCheckingUpdate: Boolean = false,
   val updateInfo: UpdateInfo? = null,
@@ -26,16 +24,13 @@ data class AboutUiState(
   val hideDonationPopup: Boolean = false,
   val loginUrl: String = ""
 )
-
 @HiltViewModel
 class AboutViewModel @Inject constructor(
   private val updateManager: UpdateManager,
   private val preferencesManager: PreferencesManager,
   private val animeDataSource: AnimeDataSource
 ) : ViewModel() {
-
   private val internalState = MutableStateFlow(AboutUiState())
-
   val uiState: StateFlow<AboutUiState> = combine(
     internalState,
     preferencesManager.developerMode,
@@ -51,7 +46,6 @@ class AboutViewModel @Inject constructor(
     started = SharingStarted.WhileSubscribed(5000),
     initialValue = AboutUiState()
   )
-
   fun checkUpdate() {
     viewModelScope.launch {
       internalState.update { it.copy(isCheckingUpdate = true, error = null) }
@@ -64,12 +58,10 @@ class AboutViewModel @Inject constructor(
         }
     }
   }
-
   fun enableDeveloperMode(password: String): Boolean {
     val hash = MessageDigest.getInstance("SHA-256")
       .digest(password.toByteArray())
       .joinToString("") { "%02x".format(it) }
-
     return if (hash == git.shin.animevsub.BuildConfig.DEV_PWD_HASH) {
       viewModelScope.launch {
         preferencesManager.setDeveloperMode(true)
@@ -79,17 +71,14 @@ class AboutViewModel @Inject constructor(
       false
     }
   }
-
   fun setHideDonationPopup(hide: Boolean) {
     viewModelScope.launch {
       preferencesManager.setHideDonationPopup(hide)
     }
   }
-
   fun downloadUpdate(info: UpdateInfo) {
     updateManager.downloadAndInstall(info.downloadUrl, "AnimeVsub_v${info.version}.apk")
   }
-
   fun dismissUpdate() {
     internalState.update { it.copy(updateInfo = null) }
   }

@@ -1,14 +1,11 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.styles
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-
 val NoPaddingTextStyle = TextStyle(
   platformStyle = PlatformTextStyle(includeFontPadding = false)
 )
-
 val SmallTextStyle = NoPaddingTextStyle.copy(
   lineHeight = 14.sp
 )

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.home
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,25 +10,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 sealed class HomeUiState {
     object Loading : HomeUiState()
     data class Success(val data: HomeData) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: AnimeRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-
     init {
         loadHomeData()
     }
-
     fun loadHomeData() {
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading

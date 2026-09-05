@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.anime
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.ui.utils.shimmerEffect
-
 @Composable
 fun RankingSkeleton(modifier: Modifier = Modifier) {
   Row(
@@ -34,7 +32,6 @@ fun RankingSkeleton(modifier: Modifier = Modifier) {
         .clip(RoundedCornerShape(4.dp))
         .shimmerEffect()
     )
-
     // Thumbnail placeholder
     Box(
       modifier = Modifier
@@ -42,9 +39,7 @@ fun RankingSkeleton(modifier: Modifier = Modifier) {
         .clip(RoundedCornerShape(6.dp))
         .shimmerEffect()
     )
-
     Spacer(modifier = Modifier.width(12.dp))
-
     Column(modifier = Modifier.weight(1f)) {
       // Title placeholder
       Box(
@@ -54,9 +49,7 @@ fun RankingSkeleton(modifier: Modifier = Modifier) {
           .clip(RoundedCornerShape(4.dp))
           .shimmerEffect()
       )
-
       Spacer(modifier = Modifier.height(8.dp))
-
       // Subtitle placeholder
       Box(
         modifier = Modifier
@@ -65,9 +58,7 @@ fun RankingSkeleton(modifier: Modifier = Modifier) {
           .clip(RoundedCornerShape(4.dp))
           .shimmerEffect()
       )
-
       Spacer(modifier = Modifier.height(8.dp))
-
       // Stats placeholder
       Row {
         Box(

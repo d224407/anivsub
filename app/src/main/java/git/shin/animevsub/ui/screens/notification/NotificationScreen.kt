@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.notification
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -49,7 +48,6 @@ import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextPrimary
 import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(
@@ -63,16 +61,13 @@ fun NotificationScreen(
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
   val pagerState = rememberPagerState(pageCount = { 3 })
-
   val unreadSystemCount = uiState.systemNotifications.count { !it.isRead }
-
   // If autoSync is enabled, set default tab to Database (index 1)
   LaunchedEffect(uiState.autoSync, uiState.isAuthReady) {
     if (uiState.isAuthReady && uiState.autoSync && pagerState.currentPage == 0) {
       pagerState.scrollToPage(1)
     }
   }
-
   LaunchedEffect(Unit) {
     viewModel.uiEvent.collect { event ->
       when (event) {
@@ -86,7 +81,6 @@ fun NotificationScreen(
       }
     }
   }
-
   Scaffold(
     topBar = {
       Column(modifier = Modifier.background(DarkBackground)) {
@@ -122,7 +116,6 @@ fun NotificationScreen(
           },
           colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
         )
-
         NotificationTabs(
           selectedTab = pagerState.currentPage,
           onTabSelected = { index ->
@@ -154,7 +147,6 @@ fun NotificationScreen(
           trackColor = DarkSurface
         )
       }
-
       if (!uiState.isAuthReady) {
         NotificationListSkeleton()
       } else {
@@ -175,7 +167,6 @@ fun NotificationScreen(
             } else {
               LoginRequiredScreen(onNavigateToLogin)
             }
-
             1 -> if (uiState.isLoggedIn) {
               DbNotificationTab(
                 uiState = uiState,
@@ -189,7 +180,6 @@ fun NotificationScreen(
             } else {
               LoginRequiredScreen(onNavigateToLogin)
             }
-
             2 -> SystemNotificationTab(
               notifications = uiState.systemNotifications,
               isLoading = false,
@@ -206,7 +196,6 @@ fun NotificationScreen(
     }
   }
 }
-
 private fun handleSystemNotificationClick(
   notification: SystemNotification,
   onNavigateToDetail: (String, String?) -> Unit,
@@ -214,7 +203,6 @@ private fun handleSystemNotificationClick(
   onNavigateToAbout: () -> Unit
 ) {
   val deepLink = notification.deepLink
-
   when {
     deepLink == "about" -> onNavigateToAbout()
     deepLink == "settings" -> onNavigateToSystemSettings()

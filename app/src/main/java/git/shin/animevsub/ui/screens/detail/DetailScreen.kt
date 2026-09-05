@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -127,7 +126,6 @@ import git.shin.animevsub.ui.utils.rememberScreenState
 import git.shin.animevsub.ui.utils.shimmerEffect
 import git.shin.animevsub.ui.utils.tvFocusScale
 import kotlinx.coroutines.launch
-
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -159,18 +157,15 @@ fun DetailScreen(
   var isFullScreen by remember { mutableStateOf(false) }
   val scope = rememberCoroutineScope()
   var exoPlayerInstance by remember { mutableStateOf<androidx.media3.exoplayer.ExoPlayer?>(null) }
-
   val screenState = rememberScreenState()
   val isTV = screenState.isTV
   val isLandscape = screenState.isLandscape
   val isLandscapeUI = (isLandscape || isTV) && !isFullScreen && !isInPipMode
-
   val configuration = LocalConfiguration.current
   val screenWidth = configuration.screenWidthDp.dp
   val videoHeight = if (isLandscapeUI) configuration.screenHeightDp.dp else screenWidth * 9 / 16
   val sheetHeight =
     if (isLandscapeUI) configuration.screenHeightDp.dp else configuration.screenHeightDp.dp - videoHeight
-
   LaunchedEffect(uiState.playerConfig?.playerData, isFullScreen, isPlayerPlaying) {
     val activity = context as? MainActivity ?: return@LaunchedEffect
     if (uiState.playerConfig != null) {
@@ -182,7 +177,6 @@ fun DetailScreen(
       }
     }
   }
-
   DisposableEffect(Unit) {
     onDispose {
       exoPlayerInstance?.release()
@@ -195,7 +189,6 @@ fun DetailScreen(
       }
     }
   }
-
   LaunchedEffect(exoPlayerInstance) {
     val activity = context as? MainActivity ?: return@LaunchedEffect
     activity.pipEvent.collect { event ->
@@ -203,27 +196,21 @@ fun DetailScreen(
         MainActivity.PipEvent.PLAY -> {
           exoPlayerInstance?.play()
         }
-
         MainActivity.PipEvent.PAUSE -> {
           exoPlayerInstance?.pause()
         }
-
         MainActivity.PipEvent.NEXT -> {
           viewModel.playNext()
         }
       }
     }
   }
-
   val followSuccessMsg = stringResource(R.string.followed)
   val unfollowSuccessMsg = stringResource(R.string.unfollowed)
   val followErrorMsg = stringResource(R.string.follow_error)
-
   val reportSuccessMsg = stringResource(R.string.report_success)
   val reportErrorMsg = stringResource(R.string.report_error)
-
   val loginRequiredMsg = stringResource(R.string.login_required)
-
   LaunchedEffect(Unit) {
     viewModel.uiEffect.collect { effect ->
       when (effect) {
@@ -238,36 +225,29 @@ fun DetailScreen(
           }
           snackbarHostState.showSnackbar(message)
         }
-
         is DetailViewModel.DetailUiEffect.RequireLogin -> {
           snackbarHostState.showSnackbar(loginRequiredMsg)
           onNavigateToLogin()
         }
-
         is DetailViewModel.DetailUiEffect.OpenPlaylistSheet -> {
           showAddToPlaylistSheet = true
         }
-
         is DetailViewModel.DetailUiEffect.PausePlayer -> {
           exoPlayerInstance?.pause()
         }
-
         is DetailViewModel.DetailUiEffect.ResumePlayer -> {
           exoPlayerInstance?.play()
         }
       }
     }
   }
-
   // List states for scrollingon
   val seasonListState = rememberLazyListState()
-
   // Store scroll states for each season to maintain separate scroll positions
   val chapterListStates = remember { mutableStateMapOf<String, LazyListState>() }
   val currentChapterListState = chapterListStates.getOrPut(uiState.activeDisplaySeasonId) {
     LazyListState()
   }
-
   // Scroll to current chapter only if it's the currently viewed season
   LaunchedEffect(uiState.currentChapIndex, uiState.activeDisplaySeasonId) {
     if (uiState.currentChapIndex >= 0 && uiState.currentSeasonId == uiState.animeId) {
@@ -282,7 +262,6 @@ fun DetailScreen(
       }
     }
   }
-
   // Cleanup orientation on dispose
   DisposableEffect(Unit) {
     onDispose {
@@ -290,13 +269,11 @@ fun DetailScreen(
       activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
   }
-
   LaunchedEffect(uiState.animeId, uiState.detail) {
     if (uiState.detail != null) {
       viewModel.loadComments()
     }
   }
-
   LaunchedEffect(isFullScreen) {
     if (isFullScreen) {
       showDetailSheet = false
@@ -305,7 +282,6 @@ fun DetailScreen(
       scaffoldState.bottomSheetState.partialExpand()
     }
   }
-
   BottomSheetScaffold(
     scaffoldState = scaffoldState,
     sheetContent = {
@@ -450,7 +426,6 @@ fun DetailScreen(
           }
         }
       }
-
       val scrollableContent = @Composable { modifier: Modifier ->
         val detail = uiState.detail
         Column(
@@ -493,7 +468,6 @@ fun DetailScreen(
                 )
                 Icon(Icons.Default.ChevronRight, null, tint = TextGrey)
               }
-
               Row(
                 modifier = Modifier.padding(top = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -504,7 +478,6 @@ fun DetailScreen(
                   fontSize = 14.sp,
                   style = NoPaddingTextStyle
                 )
-
                 uiState.chapterData?.update?.let { update ->
                   Text(
                     text = " • ",
@@ -512,7 +485,6 @@ fun DetailScreen(
                     fontSize = 14.sp,
                     style = NoPaddingTextStyle
                   )
-
                   Text(
                     text = formatScheduleUpdate(update),
                     color = AccentMain,
@@ -522,7 +494,6 @@ fun DetailScreen(
                 }
               }
             }
-
             Column(modifier = Modifier.fillMaxWidth()) {
               Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 // Author and Studio Section
@@ -534,7 +505,6 @@ fun DetailScreen(
                       fontSize = 14.sp,
                       style = NoPaddingTextStyle
                     )
-
                     Text(
                       text = detail.authors.first().name,
                       color = if (detail.authors.first().filters.isNotEmpty()) MainColor else TextPrimary,
@@ -544,7 +514,6 @@ fun DetailScreen(
                         onNavigateToCategory(detail.authors.first().filters)
                       }
                     )
-
                     Text(
                       text = " | ",
                       color = TextGrey,
@@ -552,7 +521,6 @@ fun DetailScreen(
                       style = NoPaddingTextStyle
                     )
                   }
-
                   Text(
                     text = stringResource(
                       R.string.studio_prefix,
@@ -568,9 +536,7 @@ fun DetailScreen(
                     }
                   )
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
-
                 // Badges row
                 FlowRow(
                   horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -607,7 +573,6 @@ fun DetailScreen(
                     )
                   }
                 }
-
                 // Rating info (Stars on new line)
                 Row(
                   verticalAlignment = Alignment.CenterVertically,
@@ -621,9 +586,7 @@ fun DetailScreen(
                     style = NoPaddingTextStyle
                   )
                   Icon(Icons.Default.Star, null, tint = StarColor, modifier = Modifier.size(14.dp))
-
                   Spacer(modifier = Modifier.width(8.dp))
-
                   Text(
                     text = stringResource(R.string.rating_count, formatNumber(detail.countRate)),
                     color = TextGrey,
@@ -637,7 +600,6 @@ fun DetailScreen(
                       fontSize = 14.sp,
                       style = NoPaddingTextStyle
                     )
-
                     Text(
                       text = it.name,
                       color = if (it.filters.isNotEmpty()) MainColor else TextPrimary,
@@ -649,9 +611,7 @@ fun DetailScreen(
                     )
                   }
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
-
                 // Tags/Genres
                 FlowRow(
                   horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -670,9 +630,7 @@ fun DetailScreen(
                     )
                   }
                 }
-
                 Spacer(modifier = Modifier.height(12.dp))
-
                 // Action Buttons
                 LazyRow(
                   modifier = Modifier
@@ -762,7 +720,6 @@ fun DetailScreen(
                   }
                 }
               }
-
               // External Platforms
               if (detail.externalPlatforms.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
@@ -814,7 +771,6 @@ fun DetailScreen(
                   }
                 }
               }
-
               // AI Recap Section
               if (uiState.aiRecap != null || uiState.isRecapLoading || uiState.recapError != null) {
                 AiRecapBlock(
@@ -831,7 +787,6 @@ fun DetailScreen(
                   }
                 )
               }
-
               // Server Section
               if (uiState.servers.size >= 2 || (uiState.isServersLoading && uiState.previousHadMultipleServers)) {
                 Text(
@@ -870,7 +825,6 @@ fun DetailScreen(
                         )
                         .tvFocusScale()
                         .clickable { viewModel.selectServer(server) }
-
                       Box(
                         modifier = boxModifier,
                         contentAlignment = Alignment.Center
@@ -887,7 +841,6 @@ fun DetailScreen(
                   }
                 }
               }
-
               // Episode Section Header
               Row(
                 modifier = Modifier
@@ -916,7 +869,6 @@ fun DetailScreen(
                     modifier = Modifier.size(20.dp)
                   )
                 }
-
                 IconButton(onClick = { viewModel.toggleSyncMode() }) {
                   Icon(
                     imageVector = when (uiState.syncMode) {
@@ -934,7 +886,6 @@ fun DetailScreen(
                   )
                 }
               }
-
               // Episode List (Horizontal)
               if (uiState.isChaptersLoading) {
                 ChapterSkeleton()
@@ -964,7 +915,6 @@ fun DetailScreen(
                   } else {
                     chapterData.chaps
                   }
-
                   LazyRow(
                     state = currentChapterListState,
                     modifier = Modifier.fillMaxWidth(),
@@ -981,9 +931,7 @@ fun DetailScreen(
                             activeSeason?.realId
                               ?: uiState.currentSeasonId
                             )
-
                       val progress = uiState.chapterProgress[chap.id]
-
                       EpisodeItem(
                         chap = chap,
                         isSelected = isSelected,
@@ -1007,22 +955,18 @@ fun DetailScreen(
                   )
                 }
               }
-
               // Seasons
               if (uiState.displaySeasons.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-
                 // Find current season index for scrolling
                 val currentSeasonIndex = uiState.displaySeasons.indexOfFirst {
                   it.id == uiState.activeDisplaySeasonId
                 }
-
                 LaunchedEffect(currentSeasonIndex) {
                   if (currentSeasonIndex >= 0) {
                     seasonListState.animateScrollToItem(currentSeasonIndex)
                   }
                 }
-
                 LazyRow(
                   state = seasonListState,
                   modifier = Modifier.fillMaxWidth(),
@@ -1031,7 +975,6 @@ fun DetailScreen(
                 ) {
                   items(uiState.displaySeasons) { season ->
                     val isCurrent = season.id == uiState.activeDisplaySeasonId
-
                     Box(
                       modifier = Modifier
                         .widthIn(min = 100.dp)
@@ -1063,7 +1006,6 @@ fun DetailScreen(
                 }
               }
             }
-
             // Comment Preview (YouTube-style)
 //            if (!isTV) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -1106,10 +1048,8 @@ fun DetailScreen(
                   modifier = Modifier.size(20.dp)
                 )
               }
-
               val previewComment =
                 uiState.comments.firstOrNull { !it.isPinned && !it.isGlobalPinned }
-
               Spacer(modifier = Modifier.height(8.dp))
               Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
@@ -1131,11 +1071,9 @@ fun DetailScreen(
               }
             }
 //            }
-
             // Related
             if (detail.related.isNotEmpty()) {
               Spacer(modifier = Modifier.height(16.dp))
-
               Text(
                 text = stringResource(R.string.recommended_for_you),
                 color = TextPrimary,
@@ -1157,7 +1095,6 @@ fun DetailScreen(
                   else -> 6
                 }
               }
-
               GridAnimeList(
                 items = detail.related,
                 columns = columns,
@@ -1165,11 +1102,9 @@ fun DetailScreen(
               )
             }
           }
-
           Spacer(modifier = Modifier.height(50.dp))
         }
       }
-
       if (isFullScreen) {
         playerArea(Modifier.fillMaxSize(), uiState)
       } else if (isLandscapeUI) {
@@ -1202,7 +1137,6 @@ fun DetailScreen(
         }
       }
     }
-
     // Detail Bottom Sheet
     if (showDetailSheet && uiState.detail != null) {
       DetailBottomSheet(
@@ -1214,7 +1148,6 @@ fun DetailScreen(
         }
       )
     }
-
     // AI Recap Bottom Sheet
     if (showRecapSheet) {
       AiChatBottomSheet(
@@ -1241,13 +1174,11 @@ fun DetailScreen(
         onClearHistory = { viewModel.clearAiChat() }
       )
     }
-
     // AI Summary Bottom Sheet
     if (showSummarySheet) {
       val minutes = summaryTimestamp / (1000 * 60)
       val seconds = (summaryTimestamp / 1000) % 60
       val timestampStr = String.format(java.util.Locale.getDefault(), "%02d:%02d", minutes, seconds)
-
       AiChatBottomSheet(
         title = stringResource(R.string.ai_summary_at_timestamp, timestampStr),
         isLoading = uiState.isAiChatLoading,
@@ -1272,7 +1203,6 @@ fun DetailScreen(
         onClearHistory = { viewModel.clearAiChat() }
       )
     }
-
     // Chapter Grid Bottom Sheet
     if (showChapterSheet) {
       ChapterBottomSheet(
@@ -1284,7 +1214,6 @@ fun DetailScreen(
         onSyncModeToggle = { viewModel.toggleSyncMode() }
       )
     }
-
     if (showAddToPlaylistSheet) {
       AddToPlaylistBottomSheet(
         animeId = uiState.currentSeasonId,
@@ -1298,7 +1227,6 @@ fun DetailScreen(
         }
       )
     }
-
     if (uiState.showBreakReminder) {
       BreakReminderDialog(
         onDismiss = { viewModel.dismissBreakReminder() },
@@ -1308,7 +1236,6 @@ fun DetailScreen(
         }
       )
     }
-
     if (uiState.showBedtimeReminder) {
       BedtimeReminderDialog(
         onDismiss = { viewModel.dismissBedtimeReminder() },
@@ -1320,7 +1247,6 @@ fun DetailScreen(
     }
   }
 }
-
 @Composable
 private fun DetailSkeleton() {
   Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -1364,7 +1290,6 @@ private fun DetailSkeleton() {
         )
       }
     }
-
     // Metadata Skeleton
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
       Box(
@@ -1395,7 +1320,6 @@ private fun DetailSkeleton() {
         }
       }
     }
-
     // Action Row Skeleton
     Row(
       modifier = Modifier
@@ -1422,7 +1346,6 @@ private fun DetailSkeleton() {
         }
       }
     }
-
     // Episode Header Skeleton
     Row(
       modifier = Modifier
@@ -1445,9 +1368,7 @@ private fun DetailSkeleton() {
           .shimmerEffect()
       )
     }
-
     ChapterSkeleton()
-
     // Recommend Skeleton
     Spacer(modifier = Modifier.height(24.dp))
     Box(
@@ -1459,11 +1380,9 @@ private fun DetailSkeleton() {
         .shimmerEffect()
     )
     Spacer(modifier = Modifier.height(12.dp))
-
     RecommendSkeleton()
   }
 }
-
 @Composable
 private fun RecommendSkeleton() {
   Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -1497,7 +1416,6 @@ private fun RecommendSkeleton() {
     }
   }
 }
-
 @Composable
 private fun ChapterSkeleton() {
   LazyRow(

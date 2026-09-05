@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.dialogs
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.style.StyleSpan
@@ -42,7 +41,6 @@ import git.shin.animevsub.ui.theme.GithubBlue
 import git.shin.animevsub.ui.theme.MainColor
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateDialog(
@@ -53,7 +51,6 @@ fun UpdateDialog(
   val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
   val configuration = LocalConfiguration.current
   val maxHeight = configuration.screenHeightDp.dp * 0.8f
-
   ModalBottomSheet(
     onDismissRequest = onDismiss,
     sheetState = sheetState,
@@ -73,17 +70,13 @@ fun UpdateDialog(
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold
       )
-
       Spacer(modifier = Modifier.height(8.dp))
-
       Text(
         text = stringResource(R.string.update_message, info.version),
         color = TextSecondary,
         fontSize = 14.sp
       )
-
       Spacer(modifier = Modifier.height(16.dp))
-
       // Markdown description area
       Column(
         modifier = Modifier
@@ -119,9 +112,7 @@ fun UpdateDialog(
           }
         )
       }
-
       Spacer(modifier = Modifier.height(24.dp))
-
       Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End

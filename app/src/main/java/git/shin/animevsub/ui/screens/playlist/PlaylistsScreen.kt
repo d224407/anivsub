@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.playlist
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +55,6 @@ import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.tvFocusScale
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
@@ -65,9 +63,7 @@ fun PlaylistsScreen(
   viewModel: AccountViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsState()
-
   var showCreateDialog by remember { mutableStateOf(false) }
-
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -138,7 +134,6 @@ fun PlaylistsScreen(
       }
     }
   }
-
   if (showCreateDialog) {
     CreatePlaylistDialog(
       onDismiss = { showCreateDialog = false },
@@ -149,7 +144,6 @@ fun PlaylistsScreen(
     )
   }
 }
-
 @Composable
 fun PlaylistVerticalRowSkeleton() {
   Row(
@@ -183,7 +177,6 @@ fun PlaylistVerticalRowSkeleton() {
     }
   }
 }
-
 @Composable
 fun PlaylistVerticalRow(
   playlist: Playlist,

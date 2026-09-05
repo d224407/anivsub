@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -43,7 +42,6 @@ import git.shin.animevsub.data.model.FilterOption
 import git.shin.animevsub.data.model.Trigger
 import git.shin.animevsub.data.model.VoteType
 import git.shin.animevsub.ui.theme.TextGrey
-
 @Composable
 fun BottomSheetDragHandle() {
   Box(
@@ -55,7 +53,6 @@ fun BottomSheetDragHandle() {
       .background(TextGrey)
   )
 }
-
 @Composable
 fun CommentSection(
   comments: List<Comment>,
@@ -80,7 +77,6 @@ fun CommentSection(
   onSortChange: (FilterOption) -> Unit
 ) {
   var showSortMenu by remember { mutableStateOf(false) }
-
   Column(modifier = modifier.padding(16.dp)) {
     Row(
       modifier = Modifier.fillMaxWidth(),
@@ -98,9 +94,7 @@ fun CommentSection(
         style = MaterialTheme.typography.bodyMedium,
         color = Color.Gray
       )
-
       Spacer(modifier = Modifier.weight(1f))
-
       Box {
         Row(
           verticalAlignment = Alignment.CenterVertically,
@@ -123,7 +117,6 @@ fun CommentSection(
             fontWeight = FontWeight.Medium
           )
         }
-
         DropdownMenu(
           expanded = showSortMenu,
           onDismissRequest = { showSortMenu = false },
@@ -146,9 +139,7 @@ fun CommentSection(
         }
       }
     }
-
     Spacer(modifier = Modifier.height(16.dp))
-
     LazyColumn(modifier = Modifier.weight(1f)) {
       item {
         CommentInput(
@@ -158,7 +149,6 @@ fun CommentSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
       }
-
       if (comments.isEmpty() && !isLoading) {
         item {
           Text(
@@ -169,7 +159,6 @@ fun CommentSection(
           )
         }
       }
-
       items(comments, key = { it.id }) { comment ->
         CommentItem(
           comment = comment,
@@ -187,7 +176,6 @@ fun CommentSection(
           modifier = Modifier.padding(vertical = 4.dp)
         )
       }
-
       if (hasMore) {
         item {
           LaunchedEffect(Unit) {

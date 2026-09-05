@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -73,7 +72,6 @@ import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.shimmerEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AiChatBottomSheet(
@@ -97,13 +95,11 @@ fun AiChatBottomSheet(
   val keyboardController = LocalSoftwareKeyboardController.current
   val focusRequester = remember { FocusRequester() }
   val scope = rememberCoroutineScope()
-
   LaunchedEffect(Unit) {
     scope.launch {
       sheetState.expand()
     }
   }
-
   LaunchedEffect(messages.size, isSending, suggestedQuestions.size) {
     if (messages.isNotEmpty() || isSending) {
       scope.launch {
@@ -115,7 +111,6 @@ fun AiChatBottomSheet(
       }
     }
   }
-
   ModalBottomSheet(
     onDismissRequest = onDismissRequest,
     sheetState = sheetState,
@@ -165,7 +160,6 @@ fun AiChatBottomSheet(
           )
         }
       }
-
       if (error != null && messages.isEmpty()) {
         Column(
           modifier = Modifier
@@ -193,7 +187,6 @@ fun AiChatBottomSheet(
               AiLoadingSkeleton()
             }
           }
-
           items(messages) { message ->
             if (message.isLoading) {
               AiLoadingIndicator()
@@ -205,9 +198,7 @@ fun AiChatBottomSheet(
             }
           }
         }
-
         Spacer(modifier = Modifier.height(12.dp))
-
         if (suggestedQuestions.isNotEmpty()) {
           LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -224,7 +215,6 @@ fun AiChatBottomSheet(
             }
           }
         }
-
         Row(
           verticalAlignment = Alignment.CenterVertically,
           modifier = Modifier.fillMaxWidth()
@@ -299,7 +289,6 @@ fun AiChatBottomSheet(
     }
   }
 }
-
 @Composable
 private fun AiMessageBubble(
   content: String,
@@ -327,7 +316,6 @@ private fun AiMessageBubble(
       }
       Spacer(modifier = Modifier.width(8.dp))
     }
-
     Column(
       modifier = Modifier
         .then(if (isFromUser) Modifier.widthIn(max = 280.dp) else Modifier.weight(1f))
@@ -384,7 +372,6 @@ private fun AiMessageBubble(
     }
   }
 }
-
 @Composable
 private fun SuggestionChip(
   text: String,
@@ -407,7 +394,6 @@ private fun SuggestionChip(
     )
   }
 }
-
 @Composable
 private fun AiLoadingIndicator(modifier: Modifier = Modifier) {
   Row(
@@ -429,7 +415,6 @@ private fun AiLoadingIndicator(modifier: Modifier = Modifier) {
     }
   }
 }
-
 @Composable
 private fun AiLoadingSkeleton(modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxWidth()) {

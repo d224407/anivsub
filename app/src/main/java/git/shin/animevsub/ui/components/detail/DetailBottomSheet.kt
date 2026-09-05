@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -57,7 +56,6 @@ import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
-
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -71,7 +69,6 @@ fun DetailBottomSheet(
 //  val screenWidth = configuration.screenWidthDp.dp
 //  val videoHeight = screenWidth * 9 / 16
 //  val sheetHeight = configuration.screenHeightDp.dp - videoHeight
-
   ModalBottomSheet(
     onDismissRequest = onDismissRequest,
     sheetState = sheetState,
@@ -100,7 +97,6 @@ fun DetailBottomSheet(
           Text(
             text = detail.name, color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold
           )
-
           // Info section
           Column(modifier = Modifier.padding(top = 8.dp)) {
             InfoRow(
@@ -152,9 +148,7 @@ fun DetailBottomSheet(
           }
         }
       }
-
       Spacer(modifier = Modifier.height(16.dp))
-
       if (!detail.othername.isNullOrEmpty()) {
         Text(
           text = buildAnnotatedString {
@@ -171,7 +165,6 @@ fun DetailBottomSheet(
         )
         Spacer(modifier = Modifier.height(12.dp))
       }
-
       // Tags
       FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -191,9 +184,7 @@ fun DetailBottomSheet(
           )
         }
       }
-
       Spacer(modifier = Modifier.height(16.dp))
-
       Text(
         text = stringResource(R.string.description),
         color = TextPrimary,
@@ -201,14 +192,11 @@ fun DetailBottomSheet(
         fontWeight = FontWeight.Bold
       )
       Spacer(modifier = Modifier.height(8.dp))
-
       Text(
         text = detail.description, color = TextSecondary, fontSize = 14.sp, lineHeight = 20.sp
       )
-
       if (detail.trailer != null) {
         Spacer(modifier = Modifier.height(24.dp))
-
         Text(
           text = stringResource(R.string.trailer_title),
           color = TextPrimary,

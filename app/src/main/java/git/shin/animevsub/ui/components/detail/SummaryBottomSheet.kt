@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,7 +41,6 @@ import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.shimmerEffect
 import androidx.compose.ui.graphics.Color
 import git.shin.animevsub.ui.theme.GithubBlue
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SummaryBottomSheet(
@@ -82,9 +80,7 @@ fun SummaryBottomSheet(
           fontWeight = FontWeight.Bold
         )
       }
-
       Spacer(modifier = Modifier.height(16.dp))
-
       if (isLoading) {
         SummarySkeleton()
       } else if (error != null) {
@@ -116,7 +112,6 @@ fun SummaryBottomSheet(
     }
   }
 }
-
 @Composable
 fun SummarySkeleton(modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxWidth()) {
@@ -169,7 +164,6 @@ fun SummarySkeleton(modifier: Modifier = Modifier) {
     )
   }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecapBottomSheet(

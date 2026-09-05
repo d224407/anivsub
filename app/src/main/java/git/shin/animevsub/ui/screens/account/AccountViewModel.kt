@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.account
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 data class AccountUiState(
   val isLoggedIn: Boolean = false,
   val isAuthReady: Boolean = false,
@@ -39,19 +37,15 @@ data class AccountUiState(
   val followSelectedFilters: List<SelectedFilter> = emptyList(),
   val isFollowFilterLoading: Boolean = false
 )
-
 @HiltViewModel
 class AccountViewModel @Inject constructor(
   private val repository: AnimeRepository,
   private val playlistRepository: PlaylistRepository,
   private val updateManager: git.shin.animevsub.utils.UpdateManager
 ) : ViewModel() {
-
   private val _uiState = MutableStateFlow(AccountUiState())
   val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
-
   val uiEvent = repository.authEvent
-
   init {
     viewModelScope.launch {
       repository.isLoggedIn.collect { isLoggedIn ->
@@ -81,7 +75,6 @@ class AccountViewModel @Inject constructor(
       }
     }
   }
-
   fun refresh() {
     viewModelScope.launch {
       _uiState.update { it.copy(isRefreshing = true) }
@@ -120,7 +113,6 @@ class AccountViewModel @Inject constructor(
       _uiState.update { it.copy(isRefreshing = false) }
     }
   }
-
   fun refreshHistory() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoadingHistory = true, historyError = null)
@@ -133,7 +125,6 @@ class AccountViewModel @Inject constructor(
         }
     }
   }
-
   fun refreshFollows() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoadingFollows = true, followsError = null)
@@ -147,7 +138,6 @@ class AccountViewModel @Inject constructor(
         }
     }
   }
-
   fun loadFollowFilters() {
     viewModelScope.launch {
       _uiState.update { it.copy(isFollowFilterLoading = true) }
@@ -171,27 +161,22 @@ class AccountViewModel @Inject constructor(
         }
     }
   }
-
   fun updateFollowFilter(filter: SelectedFilter) {
     val current = _uiState.value.followSelectedFilters.toMutableList()
     val group = _uiState.value.followFilterGroups.find { it.id == filter.groupId }
     val isMultiple = group?.isMultiple == true
-
     if (!isMultiple) {
       current.removeAll { it.groupId == filter.groupId }
     }
-
     val existingIndex = current.indexOfFirst { it.id == filter.id && it.groupId == filter.groupId }
     if (existingIndex != -1) {
       current.removeAt(existingIndex)
     } else {
       current.add(filter)
     }
-
     _uiState.update { it.copy(followSelectedFilters = current) }
     refreshFollows()
   }
-
   fun refreshPlaylists() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoadingPlaylists = true, playlistsError = null)
@@ -205,7 +190,6 @@ class AccountViewModel @Inject constructor(
         }
     }
   }
-
   fun performLogout() {
     viewModelScope.launch {
       repository.logout()
@@ -220,7 +204,6 @@ class AccountViewModel @Inject constructor(
       }
     }
   }
-
   fun createPlaylist(name: String, isPublic: Boolean = false) {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoadingPlaylists = true, playlistsError = null)
@@ -234,7 +217,6 @@ class AccountViewModel @Inject constructor(
         }
     }
   }
-
   fun checkAnimeInPlaylists(animeId: String) {
     viewModelScope.launch {
       val playlistIds = _uiState.value.playlists.map { it.id }
@@ -247,13 +229,11 @@ class AccountViewModel @Inject constructor(
       }
     }
   }
-
   fun togglePlaylistChecked(playlistId: Int, checked: Boolean) {
     val currentStates = _uiState.value.playlistCheckedStates.toMutableMap()
     currentStates[playlistId] = checked
     _uiState.value = _uiState.value.copy(playlistCheckedStates = currentStates)
   }
-
   fun checkForUpdate(
     onUpdateAvailable: (git.shin.animevsub.data.model.UpdateInfo) -> Unit,
     onNoUpdate: () -> Unit,
@@ -276,7 +256,6 @@ class AccountViewModel @Inject constructor(
         }
     }
   }
-
   fun downloadUpdate(info: git.shin.animevsub.data.model.UpdateInfo) {
     updateManager.downloadAndInstall(info.downloadUrl, "AnimeVsub_v${info.version}.apk")
   }

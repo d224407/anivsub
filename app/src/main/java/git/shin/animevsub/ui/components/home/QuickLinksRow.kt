@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.home
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.tvFocusScale
-
 @Composable
 fun QuickLinksRow(
   onCatalogClick: () -> Unit,
@@ -66,7 +64,6 @@ fun QuickLinksRow(
     )
   }
 }
-
 @Composable
 private fun QuickLinkItem(
   label: String,

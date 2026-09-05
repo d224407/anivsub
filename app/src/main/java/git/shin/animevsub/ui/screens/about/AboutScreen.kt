@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.about
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -67,7 +66,6 @@ import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
@@ -79,7 +77,6 @@ fun AboutScreen(
   var showDonationDialog by remember { mutableStateOf(false) }
   var iconClickCount by remember { mutableIntStateOf(0) }
   var showPasswordDialog by remember { mutableStateOf(false) }
-
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -113,7 +110,6 @@ fun AboutScreen(
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Spacer(modifier = Modifier.height(32.dp))
-
       // App icon
       Box(
         modifier = Modifier
@@ -153,26 +149,20 @@ fun AboutScreen(
           modifier = Modifier.size(64.dp)
         )
       }
-
       Spacer(modifier = Modifier.height(16.dp))
-
       Text(
         text = stringResource(R.string.app_name),
         color = TextPrimary,
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
       )
-
       Spacer(modifier = Modifier.height(8.dp))
-
       Text(
         text = stringResource(R.string.version, BuildConfig.VERSION_NAME),
         color = TextSecondary,
         fontSize = 14.sp
       )
-
       Spacer(modifier = Modifier.height(32.dp))
-
       // About card
       Column(
         modifier = Modifier
@@ -189,25 +179,20 @@ fun AboutScreen(
           textAlign = TextAlign.Center
         )
       }
-
       Spacer(modifier = Modifier.height(16.dp))
-
       // Info cards
       InfoCard(
         title = stringResource(R.string.developer),
         value = stringResource(R.string.developer_name)
       )
-
       InfoCard(
         title = stringResource(R.string.source_code),
         value = "github.com/anime-vsub/app"
       )
-
       InfoCard(
         title = stringResource(R.string.license),
         value = "GNU-GPL v3"
       )
-
       if (uiState.loginUrl.isNotEmpty()) {
         Spacer(modifier = Modifier.height(8.dp))
         InfoCard(
@@ -215,9 +200,7 @@ fun AboutScreen(
           value = uiState.loginUrl
         )
       }
-
       Spacer(modifier = Modifier.height(24.dp))
-
       Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -248,7 +231,6 @@ fun AboutScreen(
           Spacer(modifier = Modifier.size(8.dp))
           Text(text = stringResource(R.string.report), color = TextPrimary)
         }
-
         Button(
           onClick = { showDonationDialog = true },
           modifier = Modifier.weight(1f),
@@ -264,9 +246,7 @@ fun AboutScreen(
           Text(text = stringResource(R.string.donation_title), color = TextPrimary)
         }
       }
-
       Spacer(modifier = Modifier.height(12.dp))
-
       if (uiState.isCheckingUpdate) {
         CircularProgressIndicator(
           color = AccentMain,
@@ -282,20 +262,16 @@ fun AboutScreen(
           Text(text = stringResource(R.string.check_update), color = TextPrimary)
         }
       }
-
       Spacer(modifier = Modifier.height(32.dp))
-
       Text(
         text = stringResource(R.string.made_with_love),
         color = TextGrey,
         fontSize = 12.sp,
         textAlign = TextAlign.Center
       )
-
       Spacer(modifier = Modifier.height(32.dp))
     }
   }
-
   // Update Dialog
   uiState.updateInfo?.let { info ->
     if (info.isNewer) {
@@ -309,19 +285,16 @@ fun AboutScreen(
       )
     }
   }
-
   // Donation Dialog
   if (showDonationDialog) {
     DonationDialog(
       onDismiss = { showDonationDialog = false }
     )
   }
-
   // Developer Password Dialog
   if (showPasswordDialog) {
     var password by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
-
     AlertDialog(
       onDismissRequest = { showPasswordDialog = false },
       title = { Text(stringResource(R.string.unlock_developer_options)) },
@@ -372,7 +345,6 @@ fun AboutScreen(
     )
   }
 }
-
 @Composable
 private fun InfoCard(
   title: String,

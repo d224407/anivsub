@@ -1,11 +1,9 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.remote.api_hidden
-
+import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.model.Comment
 import git.shin.animevsub.data.model.CommentBadge
 import git.shin.animevsub.data.model.VoteType
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class ApiComment(
     val id: Int,

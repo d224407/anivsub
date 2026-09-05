@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,12 +34,10 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
-
 enum class ChatMode {
   RECAP,
   SUMMARY
 }
-
 data class DetailUiState(
   val isLoading: Boolean = true,
   val isRefreshing: Boolean = false,
@@ -67,16 +64,13 @@ data class DetailUiState(
   val episodeNameFromApi: String? = null,
   val lastProgress: Long = 0,
   val chapterProgress: Map<String, WatchProgress> = emptyMap(),
-
   /**
    * The actual season ID from the API (Real ID).
    * Used for: Fetching data from API, managing Cache (chapterCache).
    * This value is always the original ID from the server (e.g., "movie-123").
    */
   val currentSeasonId: String = "",
-
   val displaySeasons: List<DisplaySeason> = emptyList(),
-
   /**
    * The currently selected ID for display in the UI (UI ID).
    * Used for: Highlighting the selected tab, determining the displayed chapter range (max 30),
@@ -84,13 +78,10 @@ data class DetailUiState(
    * Can be a virtual ID (e.g., "movie-123_30").
    */
   val activeDisplaySeasonId: String = "",
-
   val chapterCounts: Map<String, Int> = emptyMap(),
   val isFollowed: Boolean = false,
-
   // User state
   val currentUser: git.shin.animevsub.data.model.User? = null,
-
   // Comments state
   val comments: List<Comment> = emptyList(),
   val totalComments: Int = 0,
@@ -122,7 +113,6 @@ data class DetailUiState(
   val aiEpisodeSummary: String? = null,
   val isAiSummaryLoading: Boolean = false,
   val aiSummaryError: String? = null,
-
   // AI Chat state
   val recapChatMessages: List<git.shin.animevsub.data.repository.ChatMessage> = emptyList(),
   val recapChatSuggestedQuestions: List<String> = emptyList(),
@@ -138,7 +128,6 @@ data class DetailUiState(
       return chapterData.chaps.indexOfFirst { it.id == currentChapter.id }
     }
 }
-
 @HiltViewModel
 class DetailViewModel @Inject constructor(
   private val repository: AnimeRepository,
@@ -147,15 +136,12 @@ class DetailViewModel @Inject constructor(
   private val preferencesManager: PreferencesManager,
   private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
   private val _uiState = MutableStateFlow(DetailUiState())
   val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
-
   private val chapterCache = mutableMapOf<String, ChapterData>()
   private val detailCache = mutableMapOf<String, AnimeDetail>()
   private var sleepTimerJob: Job? = null
   private var breakReminderJob: Job? = null
-
   companion object {
     private const val MAX_AI_CHAT_MESSAGES = 50
     private const val DETAIL_LOAD_TIMEOUT_MS = 15_000L
@@ -168,7 +154,6 @@ class DetailViewModel @Inject constructor(
   private var bedtimeReminderJob: Job? = null
   private var isPlayerPlaying = false
   private var breakReminderTargetTime: Long = 0
-
   init {
     val animeId = savedStateHandle.get<String>("animeId") ?: ""
     val chapterId = savedStateHandle.get<String>("chapterId")
@@ -181,13 +166,11 @@ class DetailViewModel @Inject constructor(
       )
     }
     loadDetail(animeId, chapterId)
-
     viewModelScope.launch {
       repository.user.collect { user ->
         _uiState.update { it.copy(currentUser = user) }
       }
     }
-
     viewModelScope.launch {
       val autoNext = repository.autoNext.first()
       val autoSkip = repository.autoSkip.first()
@@ -198,11 +181,9 @@ class DetailViewModel @Inject constructor(
         )
       }
     }
-
     loadCommentSortOptions()
     startReminders()
   }
-
   private fun startReminders() {
     viewModelScope.launch {
       repository.breakReminderEnabled.collect { enabled ->
@@ -225,13 +206,11 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   private fun startBreakReminder() {
     breakReminderJob?.cancel()
     breakReminderJob = viewModelScope.launch {
       val interval = repository.breakReminderInterval.first()
       breakReminderTargetTime = System.currentTimeMillis() + interval * 60 * 1000L
-
       while (isActive) {
         val remaining = breakReminderTargetTime - System.currentTimeMillis()
         if (remaining <= 0) {
@@ -251,7 +230,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   private fun startBedtimeReminder() {
     bedtimeReminderJob?.cancel()
     bedtimeReminderJob = viewModelScope.launch {
@@ -259,16 +237,13 @@ class DetailViewModel @Inject constructor(
         val startTime = repository.bedtimeReminderStartTime.first()
         val endTime = repository.bedtimeReminderEndTime.first()
         val waitFinish = repository.bedtimeReminderWaitFinish.first()
-
         val now = java.util.Calendar.getInstance()
         val currentMinutes = now.get(java.util.Calendar.HOUR_OF_DAY) * 60 + now.get(java.util.Calendar.MINUTE)
-
         val isBedtime = if (startTime < endTime) {
           currentMinutes in startTime until endTime
         } else {
           currentMinutes !in endTime..<startTime
         }
-
         if (isBedtime) {
           if (!waitFinish) {
             _uiState.update {
@@ -284,7 +259,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun dismissBreakReminder() {
     val wasPlaying = _uiState.value.wasPlayingBeforeReminder
     _uiState.update { it.copy(showBreakReminder = false) }
@@ -293,7 +267,6 @@ class DetailViewModel @Inject constructor(
     }
     startBreakReminder()
   }
-
   fun dismissBedtimeReminder() {
     val wasPlaying = _uiState.value.wasPlayingBeforeReminder
     _uiState.update { it.copy(showBedtimeReminder = false) }
@@ -301,7 +274,6 @@ class DetailViewModel @Inject constructor(
       viewModelScope.launch { _uiEffect.emit(DetailUiEffect.ResumePlayer) }
     }
   }
-
   private fun loadCommentSortOptions() {
     viewModelScope.launch {
       repository.getCommentSortOptions().onSuccess { options ->
@@ -314,7 +286,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   /**
    * Switches between Seasons (or Virtual Seasons).
    * Updates activeDisplaySeasonId for UI selection and chapter range.
@@ -329,21 +300,18 @@ class DetailViewModel @Inject constructor(
     }
     loadChaptersOnly(displaySeason.realId)
   }
-
   private fun updateChapterCount(seasonId: String, count: Int) {
     _uiState.update {
       it.copy(chapterCounts = it.chapterCounts + (seasonId to count))
     }
     updateDisplaySeasons()
   }
-
   /**
    * Split seasons with > 30 chapters into "Virtual Seasons" for better UX.
    */
   private fun updateDisplaySeasons() {
     val detail = _uiState.value.detail ?: return
     val counts = _uiState.value.chapterCounts
-
     val newList = mutableListOf<DisplaySeason>()
     detail.season.forEach { realSeason: Season ->
       val count = counts[realSeason.id]
@@ -375,7 +343,6 @@ class DetailViewModel @Inject constructor(
         )
       }
     }
-
     _uiState.update { state ->
       var activeId = state.activeDisplaySeasonId
       // If current active ID is no longer valid, automatically select the best match
@@ -386,7 +353,6 @@ class DetailViewModel @Inject constructor(
       state.copy(displaySeasons = newList, activeDisplaySeasonId = activeId)
     }
   }
-
   fun loadChaptersOnly(seasonId: String) {
     _uiState.update {
       it.copy(
@@ -395,7 +361,6 @@ class DetailViewModel @Inject constructor(
         chaptersError = null
       )
     }
-
     chapterCache[seasonId]?.let { cachedChapters ->
       _uiState.update { it.copy(chapterData = cachedChapters, isChaptersLoading = false) }
       updateChapterCount(seasonId, cachedChapters.chaps.size)
@@ -405,7 +370,6 @@ class DetailViewModel @Inject constructor(
         val result = withTimeoutOrNull(CHAPTER_LOAD_TIMEOUT_MS.milliseconds) {
           repository.getChapters(seasonId)
         } ?: Result.failure(Exception("Chapter load timed out"))
-
         result
           .onSuccess { chapterData ->
             chapterCache[seasonId] = chapterData
@@ -419,7 +383,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   private fun canPlayNext(): Boolean {
     val state = _uiState.value
     val detail = state.detail ?: return false
@@ -427,15 +390,12 @@ class DetailViewModel @Inject constructor(
     val data = chapterCache[currentAnimeId] ?: return false // yeah sure if current anime not exists cache then it function never called
     val currentChapterId = state.currentChapter?.id ?: return false
     val currentIndex = data.chaps.indexOfFirst { it.id == currentChapterId }
-
     if (currentIndex != -1 && currentIndex + 1 < data.chaps.size) {
       return true
     }
-
     val currentSeasonIdx = detail.season.indexOfFirst { it.id == currentAnimeId }
     return currentSeasonIdx != -1 && currentSeasonIdx + 1 < detail.season.size
   }
-
   fun loadDetail(
     animeId: String,
     targetChapterId: String? = null,
@@ -451,7 +411,6 @@ class DetailViewModel @Inject constructor(
         chaptersError = null
       )
     }
-
     detailCache[animeId]?.let { cachedDetail ->
       _uiState.update { it.copy(detail = cachedDetail, isLoading = false) }
       updateDisplaySeasons()
@@ -462,7 +421,6 @@ class DetailViewModel @Inject constructor(
         val result = withTimeoutOrNull(DETAIL_LOAD_TIMEOUT_MS.milliseconds) {
           repository.getAnimeDetail(animeId)
         } ?: Result.failure(Exception("Detail load timed out"))
-
         result
           .onSuccess { detail ->
             detailCache[animeId] = detail
@@ -476,7 +434,6 @@ class DetailViewModel @Inject constructor(
           }
       }
     }
-
     chapterCache[animeId]?.let { cachedChapters ->
       _uiState.update { it.copy(chapterData = cachedChapters, isChaptersLoading = false) }
       updateChapterCount(animeId, cachedChapters.chaps.size)
@@ -495,7 +452,6 @@ class DetailViewModel @Inject constructor(
         val result = withTimeoutOrNull(CHAPTER_LOAD_TIMEOUT_MS.milliseconds) {
           repository.getChapters(animeId)
         } ?: Result.failure(Exception("Chapter load timed out"))
-
         result
           .onSuccess { chapterData ->
             chapterCache[animeId] = chapterData
@@ -516,7 +472,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   private suspend fun handleInitialChapter(chapterData: ChapterData, targetChapterId: String?) {
     if (chapterData.chaps.isNotEmpty()) {
       val foundChapter = if (targetChapterId != null) {
@@ -524,7 +479,6 @@ class DetailViewModel @Inject constructor(
       } else {
         null
       }
-
       val chapterToPlay = if (foundChapter != null) {
         foundChapter
       } else {
@@ -538,25 +492,20 @@ class DetailViewModel @Inject constructor(
           chapterData.chaps.first()
         }
       }
-
       playChapter(chapterToPlay, _uiState.value.animeId)
     }
   }
-
   fun playChapter(chapter: ChapterInfo, seasonId: String) {
     val data = chapterCache[seasonId] ?: _uiState.value.chapterData ?: return
     val index = data.chaps.indexOfFirst { it.id == chapter.id }
     val isNewSeason = seasonId != _uiState.value.animeId
-
     // Determine appropriate display ID (could be virtual) based on chapter index
     val displayId = if (data.chaps.size > 30 && index >= 0) {
       "${seasonId}_${(index / 30) * 30}"
     } else {
       seasonId
     }
-
     val prevMultiple = _uiState.value.servers.size >= 2
-
     _uiState.update {
       it.copy(
         currentChapter = chapter,
@@ -583,17 +532,14 @@ class DetailViewModel @Inject constructor(
     savedStateHandle["chapterId"] = chapter.id
     isInitialPlayback = true
     autoPlaybackRetryKey = null
-
     if (isNewSeason) {
       loadDetail(seasonId, chapter.id, isSwitchingSeason = true)
     }
-
     loadServers(chapter)
     loadSkipRange(chapter)
     loadHistory(chapter, seasonId)
     loadAllChapterProgress(seasonId)
   }
-
   private fun loadAllChapterProgress(seasonId: String) {
     viewModelScope.launch {
       repository.getWatchProgress(seasonId)
@@ -605,7 +551,6 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   private fun loadHistory(chapter: ChapterInfo, seasonId: String) {
     viewModelScope.launch {
       repository.getSingleProgress(seasonId, chapter.id)
@@ -616,25 +561,21 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   private var lastUpdateJob: Job? = null
   private var isInitialPlayback = true
   private var autoPlaybackRetryKey: String? = null
-
   fun updateHistory(currentPosMs: Long, durationMs: Long) {
     if (_uiState.value.currentUser == null) return
     val currentPos = currentPosMs / 1000.0
     val duration = durationMs / 1000.0
     val state = _uiState.value
     val chapter = state.currentChapter ?: return
-
     // Update local progress map for UI consistency (immediate)
     _uiState.update {
       val newMap = it.chapterProgress.toMutableMap()
       newMap[chapter.id] = WatchProgress(cur = currentPos, dur = duration, chapId = chapter.id)
       it.copy(chapterProgress = newMap)
     }
-
     // Throttle Supabase RPC calls: Only save every N seconds
     if (lastUpdateJob?.isActive == true) return
     lastUpdateJob = viewModelScope.launch {
@@ -642,13 +583,11 @@ class DetailViewModel @Inject constructor(
         delay(8000.milliseconds) // Wait 8 seconds before first sync after restore
         isInitialPlayback = false
       }
-
       // Re-fetch latest data from state to get the most recent position
       val latestState = _uiState.value
       val detail = latestState.detail ?: return@launch
       val currentChapter = latestState.currentChapter ?: return@launch
       val latestProgress = latestState.chapterProgress[currentChapter.id] ?: return@launch
-
       repository.setSingleProgress(
         name = detail.name,
         poster = detail.poster ?: detail.image ?: "",
@@ -659,12 +598,10 @@ class DetailViewModel @Inject constructor(
         cur = latestProgress.cur,
         dur = latestProgress.dur
       )
-
       val interval = repository.historySyncInterval.first()
       delay((interval * 1000L).milliseconds)
     }
   }
-
   private fun loadSkipRange(chapter: ChapterInfo) {
     val detail = _uiState.value.detail ?: return
     viewModelScope.launch {
@@ -680,17 +617,14 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun generateRecap() {
     val detail = _uiState.value.detail ?: return
     val chapter = _uiState.value.currentChapter ?: return
-
     viewModelScope.launch {
       if (!preferencesManager.aiRecapEnabled.first()) {
         _uiState.update { it.copy(aiRecap = null, recapError = null) }
         return@launch
       }
-
       _uiState.update { it.copy(isRecapLoading = true, aiRecap = null, recapError = null) }
       try {
         val language = java.util.Locale.getDefault().displayLanguage
@@ -713,11 +647,9 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun generateEpisodeSummary(currentTimeMs: Long) {
     val detail = _uiState.value.detail ?: return
     val chapter = _uiState.value.currentChapter ?: return
-
     _uiState.update { it.copy(isAiSummaryLoading = true, aiSummaryError = null, aiEpisodeSummary = null) }
     viewModelScope.launch {
       try {
@@ -737,30 +669,24 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun clearAiSummary() {
     _uiState.update { it.copy(aiEpisodeSummary = null, aiSummaryError = null) }
   }
-
   fun retryRecap() {
     generateRecap()
   }
-
   fun initAiChat(mode: ChatMode) {
     val detail = _uiState.value.detail ?: return
     val chapter = _uiState.value.currentChapter
-
     val hasMessages = if (mode == ChatMode.RECAP) {
       _uiState.value.recapChatMessages.isNotEmpty()
     } else {
       _uiState.value.summaryChatMessages.isNotEmpty()
     }
-
     if (hasMessages) {
       _uiState.update { it.copy(aiChatMode = mode, aiChatError = null) }
       return
     }
-
     _uiState.update {
       it.copy(
         aiChatMode = mode,
@@ -768,11 +694,9 @@ class DetailViewModel @Inject constructor(
         isAiChatLoading = true
       )
     }
-
     viewModelScope.launch {
       try {
         val language = java.util.Locale.getDefault().displayLanguage
-
         if (mode == ChatMode.RECAP) {
           val result = geminiRepository.getRecap(
             animeName = detail.name,
@@ -819,12 +743,10 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun sendAiChatMessage(message: String) {
     val detail = _uiState.value.detail ?: return
     val chapter = _uiState.value.currentChapter
     val mode = _uiState.value.aiChatMode
-
     val currentMessages = if (mode == ChatMode.RECAP) {
       _uiState.value.recapChatMessages.toMutableList()
     } else {
@@ -832,7 +754,6 @@ class DetailViewModel @Inject constructor(
     }
     currentMessages.add(git.shin.animevsub.data.repository.ChatMessage(role = "user", content = message))
     val limitedMessages = currentMessages.takeLast(MAX_AI_CHAT_MESSAGES)
-
     _uiState.update {
       if (mode == ChatMode.RECAP) {
         it.copy(
@@ -848,7 +769,6 @@ class DetailViewModel @Inject constructor(
         )
       }
     }
-
     viewModelScope.launch {
       try {
         val language = java.util.Locale.getDefault().displayLanguage
@@ -859,12 +779,10 @@ class DetailViewModel @Inject constructor(
           currentTimestamp = _uiState.value.lastProgress,
           language = language
         )
-
         val result = geminiRepository.chatWithAI(
           messages = limitedMessages,
           context = context
         )
-
         _uiState.update { state ->
           if (mode == ChatMode.RECAP) {
             val updatedMessages = state.recapChatMessages.toMutableList()
@@ -894,7 +812,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun clearAiChat() {
     val mode = _uiState.value.aiChatMode
     _uiState.update {
@@ -913,13 +830,11 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   private fun loadServers(chapter: ChapterInfo) {
     viewModelScope.launch {
       val result = withTimeoutOrNull(SERVER_LOAD_TIMEOUT_MS.milliseconds) {
         repository.getServers(chapter)
       } ?: Result.failure(Exception("Server load timed out"))
-
       result
         .onSuccess { servers ->
           _uiState.update { it.copy(servers = servers, isServersLoading = false) }
@@ -949,7 +864,6 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun selectServer(server: ServerInfo) {
     val chapter = _uiState.value.currentChapter ?: return
     autoPlaybackRetryKey = null
@@ -966,12 +880,10 @@ class DetailViewModel @Inject constructor(
     }
     loadPlayer(chapter, server)
   }
-
   fun handlePlaybackFailure(message: String) {
     val state = _uiState.value
     val chapter = state.currentChapter ?: return
     val server = state.currentServer ?: return
-
     if (message == PLAYBACK_TIMEOUT_MESSAGE) {
       val retryKey = "${chapter.id}:${server.name}"
       if (autoPlaybackRetryKey != retryKey) {
@@ -981,7 +893,6 @@ class DetailViewModel @Inject constructor(
         return
       }
     }
-
     _uiState.update {
       it.copy(
         isPlayerLoading = false,
@@ -989,13 +900,11 @@ class DetailViewModel @Inject constructor(
       )
     }
   }
-
   private fun loadPlayer(chapter: ChapterInfo, server: ServerInfo) {
     viewModelScope.launch {
       val result = withTimeoutOrNull(PLAYER_LINK_TIMEOUT_MS.milliseconds) {
         repository.getPlayerLink(chapter, server)
       } ?: Result.failure(Exception(PLAYBACK_TIMEOUT_MESSAGE))
-
       result
         .onSuccess { data ->
           _uiState.update {
@@ -1011,7 +920,6 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun playNext(): Boolean {
     val currentAnimeId = _uiState.value.animeId
     val data = chapterCache[currentAnimeId] ?: return false
@@ -1019,7 +927,6 @@ class DetailViewModel @Inject constructor(
     val currentIndex = data.chaps.indexOfFirst { it.id == currentChapterId }
     if (currentIndex == -1) return false
     val nextIndex = currentIndex + 1
-
     if (nextIndex < data.chaps.size) {
       playChapter(data.chaps[nextIndex], currentAnimeId)
       return true
@@ -1031,14 +938,12 @@ class DetailViewModel @Inject constructor(
         if (currentSeasonIdx != -1 && currentSeasonIdx + 1 < detail.season.size) {
           val nextSeason = detail.season[currentSeasonIdx + 1]
           loadDetail(nextSeason.id, isSwitchingSeason = true) // yes it
-
           return true
         }
       }
     }
     return false
   }
-
   fun retryPlayer() {
     val state = _uiState.value
     if (state.currentChapter != null) {
@@ -1052,7 +957,6 @@ class DetailViewModel @Inject constructor(
       loadSkipRange(state.currentChapter)
     }
   }
-
   suspend fun addToPlaylist(playlistId: Int): Result<Unit> {
     if (!checkLogin()) return Result.failure(Exception("Login required"))
     val detail = _uiState.value.detail ?: return Result.failure(Exception("Detail not found"))
@@ -1069,7 +973,6 @@ class DetailViewModel @Inject constructor(
       chapName = chapter.name
     ).map { }
   }
-
   suspend fun removeFromPlaylist(playlistId: Int): Result<Unit> {
     if (!checkLogin()) return Result.failure(Exception("Login required"))
     return playlistRepository.deleteAnimeFromPlaylist(playlistId, _uiState.value.currentSeasonId)
@@ -1094,18 +997,15 @@ class DetailViewModel @Inject constructor(
 //      }
 //    }
 //  }
-
   fun refresh() {
     viewModelScope.launch {
       _uiState.update { it.copy(isRefreshing = true) }
       val animeId = _uiState.value.animeId
       val currentSeasonId = _uiState.value.currentSeasonId
-
       // Reload detail
       val detailResult = withTimeoutOrNull(DETAIL_LOAD_TIMEOUT_MS.milliseconds) {
         repository.getAnimeDetail(animeId)
       } ?: Result.failure(Exception("Detail load timed out"))
-
       detailResult
         .onSuccess { detail ->
           detailCache[animeId] = detail
@@ -1114,12 +1014,10 @@ class DetailViewModel @Inject constructor(
           checkFollow()
           loadComments()
         }
-
       // Reload chapters for current season
       val chapterResult = withTimeoutOrNull(CHAPTER_LOAD_TIMEOUT_MS.milliseconds) {
         repository.getChapters(currentSeasonId)
       } ?: Result.failure(Exception("Chapter load timed out"))
-
       chapterResult
         .onSuccess { chapterData ->
           chapterCache[currentSeasonId] = chapterData
@@ -1127,15 +1025,12 @@ class DetailViewModel @Inject constructor(
           updateChapterCount(currentSeasonId, chapterData.chaps.size)
           loadAllChapterProgress(currentSeasonId)
         }
-
       _uiState.update { it.copy(isRefreshing = false) }
     }
   }
-
   fun retry() {
     loadDetail(_uiState.value.animeId, _uiState.value.initialChapterId)
   }
-
   fun checkFollow() {
     val animeId = _uiState.value.animeId
     viewModelScope.launch {
@@ -1144,10 +1039,8 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   private val _uiEffect = MutableSharedFlow<DetailUiEffect>()
   val uiEffect: SharedFlow<DetailUiEffect> = _uiEffect.asSharedFlow()
-
   sealed class DetailUiEffect {
     data class ShowSnackbar(val message: String) : DetailUiEffect()
     data object RequireLogin : DetailUiEffect()
@@ -1155,7 +1048,6 @@ class DetailViewModel @Inject constructor(
     data object PausePlayer : DetailUiEffect()
     data object ResumePlayer : DetailUiEffect()
   }
-
   private fun checkLogin(): Boolean {
     if (_uiState.value.currentUser == null) {
       viewModelScope.launch {
@@ -1165,7 +1057,6 @@ class DetailViewModel @Inject constructor(
     }
     return true
   }
-
   fun onSaveClick() {
     if (checkLogin()) {
       viewModelScope.launch {
@@ -1173,7 +1064,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun toggleFollow() {
     if (!checkLogin()) return
     val animeId = _uiState.value.animeId
@@ -1187,19 +1077,14 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   // ======== Comment Logic ========
-
   fun loadComments(append: Boolean = false, animeDetail: AnimeDetail? = null) {
     val filmId = _uiState.value.animeId
     val anime = animeDetail ?: _uiState.value.detail ?: return
     val sort = _uiState.value.commentSort
     val offset = if (append) _uiState.value.commentsOffset else 0
-
     if (_uiState.value.isCommentsLoading) return
-
     _uiState.update { it.copy(isCommentsLoading = true, commentError = null) }
-
     viewModelScope.launch {
       repository.getComments(filmId, anime, sort, offset)
         .onSuccess { response ->
@@ -1219,17 +1104,14 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun loadMoreComments() {
     if (_uiState.value.hasMoreComments) {
       loadComments(append = true)
     }
   }
-
   fun loadReplies(commentId: String, append: Boolean = false) {
     val sort = _uiState.value.commentSort
     val offset = if (append) _uiState.value.repliesOffset[commentId] ?: 0 else 0
-
     viewModelScope.launch {
       repository.getReplies(commentId, sort, offset)
         .onSuccess { response ->
@@ -1245,16 +1127,13 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun postComment(content: String, isSpoiler: Boolean = false, parentId: String = "0") {
     if (!checkLogin()) return
     if (content.isBlank()) return
     val filmId = _uiState.value.animeId
     val episodeId = _uiState.value.currentChapter?.id
     val threadKey = _uiState.value.currentChapter?.name ?: _uiState.value.animeId
-
     _uiState.update { it.copy(isPostingComment = true) }
-
     viewModelScope.launch {
       repository.postComment(filmId, content, isSpoiler, episodeId, parentId, threadKey)
         .onSuccess { response ->
@@ -1283,7 +1162,6 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun voteComment(commentId: String, voteType: VoteType) {
     if (!checkLogin()) return
     viewModelScope.launch {
@@ -1311,7 +1189,6 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun editComment(commentId: String, content: String, isSpoiler: Boolean = false) {
     if (!checkLogin()) return
     viewModelScope.launch {
@@ -1339,7 +1216,6 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun onCommentTrigger(trigger: Trigger, parentId: String = "0") {
     if (!checkLogin()) return
     viewModelScope.launch {
@@ -1362,7 +1238,6 @@ class DetailViewModel @Inject constructor(
                 }
               }
             }
-
             "report_comment" -> {
               _uiEffect.emit(DetailUiEffect.ShowSnackbar("REPORT_SUCCESS"))
             }
@@ -1373,23 +1248,19 @@ class DetailViewModel @Inject constructor(
         }
     }
   }
-
   fun updateCommentSort(sort: FilterOption) {
     if (_uiState.value.commentSort?.id == sort.id) return
     _uiState.update { it.copy(commentSort = sort, comments = emptyList(), commentsOffset = 0) }
     loadComments()
   }
-
   fun toggleSyncMode() {
     _uiState.update {
       it.copy(syncMode = (it.syncMode + 1) % 3)
     }
   }
-
   fun setSyncMode(mode: Int) {
     _uiState.update { it.copy(syncMode = mode) }
   }
-
   fun setSleepTimer(minutes: Int) {
     sleepTimerJob?.cancel()
     sleepTimerJob = null
@@ -1400,7 +1271,6 @@ class DetailViewModel @Inject constructor(
         pauseAfterCurrentEpisode = false
       )
     }
-
     if (minutes > 0) {
       sleepTimerJob = viewModelScope.launch {
         while (isActive && _uiState.value.sleepTimerRemainingSeconds > 0) {
@@ -1422,7 +1292,6 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
-
   fun setPauseAfterCurrentEpisode(enabled: Boolean) {
     sleepTimerJob?.cancel()
     sleepTimerJob = null
@@ -1434,34 +1303,28 @@ class DetailViewModel @Inject constructor(
       )
     }
   }
-
   fun setAutoNext(enabled: Boolean) {
     _uiState.update { it.copy(autoNext = enabled) }
     viewModelScope.launch {
       repository.setAutoNext(enabled)
     }
   }
-
   fun onEpisodeEnded(): Boolean {
     if (!canPlayNext()) return false
-
     if (_uiState.value.pauseAfterCurrentEpisode) {
       _uiState.update { it.copy(pauseAfterCurrentEpisode = false) }
       return false
     }
-
     // Check if reminders are already shown (e.g. non-wait-finish reminders that triggered just before)
     if (_uiState.value.showBreakReminder || _uiState.value.showBedtimeReminder) {
       return false
     }
-
     // This is tricky because Flow is async.
     // We use runBlocking for these quick local DataStore reads to ensure we block the next episode if needed at boundary
     val shouldPlayNext = kotlinx.coroutines.runBlocking {
       val breakEnabled = repository.breakReminderEnabled.first()
       val bedtimeEnabled = repository.bedtimeReminderEnabled.first()
       val waitFinish = repository.bedtimeReminderWaitFinish.first()
-
       if (waitFinish) {
         if (breakEnabled && breakReminderTargetTime != 0L && System.currentTimeMillis() >= breakReminderTargetTime) {
           _uiState.update {
@@ -1493,10 +1356,8 @@ class DetailViewModel @Inject constructor(
       }
       true
     }
-
     return shouldPlayNext
   }
-
   fun setPlayerPlaying(playing: Boolean) {
     isPlayerPlaying = playing
   }

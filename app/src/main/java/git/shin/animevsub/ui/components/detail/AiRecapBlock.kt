@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.detail
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,7 +36,6 @@ import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.tvFocusScale
 import androidx.compose.ui.graphics.Color
 import git.shin.animevsub.ui.theme.GithubBlue
-
 @Composable
 fun AiRecapBlock(
   aiRecap: String?,
@@ -91,7 +89,6 @@ fun AiRecapBlock(
           )
         }
       }
-
       if (!aiRecap.isNullOrBlank()) {
         MarkdownText(
           markdown = aiRecap,

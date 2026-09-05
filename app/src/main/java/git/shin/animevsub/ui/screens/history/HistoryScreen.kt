@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.history
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +40,6 @@ import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import java.time.LocalDate
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
@@ -51,20 +49,17 @@ fun HistoryScreen(
 ) {
   val uiState by viewModel.uiState.collectAsState()
   val listState = rememberLazyListState()
-
   val shouldLoadMore = remember {
     derivedStateOf {
       val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
       lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 5
     }
   }
-
   LaunchedEffect(shouldLoadMore.value) {
     if (shouldLoadMore.value && !uiState.isLoadingMore && uiState.hasMore) {
       viewModel.loadMore()
     }
   }
-
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -102,14 +97,12 @@ fun HistoryScreen(
               items(10) { HistoryItemRowSkeleton() }
             }
           }
-
           uiState.error != null && uiState.groupedItems.isEmpty() -> {
             ErrorScreen(
               error = uiState.error,
               onRetry = { viewModel.retry() }
             )
           }
-
           uiState.groupedItems.isEmpty() -> {
             Box(
               modifier = Modifier.fillMaxSize(),
@@ -118,7 +111,6 @@ fun HistoryScreen(
               Text(text = stringResource(R.string.no_history), color = TextGrey)
             }
           }
-
           else -> {
             LazyColumn(
               state = listState,
@@ -135,7 +127,6 @@ fun HistoryScreen(
                   )
                 }
               }
-
               if (uiState.isLoadingMore) {
                 item {
                   Box(
@@ -155,19 +146,16 @@ fun HistoryScreen(
     }
   }
 }
-
 @Composable
 fun HistoryDateHeader(dateStr: String) {
   val date = LocalDate.parse(dateStr)
   val today = LocalDate.now()
   val yesterday = today.minusDays(1)
-
   val headerText = when (date) {
     today -> stringResource(R.string.today)
     yesterday -> stringResource(R.string.yesterday)
     else -> stringResource(R.string.history_date_format, date.dayOfMonth, date.monthValue)
   }
-
   Text(
     text = headerText,
     color = TextPrimary,

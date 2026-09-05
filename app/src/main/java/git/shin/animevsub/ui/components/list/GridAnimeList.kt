@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.list
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.data.model.AnimeCard
 import git.shin.animevsub.ui.components.anime.AnimeCardItem
-
 /**
  * A simple grid-like list for use inside a vertical scrollable column (like HomeScreen).
  * This is NOT a LazyVerticalGrid.

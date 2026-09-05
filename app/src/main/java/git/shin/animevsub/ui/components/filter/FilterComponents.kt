@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.filter
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -43,7 +42,6 @@ import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.tvFocusScale
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterActionRow(
@@ -61,7 +59,6 @@ fun FilterActionRow(
     items(groups) { group ->
       val activeFiltersInGroup = selectedFilters.filter { it.groupId == group.id }
       val isSelected = activeFiltersInGroup.isNotEmpty()
-
       val labelText = if (activeFiltersInGroup.isEmpty()) {
         group.name
       } else {
@@ -71,7 +68,6 @@ fun FilterActionRow(
           "${group.name} (${activeFiltersInGroup.size})"
         }
       }
-
       FilterChip(
         selected = isSelected,
         onClick = { onGroupClick(group) },
@@ -111,7 +107,6 @@ fun FilterActionRow(
     }
   }
 }
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun FiltersBottomSheet(
@@ -121,7 +116,6 @@ fun FiltersBottomSheet(
   onUpdateFilter: (SelectedFilter) -> Unit
 ) {
   val sheetState = rememberModalBottomSheetState()
-
   ModalBottomSheet(
     onDismissRequest = onDismiss,
     sheetState = sheetState,
@@ -142,7 +136,6 @@ fun FiltersBottomSheet(
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(16.dp)
       )
-
       groups.forEach { group ->
         Column(modifier = Modifier.padding(bottom = 16.dp)) {
           Text(
@@ -152,7 +145,6 @@ fun FiltersBottomSheet(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
           )
-
           FlowRow(
             modifier = Modifier
               .fillMaxWidth()
@@ -164,7 +156,6 @@ fun FiltersBottomSheet(
                 selectedFilters.find { it.id == option.id && it.groupId == group.id }
               val isSelected = filterInList?.include == true
               val isExcluded = filterInList?.exclude == true
-
               FilterChip(
                 selected = isSelected || isExcluded,
                 onClick = {
@@ -176,7 +167,6 @@ fun FiltersBottomSheet(
                       include = true,
                       exclude = false
                     )
-
                     isSelected -> SelectedFilter(
                       group.id,
                       option.id,
@@ -184,7 +174,6 @@ fun FiltersBottomSheet(
                       include = false,
                       exclude = true
                     )
-
                     else -> SelectedFilter(
                       group.id,
                       option.id,

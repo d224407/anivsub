@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.grid
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.data.model.AnimeCard
 import git.shin.animevsub.ui.components.anime.RankingItem
-
 @Composable
 fun VerticalGridRankingList(
   items: List<AnimeCard>,

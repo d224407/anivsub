@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.history
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +13,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import javax.inject.Inject
-
 data class HistoryUiState(
   val isLoading: Boolean = true,
   val isRefreshing: Boolean = false,
@@ -24,25 +22,19 @@ data class HistoryUiState(
   val hasMore: Boolean = true,
   val isLoadingMore: Boolean = false
 )
-
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
   private val repository: HistoryRepository
 ) : ViewModel() {
-
   private val _uiState = MutableStateFlow(HistoryUiState())
   val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
-
   private val allItems = mutableListOf<HistoryItem>()
-
   companion object {
     private const val MAX_HISTORY_ITEMS = 500
   }
-
   init {
     loadHistory(1)
   }
-
   fun loadHistory(page: Int, isRefreshing: Boolean = false) {
     viewModelScope.launch {
       if (page == 1) {
@@ -55,7 +47,6 @@ class HistoryViewModel @Inject constructor(
       } else {
         _uiState.update { it.copy(isLoadingMore = true) }
       }
-
       repository.getHistory(page)
         .onSuccess { items ->
           allItems.addAll(items)
@@ -87,11 +78,9 @@ class HistoryViewModel @Inject constructor(
         }
     }
   }
-
   fun refresh() {
     loadHistory(1, isRefreshing = true)
   }
-
   private fun groupItems(items: List<HistoryItem>): Map<String, List<HistoryItem>> = items.groupBy { item ->
     val date = try {
       ZonedDateTime.parse(item.createdAt).toLocalDate()
@@ -101,13 +90,11 @@ class HistoryViewModel @Inject constructor(
     }
     date.toString() // Store as ISO string for key, will format in UI
   }
-
   fun loadMore() {
     if (!_uiState.value.isLoadingMore && _uiState.value.hasMore) {
       loadHistory(_uiState.value.currentPage + 1)
     }
   }
-
   fun retry() {
     loadHistory(1)
   }

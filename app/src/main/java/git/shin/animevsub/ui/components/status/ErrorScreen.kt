@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.status
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.TextSecondary
-
 @Composable
 fun ErrorScreen(
   error: String?,

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.home
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,21 +29,17 @@ import androidx.compose.ui.unit.dp
 import git.shin.animevsub.ui.components.anime.SkeletonCard
 import git.shin.animevsub.ui.utils.shimmerEffect
 import git.shin.animevsub.utils.ResponsiveUtils
-
 @Composable
 fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
   val columns = ResponsiveUtils.calculateGridColumns(windowSize)
-
   val aspectRatio = when {
     windowSize.heightSizeClass == WindowHeightSizeClass.Compact -> {
       if (windowSize.widthSizeClass == WindowWidthSizeClass.Expanded) 16f / 4f else 16f / 5f
     }
-
     windowSize.widthSizeClass == WindowWidthSizeClass.Expanded -> 16f / 6f
     windowSize.widthSizeClass == WindowWidthSizeClass.Medium -> 16f / 8f
     else -> 16f / 9.5f
   }
-
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -57,7 +52,6 @@ fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
         .aspectRatio(aspectRatio)
         .shimmerEffect()
     )
-
     // Quick links skeleton
     Row(
       modifier = Modifier
@@ -84,7 +78,6 @@ fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
         }
       }
     }
-
     // This Season (Horizontal Scroll)
     SectionSkeleton()
     LazyRow(
@@ -97,7 +90,6 @@ fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
         SkeletonCard(modifier = Modifier.width(110.dp))
       }
     }
-
     // Nominated (Grid responsive columns)
     Spacer(modifier = Modifier.height(24.dp))
     SectionSkeleton()
@@ -118,7 +110,6 @@ fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
         Spacer(modifier = Modifier.height(16.dp))
       }
     }
-
     // Top / Hot Update (Horizontal)
     Spacer(modifier = Modifier.height(8.dp))
     SectionSkeleton()
@@ -132,11 +123,9 @@ fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
         SkeletonCard(modifier = Modifier.width(110.dp))
       }
     }
-
     Spacer(modifier = Modifier.height(100.dp))
   }
 }
-
 @Composable
 private fun SectionSkeleton() {
   Box(

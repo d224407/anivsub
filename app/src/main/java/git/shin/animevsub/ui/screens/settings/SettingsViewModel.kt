@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.settings
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 data class SettingsUiState(
   val autoNext: Boolean = PreferencesManager.DEFAULT_AUTO_NEXT,
   val autoSkip: Boolean = PreferencesManager.DEFAULT_AUTO_SKIP,
@@ -65,17 +63,14 @@ data class SettingsUiState(
   val testResult: String? = null,
   val testSuccess: Boolean = false
 )
-
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
   @param:ApplicationContext private val context: Context,
   private val repository: AnimeRepository,
   private val geminiRepository: git.shin.animevsub.data.repository.GeminiRepository
 ) : ViewModel() {
-
   private val _uiState = MutableStateFlow(SettingsUiState())
   val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
-
   init {
     viewModelScope.launch {
       repository.autoNext.collect { v ->
@@ -283,35 +278,29 @@ class SettingsViewModel @Inject constructor(
       }
     }
   }
-
   fun setGeminiApiKey(value: String) {
     _uiState.update { it.copy(geminiApiKey = value) }
     viewModelScope.launch { repository.setGeminiApiKey(value) }
   }
-
   fun loadAvailableModels() {
     val key = _uiState.value.geminiApiKey
     if (key.isBlank()) return
-
     viewModelScope.launch {
       _uiState.update { it.copy(isLoadingModels = true) }
       val models = geminiRepository.listAvailableModels()
       _uiState.update { it.copy(availableModels = models, isLoadingModels = false) }
     }
   }
-
   fun setGeminiModel(value: String) {
     viewModelScope.launch {
       repository.setGeminiModel(value)
       geminiRepository.saveModel(value)
     }
   }
-
   fun testGeminiKey() {
     val key = _uiState.value.geminiApiKey
     val model = _uiState.value.geminiModel
     if (key.isBlank()) return
-
     viewModelScope.launch {
       _uiState.update { it.copy(isTestingKey = true, testResult = null) }
       val result = geminiRepository.testApiKey(key)
@@ -336,11 +325,9 @@ class SettingsViewModel @Inject constructor(
       }
     }
   }
-
   fun testOpenAIKey() {
     val key = _uiState.value.openaiApiKey
     if (key.isBlank()) return
-
     viewModelScope.launch {
       _uiState.update { it.copy(isTestingKey = true, testResult = null) }
       val result = geminiRepository.testOpenAI(key, _uiState.value.openaiModel, _uiState.value.openaiEndpoint)
@@ -365,11 +352,9 @@ class SettingsViewModel @Inject constructor(
       }
     }
   }
-
   fun testClaudeKey() {
     val key = _uiState.value.claudeApiKey
     if (key.isBlank()) return
-
     viewModelScope.launch {
       _uiState.update { it.copy(isTestingKey = true, testResult = null) }
       val result = geminiRepository.testClaude(key, _uiState.value.claudeModel, _uiState.value.claudeEndpoint)
@@ -394,156 +379,120 @@ class SettingsViewModel @Inject constructor(
       }
     }
   }
-
   fun setAiSummaryEnabled(value: Boolean) {
     viewModelScope.launch { repository.setAiSummaryEnabled(value) }
   }
-
   fun setAiRecapEnabled(value: Boolean) {
     viewModelScope.launch { repository.setAiRecapEnabled(value) }
   }
-
   fun setAiProvider(value: String) {
     viewModelScope.launch { repository.setAiProvider(value) }
     _uiState.update { it.copy(aiProvider = value) }
   }
-
   fun setOpenaiApiKey(value: String) {
     _uiState.update { it.copy(openaiApiKey = value) }
     viewModelScope.launch { repository.setOpenaiApiKey(value) }
   }
-
   fun setOpenaiModel(value: String) {
     viewModelScope.launch { repository.setOpenaiModel(value) }
     _uiState.update { it.copy(openaiModel = value) }
   }
-
   fun setOpenaiEndpoint(value: String) {
     _uiState.update { it.copy(openaiEndpoint = value) }
     viewModelScope.launch { repository.setOpenaiEndpoint(value) }
   }
-
   fun setClaudeApiKey(value: String) {
     _uiState.update { it.copy(claudeApiKey = value) }
     viewModelScope.launch { repository.setClaudeApiKey(value) }
   }
-
   fun setClaudeModel(value: String) {
     viewModelScope.launch { repository.setClaudeModel(value) }
     _uiState.update { it.copy(claudeModel = value) }
   }
-
   fun setClaudeEndpoint(value: String) {
     _uiState.update { it.copy(claudeEndpoint = value) }
     viewModelScope.launch { repository.setClaudeEndpoint(value) }
   }
-
   fun setAutoNext(value: Boolean) {
     viewModelScope.launch { repository.setAutoNext(value) }
   }
-
   fun setAutoSkip(value: Boolean) {
     viewModelScope.launch { repository.setAutoSkip(value) }
   }
-
   fun setAutoSyncNotify(value: Boolean) {
     viewModelScope.launch { repository.setAutoSyncNotify(value) }
   }
-
   fun setEnableBackgroundSync(value: Boolean) {
     viewModelScope.launch { repository.setEnableBackgroundSync(value) }
   }
-
   fun setEnableNotifications(value: Boolean) {
     viewModelScope.launch { repository.setEnableNotifications(value) }
   }
-
   fun setNotifyInterval(value: Int) {
     viewModelScope.launch { repository.setNotifyInterval(value) }
   }
-
   fun setDbNotifyInterval(value: Int) {
     viewModelScope.launch { repository.setDbNotifyInterval(value) }
   }
-
   fun setVolumeGesture(value: Boolean) {
     viewModelScope.launch { repository.setVolumeGesture(value) }
   }
-
   fun setBrightnessGesture(value: Boolean) {
     viewModelScope.launch { repository.setBrightnessGesture(value) }
   }
-
   fun setBreakReminderEnabled(value: Boolean) {
     viewModelScope.launch { repository.setBreakReminderEnabled(value) }
   }
-
   fun setBreakReminderInterval(value: Int) {
     viewModelScope.launch { repository.setBreakReminderInterval(value) }
   }
-
   fun setBedtimeReminderEnabled(value: Boolean) {
     viewModelScope.launch { repository.setBedtimeReminderEnabled(value) }
   }
-
   fun setBedtimeReminderStartTime(minutes: Long) {
     viewModelScope.launch { repository.setBedtimeReminderStartTime(minutes) }
   }
-
   fun setBedtimeReminderEndTime(minutes: Long) {
     viewModelScope.launch { repository.setBedtimeReminderEndTime(minutes) }
   }
-
   fun setBedtimeReminderWaitFinish(value: Boolean) {
     viewModelScope.launch { repository.setBedtimeReminderWaitFinish(value) }
   }
-
   fun setAppLanguage(value: String) {
     viewModelScope.launch { repository.setAppLanguage(value) }
   }
-
   fun setAppIcon(value: String) {
     viewModelScope.launch { repository.setAppIcon(value) }
   }
-
   fun setHideDonationPopup(value: Boolean) {
     viewModelScope.launch { repository.setHideDonationPopup(value) }
   }
-
   fun setScreenTransition(value: String) {
     viewModelScope.launch { repository.setScreenTransition(value) }
   }
-
   fun setDynamicColor(value: Boolean) {
     viewModelScope.launch { repository.setDynamicColor(value) }
   }
-
   fun setHistorySyncInterval(value: Int) {
     viewModelScope.launch { repository.setHistorySyncInterval(value) }
   }
-
   fun setFlagSecure(value: Boolean) {
     viewModelScope.launch { repository.setFlagSecure(value) }
   }
-
   fun setMinBufferMs(value: Int) {
     viewModelScope.launch {
       repository.setMinBufferMs(value)
-
       if (value >= uiState.value.maxBufferMs) {
         repository.setMaxBufferMs(value)
       }
     }
   }
-
   fun setMaxBufferMs(value: Int) {
     viewModelScope.launch { repository.setMaxBufferMs(value) }
   }
-
   fun setBufferForPlaybackMs(value: Int) {
     viewModelScope.launch {
       repository.setBufferForPlaybackMs(value)
-
       if (value >= uiState.value.minBufferMs) {
         repository.setMinBufferMs(value)
       }
@@ -552,11 +501,9 @@ class SettingsViewModel @Inject constructor(
       }
     }
   }
-
   fun setBufferForPlaybackAfterRebufferMs(value: Int) {
     viewModelScope.launch {
       repository.setBufferForPlaybackAfterRebufferMs(value)
-
       if (value >= uiState.value.minBufferMs) {
         repository.setMinBufferMs(value)
       }
@@ -565,19 +512,15 @@ class SettingsViewModel @Inject constructor(
       }
     }
   }
-
   fun setPrioritizeTimeOverSize(value: Boolean) {
     viewModelScope.launch { repository.setPrioritizeTimeOverSize(value) }
   }
-
   fun setDnsMode(value: String) {
     viewModelScope.launch { repository.setDnsMode(value) }
   }
-
   fun setCustomDnsUrl(value: String) {
     viewModelScope.launch { repository.setCustomDnsUrl(value) }
   }
-
   fun testNotification() {
     val helper = NotificationHelper(context)
     helper.showNotification(

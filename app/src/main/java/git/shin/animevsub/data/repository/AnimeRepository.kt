@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.repository
-
+import kotlin.time.Duration.Companion.milliseconds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import git.shin.animevsub.data.local.ApiStorage
@@ -49,7 +48,6 @@ import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
-
 @Singleton
 class AnimeRepository @Inject constructor(
   private val api: AnimeDataSource,
@@ -61,13 +59,10 @@ class AnimeRepository @Inject constructor(
   private val analytics: FirebaseAnalytics
 ) {
   private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
   private val _notifications = MutableStateFlow<NotificationData?>(null)
   val notifications = _notifications.asStateFlow()
-
   private val _authEvent = MutableSharedFlow<AuthEvent>(extraBufferCapacity = 1)
   val authEvent = _authEvent.asSharedFlow()
-
   suspend fun refreshUser(): Result<User> = runCatching {
     try {
       val user = api.refreshUser()
@@ -81,14 +76,11 @@ class AnimeRepository @Inject constructor(
       throw e
     }
   }
-
   sealed class AuthEvent {
     object PromptForAction : AuthEvent()
   }
-
   // Home
   suspend fun getHomePage(): Result<HomeData> = runCatching { api.getHomePage() }
-
   // Detail
   suspend fun getAnimeDetail(animeId: String): Result<AnimeDetail> = runCatching {
     val result = api.getAnimeDetail(animeId)
@@ -98,7 +90,6 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
-
   // Chapters
   suspend fun getChapters(animeId: String): Result<ChapterData> = runCatching {
     val result = api.getChapters(animeId)
@@ -107,16 +98,13 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
-
   // Rankings
   suspend fun getRankingTypes(): Result<List<FilterOption>> = runCatching {
     api.getRankingTypes()
   }
-
   suspend fun getCommentSortOptions(): Result<List<FilterOption>> = runCatching {
     api.getCommentSortOptions()
   }
-
   suspend fun getRankings(type: String): Result<List<AnimeCard>> = runCatching {
     val result = api.getRankings(type)
     analytics.logEvent("view_rankings") {
@@ -124,7 +112,6 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
-
   // Schedule
   suspend fun getSchedule(): Result<List<ScheduleDay>> = runCatching {
     val result = api.getSchedule()
@@ -133,19 +120,16 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
-
   // Search
   suspend fun preSearch(keyword: String): Result<List<SearchSuggestion>> = runCatching {
     api.preSearch(keyword)
   }
-
   suspend fun search(keyword: String, page: Int = 1): Result<CategoryPage> = runCatching {
     analytics.logEvent(FirebaseAnalytics.Event.SEARCH) {
       param(FirebaseAnalytics.Param.SEARCH_TERM, keyword)
     }
     api.search(keyword, page)
   }
-
   // Category
   suspend fun getCategory(
     filters: List<SelectedFilter>,
@@ -158,16 +142,13 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
-
   suspend fun getFilters(filters: List<SelectedFilter>): Result<List<FilterGroup>> = runCatching {
     api.getFilters(filters)
   }
-
   // Player
   suspend fun getServers(chapter: ChapterInfo): Result<List<ServerInfo>> = runCatching {
     api.getServers(chapter)
   }
-
   suspend fun getPlayerLink(chapter: ChapterInfo, server: ServerInfo): Result<PlayerConfig> = runCatching {
     val playerData = api.getPlayerLink(server)
     analytics.logEvent("play_video") {
@@ -182,7 +163,6 @@ class AnimeRepository @Inject constructor(
       segmentDataInterceptor = api.segmentDataInterceptor
     )
   }
-
   // Skip Range
   suspend fun getSkipRange(
     animeId: String,
@@ -191,7 +171,6 @@ class AnimeRepository @Inject constructor(
   ): Result<InOutroEpisode?> = runCatching {
     api.getEpisodeSkip(animeId, detail, chapter)
   }
-
   // Auth
   val user: Flow<User?> = flow {
     emitAll(api.getUser())
@@ -204,7 +183,6 @@ class AnimeRepository @Inject constructor(
       }
     }
   val isLoggedIn: Flow<Boolean> = user.map { it != null }
-
   init {
     repositoryScope.launch {
       // Load cached notifications
@@ -215,7 +193,6 @@ class AnimeRepository @Inject constructor(
           print(e)
         }
       }
-
       // Sync notifications and refresh user when logged in
       isLoggedIn.collect { loggedIn ->
         if (loggedIn) {
@@ -232,9 +209,7 @@ class AnimeRepository @Inject constructor(
       }
     }
   }
-
   val loginUrl: String get() = api.loginUrl
-
 //  suspend fun login(email: String, password: String): Result<User> = runCatching {
 //    val user = api.login(email, password)
 //    historyRepository.upsertUser(user)
@@ -244,11 +219,9 @@ class AnimeRepository @Inject constructor(
 //    analytics.setUserId(user.username)
 //    user
 //  }
-
   suspend fun logout() {
     api.logout()
   }
-
   // Settings
   val autoNext = prefs.autoNext
   val autoSkip = prefs.autoSkip
@@ -278,7 +251,6 @@ class AnimeRepository @Inject constructor(
   val geminiApiKey = prefs.geminiApiKey
   val geminiModel = prefs.geminiModel
   val flagSecure = prefs.flagSecure
-
   val minBufferMs = prefs.minBufferMs
   val maxBufferMs = prefs.maxBufferMs
   val bufferForPlaybackMs = prefs.bufferForPlaybackMs
@@ -286,25 +258,21 @@ class AnimeRepository @Inject constructor(
   val prioritizeTimeOverSize = prefs.prioritizeTimeOverSize
   val dnsMode = prefs.dnsMode
   val customDnsUrl = prefs.customDnsUrl
-
   val breakReminderEnabled = prefs.breakReminderEnabled
   val breakReminderInterval = prefs.breakReminderInterval
   val bedtimeReminderEnabled = prefs.bedtimeReminderEnabled
   val bedtimeReminderStartTime = prefs.bedtimeReminderStartTime
   val bedtimeReminderEndTime = prefs.bedtimeReminderEndTime
   val bedtimeReminderWaitFinish = prefs.bedtimeReminderWaitFinish
-
   suspend fun setAutoNext(value: Boolean) = prefs.setAutoNext(value)
   suspend fun setAutoSkip(value: Boolean) = prefs.setAutoSkip(value)
   suspend fun setVolumeGesture(value: Boolean) = prefs.setVolumeGesture(value)
   suspend fun setBrightnessGesture(value: Boolean) = prefs.setBrightnessGesture(value)
-
   suspend fun setAutoSyncNotify(value: Boolean) = prefs.setAutoSyncNotify(value)
   suspend fun setNotifyInterval(value: Int) = prefs.setNotifyInterval(value)
   suspend fun setDbNotifyInterval(value: Int) = prefs.setDbNotifyInterval(value)
   suspend fun setEnableBackgroundSync(value: Boolean) = prefs.setEnableBackgroundSync(value)
   suspend fun setEnableNotifications(value: Boolean) = prefs.setEnableNotifications(value)
-
   suspend fun setBreakReminderEnabled(value: Boolean) = prefs.setBreakReminderEnabled(value)
   suspend fun setBreakReminderInterval(value: Int) = prefs.setBreakReminderInterval(value)
   suspend fun setBedtimeReminderEnabled(value: Boolean) = prefs.setBedtimeReminderEnabled(value)
@@ -318,7 +286,6 @@ class AnimeRepository @Inject constructor(
   suspend fun setScreenTransition(value: String) = prefs.setScreenTransition(value)
   suspend fun setDynamicColor(value: Boolean) = prefs.setDynamicColor(value)
   suspend fun setHistorySyncInterval(value: Int) = prefs.setHistorySyncInterval(value)
-
   suspend fun setAiSummaryEnabled(value: Boolean) = prefs.setAiSummaryEnabled(value)
   suspend fun setAiRecapEnabled(value: Boolean) = prefs.setAiRecapEnabled(value)
   suspend fun setAiProvider(value: String) = prefs.setAiProvider(value)
@@ -334,7 +301,6 @@ class AnimeRepository @Inject constructor(
   suspend fun getOpenaiApiKey() = prefs.openaiApiKey.first()
   suspend fun getClaudeApiKey() = prefs.claudeApiKey.first()
   suspend fun setFlagSecure(value: Boolean) = prefs.setFlagSecure(value)
-
   suspend fun setMinBufferMs(value: Int) = prefs.setMinBufferMs(value)
   suspend fun setMaxBufferMs(value: Int) = prefs.setMaxBufferMs(value)
   suspend fun setBufferForPlaybackMs(value: Int) = prefs.setBufferForPlaybackMs(value)
@@ -342,57 +308,46 @@ class AnimeRepository @Inject constructor(
   suspend fun setPrioritizeTimeOverSize(value: Boolean) = prefs.setPrioritizeTimeOverSize(value)
   suspend fun setDnsMode(value: String) = prefs.setDnsMode(value)
   suspend fun setCustomDnsUrl(value: String) = prefs.setCustomDnsUrl(value)
-
   // Search History
   val searchHistory = prefs.searchHistory
   suspend fun addSearchHistory(query: String) = prefs.addSearchHistory(query)
   suspend fun clearSearchHistory() = prefs.clearSearchHistory()
-
   // Notifications
   suspend fun getNotifications(): Result<NotificationData> = runCatching {
     val data = api.getNotifications()
     _notifications.value = data
     storage.set("cached_notifications", json.encodeToString(data))
     notificationDbRepository.getCountNotify()
-
     if (prefs.autoSyncNotify.first() && !notificationDbRepository.isSyncing.value) {
       repositoryScope.launch {
         startSyncNotifications()
       }
     }
-
     data
   }
-
   suspend fun startSyncNotifications(): Result<Unit> = notificationDbRepository.startSync(
     getApiNotifications = { getNotifications() },
     onTrigger = { onTrigger(it) }
   )
-
   suspend fun onTrigger(trigger: Trigger): Result<Unit> = runCatching {
     api.onTrigger(trigger)
   }
-
   // Follows
   suspend fun getFollows(filters: List<SelectedFilter> = emptyList(), page: Int = 1): Result<CategoryPage> = runCatching {
     api.getFollows(filters, page)
   }
-
   suspend fun getFollowFilters(filters: List<SelectedFilter> = emptyList()): Result<List<FilterGroup>> = runCatching {
     api.getFollowFilters(filters)
   }
-
   suspend fun checkFollow(animeId: String): Result<Boolean> = runCatching {
     api.checkFollow(animeId)
   }
-
   suspend fun toggleFollow(animeId: String, follow: Boolean): Result<Unit> = runCatching {
     api.toggleFollow(animeId, follow)
     analytics.logEvent(if (follow) "follow_anime" else "unfollow_anime") {
       param(FirebaseAnalytics.Param.ITEM_ID, animeId)
     }
   }
-
   // Comments
   suspend fun getComments(
     filmId: String,
@@ -402,7 +357,6 @@ class AnimeRepository @Inject constructor(
   ): Result<CommentResponse> = runCatching {
     api.getComments(filmId, anime, sort, offset)
   }
-
   suspend fun getReplies(
     commentId: String,
     sort: FilterOption?,
@@ -410,7 +364,6 @@ class AnimeRepository @Inject constructor(
   ): Result<ReplyResponse> = runCatching {
     api.getReplies(commentId, sort, offset)
   }
-
   suspend fun postComment(
     filmId: String,
     content: String,
@@ -421,11 +374,9 @@ class AnimeRepository @Inject constructor(
   ): Result<PostCommentResponse> = runCatching {
     api.postComment(filmId, content, isSpoiler, episodeId, parentId, threadKey)
   }
-
   suspend fun voteComment(commentId: String, voteType: VoteType): Result<VoteResponse> = runCatching {
     api.voteComment(commentId, voteType)
   }
-
   suspend fun editComment(
     commentId: String,
     content: String,
@@ -433,14 +384,11 @@ class AnimeRepository @Inject constructor(
   ): Result<EditCommentResponse> = runCatching {
     api.editComment(commentId, content, isSpoiler)
   }
-
   // History
   suspend fun getHistory(page: Int) = historyRepository.getHistory(page)
   suspend fun getWatchProgress(seasonId: String) = historyRepository.getWatchProgress(seasonId)
   suspend fun getSingleProgress(seasonId: String, chapId: String) = historyRepository.getSingleProgress(seasonId, chapId)
-
   suspend fun getLastChapOfSeason(seasonId: String) = historyRepository.getLastChapOfSeason(seasonId)
-
   suspend fun setSingleProgress(
     name: String,
     poster: String,

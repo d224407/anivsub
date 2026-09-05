@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.di
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
@@ -25,11 +24,9 @@ import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     @Singleton
     fun provideSupabaseClient(): SupabaseClient = createSupabaseClient(
@@ -39,7 +36,6 @@ object AppModule {
         install(Postgrest)
         install(Auth)
     }
-
     @Provides
     @Singleton
     fun provideJson(): Json = Json {
@@ -48,7 +44,6 @@ object AppModule {
         encodeDefaults = true
         isLenient = true
     }
-
     @Provides
     @Singleton
     @Named(DNS_BOOTSTRAP_CLIENT)
@@ -56,14 +51,12 @@ object AppModule {
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .build()
-
     @Provides
     @Singleton
     fun provideDynamicDns(
         prefs: PreferencesManager,
         @Named(DNS_BOOTSTRAP_CLIENT) dnsBootstrapClient: OkHttpClient
     ): DynamicDns = DynamicDns(prefs, dnsBootstrapClient)
-
     @Provides
     @Singleton
     fun provideOkHttpClient(dynamicDns: DynamicDns): OkHttpClient = OkHttpClient.Builder()
@@ -75,7 +68,6 @@ object AppModule {
         .cookieJar(WebViewCookieJar())
         .dns(dynamicDns)
         .build()
-
     @Provides
     @Singleton
     fun provideAnimeDataSource(
@@ -84,24 +76,19 @@ object AppModule {
         apiStorage: ApiStorage,
         cloudflareManager: CloudflareManager
     ): AnimeDataSource = AnimeApi(client, json, cloudflareManager)
-
     @Provides
     @Singleton
     fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(context)
     }
-
     @Provides
     @Singleton
     fun provideCloudflareManager(@ApplicationContext context: Context): CloudflareManager = CloudflareManager(context)
-
     @Provides
     @Singleton
     fun providePreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
-
     @Provides
     @Singleton
     fun provideApiStorage(@ApplicationContext context: Context): ApiStorage = ApiStorage(context)
-
     private const val DNS_BOOTSTRAP_CLIENT = "dnsBootstrapClient"
 }

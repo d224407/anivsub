@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.widget
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -53,25 +52,19 @@ import git.shin.animevsub.MainActivity
 import git.shin.animevsub.R
 import git.shin.animevsub.data.model.HistoryItem
 import git.shin.animevsub.data.repository.HistoryRepository
-
 class ContinueWatchingWidget : GlanceAppWidget() {
-
   companion object {
     suspend fun refresh(context: Context) {
       ContinueWatchingWidget().updateAll(context)
     }
   }
-
   override val sizeMode: SizeMode = SizeMode.Exact
-
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     val historyRepository = EntryPointAccessors.fromApplication(
       context,
       WidgetEntryPoint::class.java
     ).historyRepository()
-
     val history = historyRepository.getHistory(1, 1).getOrNull()?.firstOrNull()
-
     val posterBitmap = history?.poster?.let { url ->
       try {
         val loader = Coil.imageLoader(context)
@@ -84,14 +77,12 @@ class ContinueWatchingWidget : GlanceAppWidget() {
         null
       }
     }
-
     provideContent {
       GlanceTheme {
         WidgetContent(context, history, posterBitmap)
       }
     }
   }
-
   private fun formatDuration(seconds: Double): String {
     val s = seconds.toInt()
     val h = s / 3600
@@ -103,14 +94,12 @@ class ContinueWatchingWidget : GlanceAppWidget() {
       "%02d:%02d".format(m, sec)
     }
   }
-
   @Composable
   private fun WidgetContent(context: Context, history: HistoryItem?, poster: Bitmap?) {
     val widgetSize = LocalSize.current
     val isSmall = widgetSize.width < 150.dp
     val isLarge = widgetSize.width > 250.dp
     val isShort = widgetSize.height < 110.dp
-
     val clickAction = if (history != null) {
       val intent = Intent(context, MainActivity::class.java).apply {
         action = "PLAY_ANIME"
@@ -122,7 +111,6 @@ class ContinueWatchingWidget : GlanceAppWidget() {
     } else {
       actionStartActivity(Intent(context, MainActivity::class.java))
     }
-
     Column(
       modifier = GlanceModifier
         .fillMaxSize()
@@ -148,7 +136,6 @@ class ContinueWatchingWidget : GlanceAppWidget() {
             isSmall || isShort -> 75.dp
             else -> 125.dp
           }
-
           if (poster != null) {
             Image(
               provider = ImageProvider(poster),
@@ -179,9 +166,7 @@ class ContinueWatchingWidget : GlanceAppWidget() {
               )
             }
           }
-
           Spacer(modifier = GlanceModifier.width(12.dp))
-
           Column(modifier = GlanceModifier.defaultWeight()) {
             Text(
               text = history.name,
@@ -216,9 +201,7 @@ class ContinueWatchingWidget : GlanceAppWidget() {
               ),
               maxLines = 1
             )
-
             Spacer(modifier = GlanceModifier.height(if (isLarge) 12.dp else 4.dp))
-
             Text(
               text = "${formatDuration(history.cur)} / ${formatDuration(history.dur)}",
               style = TextStyle(
@@ -232,9 +215,7 @@ class ContinueWatchingWidget : GlanceAppWidget() {
                 }
               )
             )
-
             Spacer(modifier = GlanceModifier.height(if (isLarge) 12.dp else 8.dp))
-
             // Progress Bar
             val progress = if (history.dur > 0) (history.cur / history.dur).toFloat() else 0f
             LinearProgressIndicator(
@@ -289,13 +270,11 @@ class ContinueWatchingWidget : GlanceAppWidget() {
     }
   }
 }
-
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface WidgetEntryPoint {
   fun historyRepository(): HistoryRepository
 }
-
 class ContinueWatchingWidgetReceiver : GlanceAppWidgetReceiver() {
   override val glanceAppWidget: GlanceAppWidget = ContinueWatchingWidget()
 }

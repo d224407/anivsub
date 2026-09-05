@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.account
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,6 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @Composable
 fun FollowHorizontalList(
   follows: List<AnimeCard>,
@@ -88,7 +86,6 @@ fun FollowHorizontalList(
         )
       }
     }
-
     if (isLoading) {
       LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -123,7 +120,6 @@ fun FollowHorizontalList(
     }
   }
 }
-
 @Composable
 fun FollowItemSkeleton() {
   Column(modifier = Modifier.width(120.dp)) {

@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.category
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +40,6 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.utils.ResponsiveUtils
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
@@ -56,7 +54,6 @@ fun CategoryScreen(
   val gridColumns = ResponsiveUtils.calculateGridColumns(
     windowSizeClass = windowSize
   )
-
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -94,7 +91,6 @@ fun CategoryScreen(
           },
           colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
         )
-
         if (uiState.filterGroups.isNotEmpty()) {
           FilterActionRow(
             groups = uiState.filterGroups,
@@ -119,7 +115,6 @@ fun CategoryScreen(
               onRetry = { viewModel.refresh() }
             )
           }
-
           else -> {
             VerticalGridAnimeList(
               items = uiState.items,
@@ -134,7 +129,6 @@ fun CategoryScreen(
       }
     }
   }
-
   if (showFilterSheet) {
     FiltersBottomSheet(
       groups = uiState.filterGroups,

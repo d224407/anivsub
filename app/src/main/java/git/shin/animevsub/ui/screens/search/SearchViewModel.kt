@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.search
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 data class SearchUiState(
   val query: String = "",
   val suggestions: List<SearchSuggestion> = emptyList(),
@@ -28,18 +26,14 @@ data class SearchUiState(
   val totalPages: Int = 1,
   val isRefreshing: Boolean = false
 )
-
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   private val repository: AnimeRepository
 ) : ViewModel() {
-
   private val _uiState = MutableStateFlow(SearchUiState())
   val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
-
   private var preSearchJob: Job? = null
   private var searchJob: Job? = null
-
   init {
     viewModelScope.launch {
       repository.searchHistory.collect { history ->
@@ -47,18 +41,14 @@ class SearchViewModel @Inject constructor(
       }
     }
   }
-
   fun onQueryChange(query: String) {
     _uiState.value = _uiState.value.copy(query = query, isSearching = false)
     preSearchJob?.cancel()
-
     if (query.isBlank()) {
       _uiState.value = _uiState.value.copy(suggestions = emptyList(), isLoading = false)
       return
     }
-
     if (query.length < 2) return
-
     preSearchJob = viewModelScope.launch {
       delay(300.milliseconds) // debounce
       _uiState.value = _uiState.value.copy(isLoading = true)
@@ -79,11 +69,9 @@ class SearchViewModel @Inject constructor(
         }
     }
   }
-
   fun onSearch(query: String, isRefreshing: Boolean = false) {
     if (query.isBlank()) return
     searchJob?.cancel()
-
     if (isRefreshing) {
       _uiState.value = _uiState.value.copy(isRefreshing = true)
     } else {
@@ -96,11 +84,9 @@ class SearchViewModel @Inject constructor(
         currentPage = 1
       )
     }
-
     viewModelScope.launch {
       repository.addSearchHistory(query)
     }
-
     searchJob = viewModelScope.launch {
       repository.search(query, 1)
         .onSuccess { page ->
@@ -123,18 +109,14 @@ class SearchViewModel @Inject constructor(
         }
     }
   }
-
   fun refresh() {
     onSearch(_uiState.value.query, isRefreshing = true)
   }
-
   fun loadMore() {
     val state = _uiState.value
     if (state.isLoading || state.currentPage >= state.totalPages || !state.isSearching) return
-
     _uiState.value = _uiState.value.copy(isLoading = true)
     val nextPage = state.currentPage + 1
-
     viewModelScope.launch {
       repository.search(state.query, nextPage)
         .onSuccess { page ->
@@ -154,7 +136,6 @@ class SearchViewModel @Inject constructor(
         }
     }
   }
-
   fun clearHistory() {
     viewModelScope.launch {
       repository.clearSearchHistory()

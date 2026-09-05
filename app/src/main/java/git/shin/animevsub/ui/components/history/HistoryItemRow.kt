@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.history
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.formatDuration
 import git.shin.animevsub.ui.utils.shimmerEffect
 import git.shin.animevsub.ui.utils.tvFocusScale
-
 @Composable
 fun HistoryItemRow(
   item: HistoryItem,
@@ -61,7 +59,6 @@ fun HistoryItemRow(
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
       )
-
       if (item.dur > 0) {
         LinearProgressIndicator(
           progress = { (item.cur / item.dur).toFloat() },
@@ -74,7 +71,6 @@ fun HistoryItemRow(
         )
       }
     }
-
     Column(
       modifier = Modifier.weight(1f)
     ) {
@@ -86,9 +82,7 @@ fun HistoryItemRow(
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
       )
-
       Spacer(modifier = Modifier.height(4.dp))
-
       Text(
         text = item.seasonName + stringResource(R.string.episode_label, item.chapName ?: ""),
         color = TextGrey,
@@ -96,9 +90,7 @@ fun HistoryItemRow(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
       )
-
       Spacer(modifier = Modifier.height(4.dp))
-
       Text(
         text = "${formatDuration((item.cur * 1000).toLong())} / ${formatDuration((item.dur * 1000).toLong())}",
         color = TextGrey,
@@ -107,7 +99,6 @@ fun HistoryItemRow(
     }
   }
 }
-
 @Composable
 fun HistoryItemRowSkeleton() {
   Row(
@@ -123,7 +114,6 @@ fun HistoryItemRowSkeleton() {
         .clip(RoundedCornerShape(4.dp))
         .shimmerEffect()
     )
-
     Column(
       modifier = Modifier.weight(1f)
     ) {
@@ -134,9 +124,7 @@ fun HistoryItemRowSkeleton() {
           .clip(RoundedCornerShape(2.dp))
           .shimmerEffect()
       )
-
       Spacer(modifier = Modifier.height(8.dp))
-
       Box(
         modifier = Modifier
           .fillMaxWidth(0.4f)
@@ -144,9 +132,7 @@ fun HistoryItemRowSkeleton() {
           .clip(RoundedCornerShape(2.dp))
           .shimmerEffect()
       )
-
       Spacer(modifier = Modifier.height(8.dp))
-
       Box(
         modifier = Modifier
           .fillMaxWidth(0.3f)

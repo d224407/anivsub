@@ -1,9 +1,7 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.model
-
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class Playlist(
   val id: Int,
@@ -14,7 +12,6 @@ data class Playlist(
   @SerialName("movies_count") val movieCount: Int = 0,
   @SerialName("poster_url") val poster: String? = null
 )
-
 @Serializable
 data class PlaylistItem(
   val id: Int? = null,
@@ -26,13 +23,11 @@ data class PlaylistItem(
   @SerialName("name_chap") val chapName: String? = null,
   @SerialName("add_at") val addAt: String? = null
 )
-
 @Serializable
 data class PlaylistHasMovieResponse(
   @SerialName("playlist_id") val playlistId: Int,
   @SerialName("has_movie") val hasMovie: Boolean
 )
-
 @Serializable
 data class PlaylistPosterResponse(
   val poster: String? = null

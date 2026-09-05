@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.dialogs
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -54,7 +53,6 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,13 +68,11 @@ fun CloudflareBypassDialog(
   var progress by remember { mutableIntStateOf(0) }
   val loadingText = stringResource(R.string.loading)
   var pageTitle by remember { mutableStateOf(loadingText) }
-
   DisposableEffect(Unit) {
     onDispose {
       webView?.destroy()
     }
   }
-
   Dialog(
     onDismissRequest = onDismiss,
     properties = DialogProperties(
@@ -176,7 +172,6 @@ fun CloudflareBypassDialog(
                     modifier = Modifier.size(24.dp)
                   )
                 }
-
                 IconButton(
                   onClick = { webView?.goBack() },
                   enabled = canGoBack
@@ -188,7 +183,6 @@ fun CloudflareBypassDialog(
                     modifier = Modifier.size(24.dp)
                   )
                 }
-
                 IconButton(
                   onClick = { webView?.goForward() },
                   enabled = canGoForward
@@ -200,7 +194,6 @@ fun CloudflareBypassDialog(
                     modifier = Modifier.size(24.dp)
                   )
                 }
-
                 Spacer(modifier = Modifier.weight(1f))
               }
             }
@@ -223,14 +216,12 @@ fun CloudflareBypassDialog(
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
                 onUserAgent(settings.userAgentString)
-
                 webViewClient = object : WebViewClient() {
                   override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
                     canGoBack = view?.canGoBack() ?: false
                     canGoForward = view?.canGoForward() ?: false
                     pageTitle = view?.title ?: ""
-
                     // Check if bypassed
                     val title = view?.title
                     // if (!title.isNullOrEmpty() &&
@@ -240,7 +231,6 @@ fun CloudflareBypassDialog(
                       onResult(url)
                     }
                   }
-
                   override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
                     request?.let {
                       if (it.requestHeaders.containsKey("X-Requested-With")) {
@@ -250,26 +240,21 @@ fun CloudflareBypassDialog(
                     }
                     return super.shouldInterceptRequest(view, request)
                   }
-
                   override fun shouldOverrideUrlLoading(
                     view: WebView?,
                     request: WebResourceRequest?
                   ): Boolean = false
                 }
-
                 webChromeClient = object : WebChromeClient() {
                   override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     progress = newProgress
                   }
-
                   override fun onReceivedTitle(view: WebView?, title: String?) {
                     pageTitle = title ?: ""
                   }
                 }
-
                 val noXRequestedWith = HashMap<String, String>()
                 noXRequestedWith["X-Requested-With"] = ""
-
                 loadUrl(url, noXRequestedWith)
                 webView = this
               }

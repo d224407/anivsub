@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.login
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -60,7 +59,6 @@ import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.ErrorColor
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -75,24 +73,20 @@ fun LoginScreen(
   var pageTitle by remember { mutableStateOf("") }
   val loadingText = stringResource(R.string.loading)
   val loginText = stringResource(R.string.login)
-
   DisposableEffect(Unit) {
     onDispose {
       webView?.destroy()
     }
   }
-
   LaunchedEffect(Unit) {
     pageTitle = loadingText
   }
-
   // Navigate back on success
   LaunchedEffect(uiState.isSuccess) {
     if (uiState.isSuccess) {
       onNavigateBack()
     }
   }
-
   Scaffold(
     modifier = Modifier.statusBarsPadding(),
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -180,7 +174,6 @@ fun LoginScreen(
                 modifier = Modifier.size(24.dp)
               )
             }
-
             IconButton(
               onClick = { webView?.goBack() },
               enabled = canGoBack
@@ -192,7 +185,6 @@ fun LoginScreen(
                 modifier = Modifier.size(24.dp)
               )
             }
-
             IconButton(
               onClick = { webView?.goForward() },
               enabled = canGoForward
@@ -204,9 +196,7 @@ fun LoginScreen(
                 modifier = Modifier.size(24.dp)
               )
             }
-
             Spacer(modifier = Modifier.weight(1f))
-
             Button(
               onClick = { viewModel.checkLoginStatus() },
               colors = ButtonDefaults.buttonColors(containerColor = AccentMain),
@@ -241,7 +231,6 @@ fun LoginScreen(
           WebView(context).apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
-
             webViewClient = object : WebViewClient() {
               override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
@@ -249,30 +238,25 @@ fun LoginScreen(
                 canGoForward = view?.canGoForward() ?: false
                 pageTitle = view?.title ?: loginText
               }
-
               override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
               ): Boolean = false
             }
-
             webChromeClient = object : WebChromeClient() {
               override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 progress = newProgress
               }
-
               override fun onReceivedTitle(view: WebView?, title: String?) {
                 pageTitle = title ?: loginText
               }
             }
-
             loadUrl(uiState.loginUrl)
             webView = this
           }
         },
         modifier = Modifier.fillMaxSize()
       )
-
       if (uiState.error != null) {
         Surface(
           color = ErrorColor.copy(alpha = 0.95f),

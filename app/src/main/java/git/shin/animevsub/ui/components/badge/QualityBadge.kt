@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.badge
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,7 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.AccentMain
-
 @Composable
 fun QualityBadge(
   quality: String,
@@ -33,7 +31,6 @@ fun QualityBadge(
       RoundedCornerShape(4.dp)
     )
   }
-
   @Suppress("DEPRECATION")
   Text(
     text = quality,

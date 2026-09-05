@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,7 +23,6 @@ import git.shin.animevsub.data.model.ChapterInfo
 import git.shin.animevsub.data.model.WatchProgress
 import git.shin.animevsub.ui.theme.MainColor
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @Composable
 fun EpisodeItem(
   chap: ChapterInfo,
@@ -57,7 +55,6 @@ fun EpisodeItem(
       maxLines = 1,
       overflow = TextOverflow.Ellipsis
     )
-
     if (progress != null && progress.dur > 0) {
       val percent = (progress.cur.toFloat() / progress.dur.toFloat()).coerceIn(0f, 1f)
       Box(

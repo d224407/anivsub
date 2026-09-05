@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.repository
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
@@ -20,12 +19,10 @@ import java.util.LinkedHashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-
 data class ChatMessage(
   val role: String,
   val content: String
 )
-
 data class ChatContext(
   val animeName: String,
   val otherName: String? = null,
@@ -33,18 +30,15 @@ data class ChatContext(
   val currentTimestamp: Long? = null,
   val language: String
 )
-
 data class AiChatResponse(
   val content: String,
   val suggestions: List<String> = emptyList()
 )
-
 enum class AiProvider {
   GEMINI,
   OPENAI,
   CLAUDE
 }
-
 @Singleton
 class GeminiRepository @Inject constructor(
   private val prefs: PreferencesManager
@@ -52,27 +46,22 @@ class GeminiRepository @Inject constructor(
   companion object {
     private const val MAX_AI_CACHE_ENTRIES = 50
   }
-
   private val aiCache = object : LinkedHashMap<String, String>(16, 0.75f, true) {
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>): Boolean = size > MAX_AI_CACHE_ENTRIES
   }
-
   // OkHttpClient remains for listing models as the SDK doesn't expose this management API yet
   private val client = OkHttpClient.Builder()
     .connectTimeout(60, TimeUnit.SECONDS)
     .readTimeout(60, TimeUnit.SECONDS)
     .build()
-
   private suspend fun getApiKey(): String? {
     val key = prefs.geminiApiKey.first()
     return key.ifBlank { null }
   }
-
   private suspend fun getModelName(): String {
     val model = prefs.geminiModel.first()
     return model.ifBlank { "gemini-flash-lite-latest" }
   }
-
   private suspend fun getAiProvider(): AiProvider {
     val provider = prefs.aiProvider.first()
     return when (provider.lowercase()) {
@@ -81,37 +70,30 @@ class GeminiRepository @Inject constructor(
       else -> AiProvider.GEMINI
     }
   }
-
   private suspend fun getOpenAIKey(): String? {
     val key = prefs.openaiApiKey.first()
     return key.ifBlank { null }
   }
-
   private suspend fun getOpenAIModel(): String {
     val model = prefs.openaiModel.first()
     return model.ifBlank { "gpt-4o-mini" }
   }
-
   private suspend fun getOpenAIEndpoint(): String {
     val endpoint = prefs.openaiEndpoint.first()
     return if (endpoint.isBlank()) "https://api.openai.com/v1" else endpoint.trimEnd('/')
   }
-
   private suspend fun getClaudeKey(): String? {
     val key = prefs.claudeApiKey.first()
     return key.ifBlank { null }
   }
-
   private suspend fun getClaudeModel(): String {
     val model = prefs.claudeModel.first()
     return model.ifBlank { "claude-sonnet-4-20250514" }
   }
-
   private suspend fun getClaudeEndpoint(): String {
     val endpoint = prefs.claudeEndpoint.first()
     return if (endpoint.isBlank()) "https://api.anthropic.com/v1" else endpoint.trimEnd('/')
   }
-
   suspend fun listAvailableModels(): List<String> = withContext(Dispatchers.IO) {
     val apiKey = getApiKey() ?: return@withContext emptyList()
     try {
@@ -124,7 +106,6 @@ class GeminiRepository @Inject constructor(
       val response = client.newCall(request).execute()
       val body = response.body?.string() ?: return@withContext emptyList()
       response.close()
-
       val json = JSONObject(body)
       val models = json.getJSONArray("models")
       val result = mutableListOf<String>()
@@ -149,7 +130,6 @@ class GeminiRepository @Inject constructor(
       emptyList()
     }
   }
-
   suspend fun testApiKey(apiKey: String): Result<String> = runCatching {
     val modelName = getModelName()
     val generativeModel = GenerativeModel(
@@ -159,7 +139,6 @@ class GeminiRepository @Inject constructor(
     val response = generativeModel.generateContent("Hello, are you working?")
     response.text ?: "Connect successfully but not respond."
   }
-
   suspend fun testOpenAI(apiKey: String, model: String, endpoint: String): Result<String> = withContext(Dispatchers.IO) {
     runCatching {
       val baseUrl = if (endpoint.isBlank()) "https://api.openai.com/v1" else endpoint.trimEnd('/')
@@ -167,7 +146,6 @@ class GeminiRepository @Inject constructor(
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .build()
-
       val requestBody = JSONObject().apply {
         put("model", model)
         put(
@@ -181,18 +159,15 @@ class GeminiRepository @Inject constructor(
         )
         put("max_tokens", 50)
       }
-
       val request = Request.Builder()
         .url("$baseUrl/chat/completions")
         .header("Authorization", "Bearer $apiKey")
         .header("Content-Type", "application/json")
         .post(requestBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
         .build()
-
       val response = client.newCall(request).execute()
       val body = response.body?.string() ?: throw Exception("Empty response")
       response.close()
-
       val json = JSONObject(body)
       if (json.has("choices")) {
         val choices = json.getJSONArray("choices")
@@ -208,7 +183,6 @@ class GeminiRepository @Inject constructor(
       }
     }
   }
-
   suspend fun testClaude(apiKey: String, model: String, endpoint: String): Result<String> = withContext(Dispatchers.IO) {
     runCatching {
       val baseUrl = if (endpoint.isBlank()) "https://api.anthropic.com/v1" else endpoint.trimEnd('/')
@@ -216,7 +190,6 @@ class GeminiRepository @Inject constructor(
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .build()
-
       val requestBody = JSONObject().apply {
         put("model", model)
         put(
@@ -230,7 +203,6 @@ class GeminiRepository @Inject constructor(
         )
         put("max_tokens", 50)
       }
-
       val request = Request.Builder()
         .url("$baseUrl/messages")
         .header("x-api-key", apiKey)
@@ -238,11 +210,9 @@ class GeminiRepository @Inject constructor(
         .header("Content-Type", "application/json")
         .post(requestBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
         .build()
-
       val response = client.newCall(request).execute()
       val body = response.body?.string() ?: throw Exception("Empty response")
       response.close()
-
       val json = JSONObject(body)
       if (json.has("content")) {
         val content = json.getJSONArray("content")
@@ -258,15 +228,12 @@ class GeminiRepository @Inject constructor(
       }
     }
   }
-
   suspend fun saveApiKey(apiKey: String) {
     prefs.setGeminiApiKey(apiKey)
   }
-
   suspend fun saveModel(modelName: String) {
     prefs.setGeminiModel(modelName)
   }
-
   private suspend fun callAiApi(prompt: String): String = withContext(Dispatchers.IO) {
     when (getAiProvider()) {
       AiProvider.GEMINI -> callGeminiApi(prompt)
@@ -275,7 +242,6 @@ class GeminiRepository @Inject constructor(
       else -> throw Exception("Unknown AI provider")
     }
   }
-
   private suspend fun callGeminiApi(prompt: String): String {
     val apiKey = getApiKey() ?: throw Exception("Gemini API Key is not configured")
     val modelName = getModelName()
@@ -294,12 +260,10 @@ class GeminiRepository @Inject constructor(
       throw e
     }
   }
-
   private suspend fun callOpenAIApi(prompt: String): String {
     val apiKey = getOpenAIKey() ?: throw Exception("OpenAI API Key is not configured")
     val model = getOpenAIModel()
     val baseUrl = getOpenAIEndpoint()
-
     val requestBody = JSONObject().apply {
       put("model", model)
       put(
@@ -313,18 +277,15 @@ class GeminiRepository @Inject constructor(
       )
       put("max_tokens", 2048)
     }
-
     val request = Request.Builder()
       .url("$baseUrl/chat/completions")
       .header("Authorization", "Bearer $apiKey")
       .header("Content-Type", "application/json")
       .post(requestBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
       .build()
-
     val response = client.newCall(request).execute()
     val body = response.body?.string() ?: throw Exception("Empty response")
     response.close()
-
     val json = JSONObject(body)
     if (json.has("choices")) {
       val choices = json.getJSONArray("choices")
@@ -339,12 +300,10 @@ class GeminiRepository @Inject constructor(
       throw Exception("Unknown response: $body")
     }
   }
-
   private suspend fun callClaudeApi(prompt: String): String {
     val apiKey = getClaudeKey() ?: throw Exception("Claude API Key is not configured")
     val model = getClaudeModel()
     val baseUrl = getClaudeEndpoint()
-
     val requestBody = JSONObject().apply {
       put("model", model)
       put(
@@ -358,7 +317,6 @@ class GeminiRepository @Inject constructor(
       )
       put("max_tokens", 2048)
     }
-
     val request = Request.Builder()
       .url("$baseUrl/messages")
       .header("x-api-key", apiKey)
@@ -366,11 +324,9 @@ class GeminiRepository @Inject constructor(
       .header("Content-Type", "application/json")
       .post(requestBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
       .build()
-
     val response = client.newCall(request).execute()
     val body = response.body?.string() ?: throw Exception("Empty response")
     response.close()
-
     val json = JSONObject(body)
     if (json.has("content")) {
       val content = json.getJSONArray("content")
@@ -385,27 +341,22 @@ class GeminiRepository @Inject constructor(
       throw Exception("Unknown response: $body")
     }
   }
-
   suspend fun summarizeNotifications(notifications: List<DbNotificationItem>, language: String): String {
     val prompt = """
             You are an enthusiastic anime assistant. Summarize the following notification list in a friendly, concise, and natural way.
             Group related information if possible (e.g., new episodes of the same anime).
             Use Markdown formatting (like bolding anime titles) to make it readable. Avoid code blocks.
             Respond in $language.
-
             List:
             ${notifications.joinToString("\n") { "- ${it.name}: ${it.episodes.firstOrNull()?.name}" }}
     """.trimIndent()
-
     return callAiApi(prompt)
   }
-
   private fun extractSuggestions(response: String): AiChatResponse {
     val tagStart = "<suggestions>"
     val tagEnd = "</suggestions>"
     val startIndex = response.indexOf(tagStart)
     val endIndex = response.indexOf(tagEnd)
-
     if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
       val content = response.substring(0, startIndex).trim()
       val suggestionsJson = response.substring(startIndex + tagStart.length, endIndex).trim()
@@ -422,7 +373,6 @@ class GeminiRepository @Inject constructor(
     }
     return AiChatResponse(response.trim())
   }
-
   suspend fun getRecap(
     animeName: String,
     otherName: String? = null,
@@ -439,7 +389,6 @@ class GeminiRepository @Inject constructor(
         if (cached != null) return AiChatResponse(cached)
       }
     }
-
     val animeIdentity = if (otherName.isNullOrBlank()) "'$animeName'" else "'$animeName' (also known as '$otherName')"
     val prompt = """
             Act as a professional anime fan, summarize the main events that happened in previous episodes of $animeIdentity (up to before episode $episode).
@@ -448,7 +397,6 @@ class GeminiRepository @Inject constructor(
             Finally, include a brief note about the next season's release date or the possibility of its production if information is available.
             ${if (includeSuggestions) "\nAt the very end, provide 3 suggested follow-up questions in a JSON array wrapped in <suggestions> tags. Example: <suggestions>[\"Question 1\", \"Question 2\"]</suggestions>" else ""}
     """.trimIndent()
-
     val response = callAiApi(prompt)
     val result = extractSuggestions(response)
     if (cacheKey != null && !includeSuggestions) {
@@ -456,7 +404,6 @@ class GeminiRepository @Inject constructor(
     }
     return result
   }
-
   suspend fun getEpisodeSummary(
     animeName: String,
     otherName: String? = null,
@@ -475,7 +422,6 @@ class GeminiRepository @Inject constructor(
         if (cached != null) return AiChatResponse(cached)
       }
     }
-
     val timestampFormatted = String.format("%02d:%02d", minutes, (timestampMs / 1000) % 60)
     val animeIdentity = if (otherName.isNullOrBlank()) "'$animeName'" else "'$animeName' (also known as '$otherName')"
     val prompt = """
@@ -484,7 +430,6 @@ class GeminiRepository @Inject constructor(
             Use Markdown for formatting. Respond in $language. Be concise and helpful.
             ${if (includeSuggestions) "\nAt the very end, provide 3 suggested follow-up questions in a JSON array wrapped in <suggestions> tags. Example: <suggestions>[\"Question 1\", \"Question 2\"]</suggestions>" else ""}
     """.trimIndent()
-
     val response = callAiApi(prompt)
     val result = extractSuggestions(response)
     if (cacheKey != null && !includeSuggestions) {
@@ -492,7 +437,6 @@ class GeminiRepository @Inject constructor(
     }
     return result
   }
-
   suspend fun chatWithAI(
     messages: List<ChatMessage>,
     context: ChatContext
@@ -508,7 +452,6 @@ class GeminiRepository @Inject constructor(
       } ?: "N/A"
     }
       - Language: ${context.language}
-
       Guidelines:
       1. Respond in the same language as the user
       2. Be friendly, helpful, and concise
@@ -518,18 +461,15 @@ class GeminiRepository @Inject constructor(
       6. Keep responses focused on the anime context
       7. At the very end of your response, always provide 3 suggested follow-up questions that the user might want to ask next. Format these suggestions as a JSON array of strings wrapped in <suggestions> tags. Example: <suggestions>["Question 1", "Question 2", "Question 3"]</suggestions>
     """.trimIndent()
-
     when (getAiProvider()) {
       AiProvider.GEMINI -> chatWithGemini(messages, systemPrompt)
       AiProvider.OPENAI -> chatWithOpenAI(messages, systemPrompt)
       AiProvider.CLAUDE -> chatWithClaude(messages, systemPrompt)
     }
   }
-
   private suspend fun chatWithGemini(messages: List<ChatMessage>, systemPrompt: String): AiChatResponse {
     val apiKey = getApiKey() ?: throw Exception("Gemini API Key is not configured")
     val modelName = getModelName()
-
     return try {
       val generativeModel = GenerativeModel(
         modelName = modelName,
@@ -538,7 +478,6 @@ class GeminiRepository @Inject constructor(
           temperature = 0.7f
         }
       )
-
       val contents = buildList {
         add(
           content(role = "user") { text(systemPrompt) }
@@ -551,7 +490,6 @@ class GeminiRepository @Inject constructor(
           )
         }
       }
-
       @Suppress("SpreadOperator")
       val response = generativeModel.generateContent(*contents.toTypedArray())
       val rawText = response.text?.trim() ?: throw Exception("Empty response from AI")
@@ -561,12 +499,10 @@ class GeminiRepository @Inject constructor(
       throw e
     }
   }
-
   private suspend fun chatWithOpenAI(messages: List<ChatMessage>, systemPrompt: String): AiChatResponse {
     val apiKey = getOpenAIKey() ?: throw Exception("OpenAI API Key is not configured")
     val model = getOpenAIModel()
     val baseUrl = getOpenAIEndpoint()
-
     try {
       val openAIMessages = JSONArray().apply {
         put(
@@ -584,24 +520,20 @@ class GeminiRepository @Inject constructor(
           )
         }
       }
-
       val requestBody = JSONObject().apply {
         put("model", model)
         put("messages", openAIMessages)
         put("max_tokens", 2048)
       }
-
       val request = Request.Builder()
         .url("$baseUrl/chat/completions")
         .header("Authorization", "Bearer $apiKey")
         .header("Content-Type", "application/json")
         .post(requestBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
         .build()
-
       val response = client.newCall(request).execute()
       val body = response.body?.string() ?: throw Exception("Empty response")
       response.close()
-
       val json = JSONObject(body)
       if (json.has("choices")) {
         val choices = json.getJSONArray("choices")
@@ -621,12 +553,10 @@ class GeminiRepository @Inject constructor(
       throw e
     }
   }
-
   private suspend fun chatWithClaude(messages: List<ChatMessage>, systemPrompt: String): AiChatResponse {
     val apiKey = getClaudeKey() ?: throw Exception("Claude API Key is not configured")
     val model = getClaudeModel()
     val baseUrl = getClaudeEndpoint()
-
     try {
       val claudeMessages = JSONArray().apply {
         put(
@@ -644,13 +574,11 @@ class GeminiRepository @Inject constructor(
           )
         }
       }
-
       val requestBody = JSONObject().apply {
         put("model", model)
         put("messages", claudeMessages)
         put("max_tokens", 2048)
       }
-
       val request = Request.Builder()
         .url("$baseUrl/messages")
         .header("x-api-key", apiKey)
@@ -658,11 +586,9 @@ class GeminiRepository @Inject constructor(
         .header("Content-Type", "application/json")
         .post(requestBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
         .build()
-
       val response = client.newCall(request).execute()
       val body = response.body?.string() ?: throw Exception("Empty response")
       response.close()
-
       val json = JSONObject(body)
       if (json.has("content")) {
         val content = json.getJSONArray("content")

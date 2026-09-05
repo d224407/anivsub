@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.playlist
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -54,7 +53,6 @@ import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddToPlaylistBottomSheet(
@@ -68,11 +66,9 @@ fun AddToPlaylistBottomSheet(
   var showCreateDialog by remember { mutableStateOf(false) }
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
-
   LaunchedEffect(animeId) {
     accountViewModel.checkAnimeInPlaylists(animeId)
   }
-
   ModalBottomSheet(
     onDismissRequest = onDismissRequest,
     sheetState = sheetState,
@@ -90,7 +86,6 @@ fun AddToPlaylistBottomSheet(
         color = TextPrimary,
         modifier = Modifier.padding(16.dp)
       )
-
       if (uiState.isLoadingPlaylists) {
         Column {
           repeat(3) {
@@ -172,7 +167,6 @@ fun AddToPlaylistBottomSheet(
           }
         }
       }
-
       ListItem(
         headlineContent = {
           Text(
@@ -194,7 +188,6 @@ fun AddToPlaylistBottomSheet(
       )
     }
   }
-
   if (showCreateDialog) {
     CreatePlaylistDialog(
       onDismiss = { showCreateDialog = false },
@@ -205,7 +198,6 @@ fun AddToPlaylistBottomSheet(
     )
   }
 }
-
 @Composable
 fun PlaylistBottomSheetSkeleton() {
   Row(

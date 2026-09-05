@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.remote.api_hidden
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.webkit.CookieManager
 import git.shin.animevsub.data.model.*
 import git.shin.animevsub.data.remote.api.AnimeDataSource
@@ -17,13 +16,11 @@ import javax.crypto.Mac
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.math.max
-
 class AnimeApi(
   private val client: OkHttpClient,
   private val json: Json,
   private val cloudflareManager: CloudflareManager
 ) : AnimeDataSource {
-
   companion object {
     private var currentDomain = "animevietsub.pl"
     private var isInitialized = false
@@ -33,62 +30,47 @@ class AnimeApi(
       520, 521, 522, 523, 524, 525, 526, 527
     )
   }
-
   override val hostCurl: String get() = currentDomain
   override val baseUrl: String get() = "https://$currentDomain"
   override val loginUrl: String get() = "$baseUrl/login"
-
   private suspend fun initDomain() {
     if (isInitialized) return
     // TODO: Implement domain initialization from remote config
     isInitialized = true
   }
-
   fun getFullUrl(path: String): String = baseUrl + path
-
   fun parseAnimeCard(element: Element): AnimeCard {
     val linkElement = element.selectFirst("a")
     val href = linkElement?.attr("href") ?: ""
     val path = extractPath(href)
     val animeId = path.substringAfterLast("/phim/").substringBefore("/")
-
     val imgElement = element.selectFirst("img")
     val image = imgElement?.attr("data-cfsrc") ?: imgElement?.attr("src") ?: ""
-
     val titleElement = element.selectFirst(".Title")
     val name = titleElement?.text() ?: ""
-
     val episodeElement = element.selectFirst(".mli-eps > i")
     var episode = episodeElement?.text() ?: ""
     if (episode == "TẤT") episode = "Full Season"
     val lastEpisode = ChapterInfo(episode, episode)
-
     val ratingElement = element.selectFirst(".anime-avg-user-rating")
     var rating = ratingElement?.text()?.toFloatOrNull() ?: 0f
     if (rating == 0f) {
       val starElement = element.selectFirst(".AAIco-star")
       rating = starElement?.text()?.toFloatOrNull() ?: 0f
     }
-
     val yearElement = element.selectFirst(".Year")
     val year = yearElement?.text()?.let {
       Regex("\\d+").find(it)?.value?.toIntOrNull()
     }
-
     val qualityElement = element.selectFirst(".Qlty") ?: element.selectFirst(".mli-quality")
     val quality = qualityElement?.text()
-
     val timeElement = element.selectFirst(".AAIco-access_time")
     val process = timeElement?.text()
-
     val descElement = element.selectFirst(".Description > p")
     val description = descElement?.text()
-
     val studioElement = element.selectFirst(".Studio")
     val studio = studioElement?.text()?.split(":")?.lastOrNull()?.trim()
-
     val genre = element.select(".Genre > a").map { parseCategoryLink(it) }
-
     return AnimeCard(
       animeId = animeId,
       image = image,
@@ -103,13 +85,11 @@ class AnimeApi(
       genre = genre
     )
   }
-
   fun parseCategoryLink(element: Element): CategoryLink {
     val href = element.attr("href")
     val path = extractPath(href)
     val name = element.text()
     val segments = path.substringAfter("/").split("/").filter { it.isNotEmpty() }
-
     val mapping = mapOf(
       "the-loai" to "genres",
       "quoc-gia" to "country",
@@ -124,7 +104,6 @@ class AnimeApi(
       "anime-bo" to "danh-sach",
       "anime-dang-chieu" to "danh-sach"
     )
-
     val filters = if (segments.size >= 2) {
       val key = mapping[segments[0]] ?: segments[0]
       listOf(SelectedFilter(key, segments[1], name))
@@ -134,10 +113,8 @@ class AnimeApi(
     } else {
       emptyList()
     }
-
     return CategoryLink(name, filters)
   }
-
   private fun extractPath(url: String): String {
     return try {
       URL(url).path
@@ -149,7 +126,6 @@ class AnimeApi(
       path
     }
   }
-
   private fun syncCookies(fromUrl: String, toUrl: String) {
     val cookieManager = CookieManager.getInstance()
     val fromFull = "https://$fromUrl"
@@ -163,7 +139,6 @@ class AnimeApi(
     }
     cookieManager.flush()
   }
-
   @Throws(Exception::class)
   private fun decryptAesGcm(
     encrypted: String,
@@ -176,7 +151,6 @@ class AnimeApi(
     val keyBytes = decodeBase64(keyBase64)
     val mac = Mac.getInstance("HmacSHA256")
     mac.init(SecretKeySpec(keyBytes, "HmacSHA256"))
-
     val data = if (shadow) {
       "$stag:$rtag:$iv:0"
     } else {
@@ -184,11 +158,9 @@ class AnimeApi(
     }
     val hash = mac.doFinal(data.toByteArray(Charsets.UTF_8))
     val secretKey = SecretKeySpec(hash, "AES")
-
     val cipher = Cipher.getInstance("AES/GCM/NoPadding")
     val gcmSpec = GCMParameterSpec(128, keyBytes)
     cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec)
-
     val encryptedBytes = decodeBase64(encrypted.replace("-", "+").replace("_", "/"))
     try {
       val decrypted = cipher.doFinal(encryptedBytes)
@@ -222,79 +194,60 @@ class AnimeApi(
       return String(result, Charsets.UTF_8)
     }
   }
-
   private fun decodeBase64(input: String): ByteArray {
     val padded = input + "=".repeat((4 - input.length % 4) % 4)
     return Base64.getDecoder().decode(padded)
   }
-
   fun replaceDomain(input: String): String {
     val pattern = Regex("animevietsub\\.(\\w+)")
     return pattern.replace(input, currentDomain)
   }
-
   // ==================== AnimeDataSource Methods ====================
-
   override suspend fun getUser(): Flow<User?> {
     return flowOf(null)
   }
-
   override suspend fun refreshUser(): User {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun logout() {
     // TODO: Implement actual logic
   }
-
   override suspend fun getHomePage(): HomeData {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun getSchedule(): List<ScheduleDay> {
     return emptyList()
   }
-
   override suspend fun getRankings(type: String): List<AnimeCard> {
     return emptyList()
   }
-
   override suspend fun getRankingTypes(): List<FilterOption> {
     return emptyList()
   }
-
   override suspend fun preSearch(keyword: String): List<SearchSuggestion> {
     return emptyList()
   }
-
   override suspend fun search(keyword: String, page: Int): CategoryPage {
     return CategoryPage(emptyList(), 0, 0)
   }
-
   override suspend fun getCategory(filters: List<SelectedFilter>, page: Int): CategoryPage {
     return CategoryPage(emptyList(), 0, 0)
   }
-
   override suspend fun getFilters(filters: List<SelectedFilter>): List<FilterGroup> {
     return emptyList()
   }
-
   override suspend fun getAnimeDetail(animeId: String): AnimeDetail {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun getChapters(animeId: String): ChapterData {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun getServers(chapter: ChapterInfo): List<ServerInfo> {
     return emptyList()
   }
-
   override suspend fun getPlayerLink(server: ServerInfo): PlayerData {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun getEpisodeSkip(
     animeId: String,
     detail: AnimeDetail,
@@ -302,31 +255,24 @@ class AnimeApi(
   ): InOutroEpisode? {
     return null
   }
-
   override suspend fun getFollows(filters: List<SelectedFilter>, page: Int): CategoryPage {
     return CategoryPage(emptyList(), 0, 0)
   }
-
   override suspend fun getFollowFilters(filters: List<SelectedFilter>): List<FilterGroup> {
     return emptyList()
   }
-
   override suspend fun checkFollow(animeId: String): Boolean {
     return false
   }
-
   override suspend fun toggleFollow(animeId: String, follow: Boolean) {
     // TODO: Implement actual logic
   }
-
   override suspend fun getNotifications(): NotificationData {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun onTrigger(trigger: Trigger) {
     // TODO: Implement actual logic
   }
-
   override suspend fun getComments(
     filmId: String,
     anime: AnimeDetail,
@@ -335,7 +281,6 @@ class AnimeApi(
   ): CommentResponse {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun getReplies(
     commentId: String,
     sort: FilterOption?,
@@ -343,7 +288,6 @@ class AnimeApi(
   ): ReplyResponse {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun postComment(
     filmId: String,
     content: String,
@@ -354,11 +298,9 @@ class AnimeApi(
   ): PostCommentResponse {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun voteComment(commentId: String, voteType: VoteType): VoteResponse {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun editComment(
     commentId: String,
     content: String,
@@ -366,15 +308,12 @@ class AnimeApi(
   ): EditCommentResponse {
     throw UnsupportedOperationException("Not implemented yet")
   }
-
   override suspend fun getCommentSortOptions(): List<FilterOption> {
     return emptyList()
   }
-
   override fun encodeURI(url: String): String {
     return URL(url).toString()
   }
-
   override fun decodeURI(url: String): String {
     return URL(url).toString()
   }

@@ -1,15 +1,12 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.utils
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import android.text.format.DateUtils
 import git.shin.animevsub.R
 import java.time.Instant
-
 fun formatRelativeTime(context: Context, instant: Instant): String {
   val now = Instant.now()
   val diffMillis = java.time.Duration.between(instant, now).toMillis()
-
   return when {
     diffMillis < 0 -> context.getString(R.string.time_just_now)
     diffMillis < DateUtils.MINUTE_IN_MILLIS -> context.getString(R.string.time_just_now)

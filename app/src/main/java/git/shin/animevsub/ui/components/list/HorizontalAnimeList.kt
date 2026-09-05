@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.list
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +37,6 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-
 @Composable
 fun HorizontalAnimeList(
   items: List<AnimeCard>,
@@ -52,7 +50,6 @@ fun HorizontalAnimeList(
   val scope = rememberCoroutineScope()
   val now = LocalDateTime.now()
   val locale = LocalConfiguration.current.locales[0]
-
   LazyRow(
     state = state,
     modifier = modifier,
@@ -70,7 +67,6 @@ fun HorizontalAnimeList(
           modifier = Modifier.width(110.dp)
         )
       }
-
       if (showTimeline) {
         val timeRelease = try {
           anime.timeRelease?.let {
@@ -82,7 +78,6 @@ fun HorizontalAnimeList(
         } catch (e: Exception) {
           null
         }
-
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -97,11 +92,9 @@ fun HorizontalAnimeList(
                 includeFontPadding = false
               )
             )
-
             if (timeRelease != null) {
               val isToday = timeRelease.toLocalDate().isEqual(now.toLocalDate())
               val isTomorrow = timeRelease.toLocalDate().isEqual(now.toLocalDate().plusDays(1))
-
               if (isToday || isTomorrow) {
                 Text(
                   text = timeRelease.format(DateTimeFormatter.ofPattern("HH:mm")),
@@ -140,9 +133,7 @@ fun HorizontalAnimeList(
               )
             }
           }
-
           Spacer(modifier = Modifier.height(4.dp))
-
           Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
               modifier = Modifier
@@ -151,7 +142,6 @@ fun HorizontalAnimeList(
                 .background(Color.Gray)
             )
           }
-
           Spacer(modifier = Modifier.height(4.dp))
           card()
         }

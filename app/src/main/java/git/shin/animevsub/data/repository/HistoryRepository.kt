@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.repository
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import git.shin.animevsub.data.local.ApiStorage
@@ -21,7 +20,6 @@ import java.security.MessageDigest
 import java.util.TimeZone
 import javax.inject.Inject
 import javax.inject.Singleton
-
 @Singleton
 class HistoryRepository @Inject constructor(
   private val supabase: SupabaseClient,
@@ -39,16 +37,13 @@ class HistoryRepository @Inject constructor(
       null
     }
   }
-
   private fun sha256(input: String): String = MessageDigest.getInstance("SHA-256")
     .digest(input.toByteArray())
     .joinToString("") { "%02x".format(it) }
-
   private fun getGmtOffset(): Int {
     val tz = TimeZone.getDefault()
     return -(tz.rawOffset / (1000 * 60 * 60))
   }
-
   suspend fun upsertUser(user: User): Result<Unit> = runCatching {
     val uid = sha256((user.email ?: "") + user.name)
     supabase.postgrest.rpc(
@@ -60,7 +55,6 @@ class HistoryRepository @Inject constructor(
       }
     )
   }
-
   suspend fun getHistory(page: Int, size: Int = 30): Result<List<HistoryItem>> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -73,7 +67,6 @@ class HistoryRepository @Inject constructor(
     )
     response.decodeList<HistoryItem>().map { it.copy(poster = animeDataSource.decodeURI(it.poster)) }
   }
-
   suspend fun getWatchProgress(seasonId: String): Result<List<WatchProgress>> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -85,7 +78,6 @@ class HistoryRepository @Inject constructor(
     )
     response.decodeList<WatchProgress>()
   }
-
   suspend fun getSingleProgress(seasonId: String, chapId: String): Result<WatchProgress?> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -103,7 +95,6 @@ class HistoryRepository @Inject constructor(
       null
     }
   }
-
   suspend fun setSingleProgress(
     name: String,
     poster: String,
@@ -132,7 +123,6 @@ class HistoryRepository @Inject constructor(
     )
     ContinueWatchingWidget.refresh(context)
   }
-
   suspend fun getLastChapOfSeason(seasonId: String): Result<String?> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(

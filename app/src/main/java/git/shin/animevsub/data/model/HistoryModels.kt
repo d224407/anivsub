@@ -1,9 +1,7 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.model
-
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class HistoryItem(
   val name: String,
@@ -16,7 +14,6 @@ data class HistoryItem(
   @SerialName("watch_cur") val cur: Double = 0.0,
   @SerialName("watch_dur") val dur: Double = 0.0
 )
-
 @Serializable
 data class WatchProgress(
   val cur: Double,
@@ -24,7 +21,6 @@ data class WatchProgress(
   val name: String? = null,
   @SerialName("chap_id") val chapId: String? = null
 )
-
 @Serializable
 data class LastChapResponse(
   @SerialName("chap_id") val chapId: String? = null

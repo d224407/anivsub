@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.utils
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -23,7 +22,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 class NotificationHelper(private val context: Context) {
   companion object {
     private const val CHANNEL_ID = "anime_updates"
@@ -31,12 +29,10 @@ class NotificationHelper(private val context: Context) {
     private const val SYSTEM_CHANNEL_ID = "system_notifications"
     private const val SYSTEM_CHANNEL_NAME = "System Notifications"
   }
-
   init {
     createNotificationChannel()
     createSystemNotificationChannel()
   }
-
   private fun createNotificationChannel() {
     val importance = NotificationManager.IMPORTANCE_DEFAULT
     val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
@@ -44,7 +40,6 @@ class NotificationHelper(private val context: Context) {
       context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.createNotificationChannel(channel)
   }
-
   private fun createSystemNotificationChannel() {
     val importance = NotificationManager.IMPORTANCE_HIGH
     val channel = NotificationChannel(SYSTEM_CHANNEL_ID, SYSTEM_CHANNEL_NAME, importance).apply {
@@ -63,7 +58,6 @@ class NotificationHelper(private val context: Context) {
       context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.createNotificationChannel(channel)
   }
-
   fun showNotification(
     title: String,
     message: String,
@@ -82,13 +76,11 @@ class NotificationHelper(private val context: Context) {
         return
       }
     }
-
     val channelId = if (notificationType == "app_update" || notificationType == "maintenance" || notificationType == "security") {
       SYSTEM_CHANNEL_ID
     } else {
       CHANNEL_ID
     }
-
     val intent = Intent(context, MainActivity::class.java).apply {
       action = "OPEN_FROM_NOTIFICATION"
       if (animeId != null) {
@@ -107,9 +99,7 @@ class NotificationHelper(private val context: Context) {
       context, System.currentTimeMillis().toInt(), intent,
       PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
-
     val notificationId = System.currentTimeMillis().toInt()
-
     val builder = NotificationCompat.Builder(context, channelId)
       .setSmallIcon(R.drawable.ic_notification)
       .setContentTitle(title)
@@ -117,7 +107,6 @@ class NotificationHelper(private val context: Context) {
       .setPriority(if (channelId == SYSTEM_CHANNEL_ID) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT)
       .setContentIntent(pendingIntent)
       .setAutoCancel(true)
-
     if (!imageUrl.isNullOrEmpty()) {
       val scope = CoroutineScope(Dispatchers.IO)
       scope.launch {
@@ -140,7 +129,6 @@ class NotificationHelper(private val context: Context) {
       notificationManager.notify(notificationId, builder.build())
     }
   }
-
   private suspend fun fetchBitmap(url: String): Bitmap? = withContext(Dispatchers.IO) {
     val loader = Coil.imageLoader(context)
     val request = ImageRequest.Builder(context)

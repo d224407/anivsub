@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.anime
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.ui.utils.shimmerEffect
-
 @Composable
 fun NotificationSkeleton(modifier: Modifier = Modifier) {
   Row(
@@ -35,9 +33,7 @@ fun NotificationSkeleton(modifier: Modifier = Modifier) {
         .clip(RoundedCornerShape(8.dp))
         .shimmerEffect()
     )
-
     Spacer(modifier = Modifier.width(12.dp))
-
     Column(modifier = Modifier.weight(1f)) {
       // Title placeholder
       Box(
@@ -48,7 +44,6 @@ fun NotificationSkeleton(modifier: Modifier = Modifier) {
           .shimmerEffect()
       )
       Spacer(modifier = Modifier.height(8.dp))
-
       // Description lines
       Box(
         modifier = Modifier
@@ -65,9 +60,7 @@ fun NotificationSkeleton(modifier: Modifier = Modifier) {
           .clip(RoundedCornerShape(4.dp))
           .shimmerEffect()
       )
-
       Spacer(modifier = Modifier.height(12.dp))
-
       // Time ago placeholder
       Box(
         modifier = Modifier
@@ -79,7 +72,6 @@ fun NotificationSkeleton(modifier: Modifier = Modifier) {
     }
   }
 }
-
 @Composable
 fun NotificationListSkeleton() {
   LazyColumn(userScrollEnabled = false) {

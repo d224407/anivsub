@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.login
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,24 +13,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 data class LoginUiState(
   val loginUrl: String = "",
   val isLoading: Boolean = false,
   val error: String? = null,
   val isSuccess: Boolean = false
 )
-
 @HiltViewModel
 class LoginViewModel @Inject constructor(
   private val repository: AnimeRepository,
   val cloudflareManager: CloudflareManager,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
-
   private val _uiState = MutableStateFlow(LoginUiState(loginUrl = repository.loginUrl))
   val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
   fun checkLoginStatus() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoading = true, error = null)

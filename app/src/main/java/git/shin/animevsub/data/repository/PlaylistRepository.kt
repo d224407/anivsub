@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.repository
-
+import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.local.ApiStorage
 import git.shin.animevsub.data.model.Playlist
 import git.shin.animevsub.data.model.PlaylistHasMovieResponse
@@ -20,7 +19,6 @@ import kotlinx.serialization.json.put
 import java.security.MessageDigest
 import javax.inject.Inject
 import javax.inject.Singleton
-
 @Singleton
 class PlaylistRepository @Inject constructor(
   private val supabase: SupabaseClient,
@@ -37,11 +35,9 @@ class PlaylistRepository @Inject constructor(
       null
     }
   }
-
   private fun sha256(input: String): String = MessageDigest.getInstance("SHA-256")
     .digest(input.toByteArray())
     .joinToString("") { "%02x".format(it) }
-
   suspend fun getPlaylists(): Result<List<Playlist>> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -54,7 +50,6 @@ class PlaylistRepository @Inject constructor(
       it.copy(poster = it.poster?.let { p -> animeDataSource.decodeURI(p) })
     }
   }
-
   suspend fun createPlaylist(name: String, isPublic: Boolean): Result<Playlist> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -68,7 +63,6 @@ class PlaylistRepository @Inject constructor(
     val playlist = response.decodeSingle<Playlist>()
     playlist.copy(poster = playlist.poster?.let { p -> animeDataSource.decodeURI(p) })
   }
-
   suspend fun deletePlaylist(id: Int): Result<Unit> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     supabase.postgrest.rpc(
@@ -79,7 +73,6 @@ class PlaylistRepository @Inject constructor(
       }
     )
   }
-
   suspend fun renamePlaylist(oldName: String, newName: String): Result<Unit> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     supabase.postgrest.rpc(
@@ -91,7 +84,6 @@ class PlaylistRepository @Inject constructor(
       }
     )
   }
-
   suspend fun setDescriptionPlaylist(id: Int, description: String): Result<Unit> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     supabase.postgrest.rpc(
@@ -103,7 +95,6 @@ class PlaylistRepository @Inject constructor(
       }
     )
   }
-
   suspend fun setPublicPlaylist(id: Int, isPublic: Boolean): Result<Unit> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     supabase.postgrest.rpc(
@@ -115,7 +106,6 @@ class PlaylistRepository @Inject constructor(
       }
     )
   }
-
   suspend fun addAnimeToPlaylist(
     id: Int,
     seasonId: String,
@@ -146,7 +136,6 @@ class PlaylistRepository @Inject constructor(
       null
     }
   }
-
   suspend fun deleteAnimeFromPlaylist(id: Int, seasonId: String): Result<Playlist?> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -164,7 +153,6 @@ class PlaylistRepository @Inject constructor(
       null
     }
   }
-
   suspend fun hasAnimeOfPlaylists(ids: List<Int>, seasonId: String): Result<List<Boolean>> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(
@@ -179,7 +167,6 @@ class PlaylistRepository @Inject constructor(
     val map = data.associate { it.playlistId to it.hasMovie }
     ids.map { map[it] ?: false }
   }
-
   suspend fun getAnimesFromPlaylist(
     id: Int,
     page: Int,
@@ -200,7 +187,6 @@ class PlaylistRepository @Inject constructor(
       it.copy(poster = animeDataSource.decodeURI(it.poster))
     }
   }
-
   suspend fun getPosterPlaylist(id: Int): Result<String?> = runCatching {
     val uid = getCurrentUid() ?: throw Exception("Login required")
     val response = supabase.postgrest.rpc(

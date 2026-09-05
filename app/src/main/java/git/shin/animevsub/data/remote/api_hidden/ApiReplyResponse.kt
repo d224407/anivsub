@@ -1,9 +1,7 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.remote.api_hidden
-
+import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.model.ReplyResponse
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class ApiReplyResponse(
     val success: Boolean,

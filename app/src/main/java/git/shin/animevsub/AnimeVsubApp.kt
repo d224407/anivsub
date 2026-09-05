@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub
-
+import kotlin.time.Duration.Companion.milliseconds
 import android.app.Application
 import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
@@ -14,32 +13,26 @@ import git.shin.animevsub.data.remote.WebViewCookieJar
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
 @HiltAndroidApp
 class AnimeVsubApp :
   Application(),
   ImageLoaderFactory,
   Configuration.Provider {
-
   companion object {
     var instance: AnimeVsubApp? = null
       private set
   }
-
   @Inject
   lateinit var workerFactory: HiltWorkerFactory
-
   override fun onCreate() {
     super.onCreate()
     instance = this
     AppIntegrityChecker.checkIntegrity(this)
   }
-
   override val workManagerConfiguration: Configuration
     get() = Configuration.Builder()
       .setWorkerFactory(workerFactory)
       .build()
-
   override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this)
     .okHttpClient {
       OkHttpClient.Builder()

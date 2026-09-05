@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.notification.components
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +51,6 @@ import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DbNotificationTab(
@@ -67,14 +65,12 @@ fun DbNotificationTab(
   val listState = rememberLazyListState()
   val currentUiState by rememberUpdatedState(uiState)
   val currentOnLoadMore by rememberUpdatedState(onLoadMore)
-
   LaunchedEffect(listState) {
     snapshotFlow {
       val lastIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
       val size = currentUiState.dbNotifications.size
       val hasMore = currentUiState.hasMoreDb
       val loading = currentUiState.isLoadingDb
-
       lastIndex != null && lastIndex >= size - 5 && hasMore && !loading
     }
       .distinctUntilChanged()
@@ -83,7 +79,6 @@ fun DbNotificationTab(
         currentOnLoadMore()
       }
   }
-
   Column(modifier = Modifier.fillMaxSize()) {
     // Search Bar
     Box(
@@ -137,7 +132,6 @@ fun DbNotificationTab(
         )
       )
     }
-
     Row(
       modifier = Modifier
         .fillMaxWidth()
@@ -162,14 +156,12 @@ fun DbNotificationTab(
         )
       }
     }
-
     PullToRefreshBox(
       isRefreshing = uiState.isRefreshing,
       onRefresh = onRefresh,
       modifier = Modifier.weight(1f)
     ) {
       val items = uiState.dbNotifications
-
       LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -202,7 +194,6 @@ fun DbNotificationTab(
               )
             }
           }
-
           if (uiState.hasMoreDb && uiState.isLoadingDb) {
             item {
               NotificationSkeleton()

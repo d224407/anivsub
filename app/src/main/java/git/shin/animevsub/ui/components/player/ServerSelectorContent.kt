@@ -1,6 +1,5 @@
-import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player
-
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,7 +26,6 @@ import git.shin.animevsub.data.model.ServerInfo
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.MainColor
 import git.shin.animevsub.ui.theme.TextPrimary
-
 @Composable
 fun ServerSelectorContent(
   servers: List<ServerInfo>,
