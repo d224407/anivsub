@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.utils
 
 import android.os.Handler

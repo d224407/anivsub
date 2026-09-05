@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.schedule
 
 import androidx.lifecycle.ViewModel

@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.remote.api_hidden
 
 import git.shin.animevsub.data.model.CommentResponse

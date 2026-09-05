@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.player
 
 // import androidx.compose.material.icons.filled.Cast

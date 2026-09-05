@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.remote
 
 import git.shin.animevsub.data.local.PreferencesManager

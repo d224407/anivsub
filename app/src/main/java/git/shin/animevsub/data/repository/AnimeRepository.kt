@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.data.repository
 
 import com.google.firebase.analytics.FirebaseAnalytics

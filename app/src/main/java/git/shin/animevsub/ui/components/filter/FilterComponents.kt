@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.components.filter
 
 import androidx.compose.foundation.layout.Arrangement

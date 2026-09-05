@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.styles
 
 import androidx.compose.ui.text.PlatformTextStyle

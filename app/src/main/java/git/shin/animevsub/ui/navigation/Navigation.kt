@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector

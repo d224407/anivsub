@@ -1,3 +1,4 @@
+import kotlin.time.Duration.Companion.milliseconds
 package git.shin.animevsub.ui.screens.rankings
 
 import androidx.lifecycle.SavedStateHandle
