@@ -37,7 +37,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -190,16 +192,16 @@ class AnimeRepository @Inject constructor(
   }
 
   // Auth
-  val user: Flow<User?>
-    get() = api.getUser()
-      .distinctUntilChanged()
-      .onEach { user ->
-        if (user != null) {
-          repositoryScope.launch {
-            historyRepository.upsertUser(user)
-          }
+  val user: Flow<User?> = flow {
+    emitAll(api.getUser())
+  }.distinctUntilChanged()
+    .onEach { user ->
+      if (user != null) {
+        repositoryScope.launch {
+          historyRepository.upsertUser(user)
         }
       }
+    }
   val isLoggedIn: Flow<Boolean> = user.map { it != null }
 
   init {
