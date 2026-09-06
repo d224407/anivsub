@@ -515,7 +515,7 @@ class AnimeApi(
         if (filters.isEmpty()) return "/danh-sach?page=$page"
 
         val selected = filters.joinToString("&") { filter ->
-            "${urlEncode(filter.id)}=${urlEncode(filter.value)}"
+            "${urlEncode(filter.groupId)}=${urlEncode(filter.id)}"
         }
 
         return "/danh-sach?page=$page&$selected"
