@@ -26,7 +26,7 @@ detekt {
 
   val sourceRoot = file("app/src/main/java")
 
-  source = files(
+  setFrom(
     fileTree(sourceRoot) {
       exclude(excludePatterns)
     }
@@ -37,11 +37,8 @@ tasks.register("lintFast") {
   dependsOn("lintDebug")
 
   doFirst {
-    // disable KSP
     tasks.matching { it.name.startsWith("ksp") }.configureEach { enabled = false }
-    // disable Kotlin compile
     tasks.matching { it.name.contains("compile", ignoreCase = true) }.configureEach { enabled = false }
-    // disable detekt, ktlint
     tasks.matching { it.name.startsWith("detekt") }.configureEach { enabled = false }
     tasks.matching { it.name.startsWith("ktlint") }.configureEach { enabled = false }
   }
@@ -119,8 +116,11 @@ android {
     targetCompatibility = JavaVersion.VERSION_21
   }
 
-  compilerOptions {
-    jvmTarget = JvmTarget.fromTarget("21")
+  // Sửa lỗi compilerOptions: đặt trong android block
+  kotlin {
+    compilerOptions {
+      jvmTarget = JvmTarget.JVM_21
+    }
   }
 
   buildFeatures {
