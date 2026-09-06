@@ -1,5 +1,6 @@
 import java.security.MessageDigest
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("com.android.application")
@@ -25,7 +26,7 @@ detekt {
 
   val sourceRoot = file("app/src/main/java")
 
-  input = files(
+  source = files(
     fileTree(sourceRoot) {
       exclude(excludePatterns)
     }
@@ -112,17 +113,21 @@ android {
       )
     }
   }
+
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
   }
-  kotlinOptions {
-    jvmTarget = "21"
+
+  compilerOptions {
+    jvmTarget = JvmTarget.fromTarget("21")
   }
+
   buildFeatures {
     compose = true
     buildConfig = true
   }
+
   packaging {
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -134,7 +139,7 @@ android {
 
 dependencies {
   implementation("androidx.core:core-ktx:1.19.0")
-    // Compose BOM
+  // Compose BOM
   val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
   implementation(composeBom)
 
