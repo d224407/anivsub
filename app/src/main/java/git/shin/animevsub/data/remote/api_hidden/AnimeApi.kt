@@ -11,8 +11,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.io.IOException
 import java.net.URL
 import java.util.*
 import javax.crypto.Cipher
@@ -29,7 +29,7 @@ class AnimeApi(
 ) : AnimeDataSource {
 
     companion object {
-        private var currentDomain = "animevietsub.pl"
+        private var currentDomain = "animevietsub.li"
         private var isInitialized = false
     }
 
@@ -37,26 +37,37 @@ class AnimeApi(
     override val baseUrl: String get() = "https://$currentDomain"
     override val loginUrl: String get() = "$baseUrl/login"
 
-    // ==================== AUTO FIND DOMAIN ====================
-
-    private suspend fun initDomain() {
-        if (isInitialized) return
-        try {
-            apiStorage.getString("dynamic_host").collect { savedDomain ->
-                if (!savedDomain.isNullOrEmpty()) {
-                    currentDomain = savedDomain
-                }
-            }
-        } catch (_: Exception) {}
-        isInitialized = true
-    }
-
     private suspend fun ensureDomain(): String {
-        if (!isInitialized) initDomain()
+        if (!isInitialized) {
+            try {
+                apiStorage.getString("dynamic_host").collect { savedDomain ->
+                    if (!savedDomain.isNullOrEmpty()) {
+                        currentDomain = savedDomain
+                    }
+                }
+            } catch (_: Exception) {}
+            isInitialized = true
+        }
         return currentDomain
     }
 
-    fun getFullUrl(path: String): String = baseUrl + path
+    // ==================== NETWORK ====================
+
+    private suspend fun fetchHtml(path: String): Document? {
+        val domain = ensureDomain()
+        val url = "https://$domain$path"
+        val request = Request.Builder()
+            .url(url)
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+            .header("Referer", "https://$domain/")
+            .build()
+        return try {
+            val response = client.newCall(request).execute()
+            response.body?.string()?.let { Jsoup.parse(it, url) }
+        } catch (_: Exception) {
+            null
+        }
+    }
 
     // ==================== PARSE FUNCTIONS ====================
 
@@ -188,11 +199,7 @@ class AnimeApi(
         val keyBytes = decodeBase64(keyBase64)
         val mac = Mac.getInstance("HmacSHA256")
         mac.init(SecretKeySpec(keyBytes, "HmacSHA256"))
-        val data = if (shadow) {
-            "$stag:$rtag:$iv:0"
-        } else {
-            "$stag:$rtag:$iv"
-        }
+        val data = if (shadow) "$stag:$rtag:$iv:0" else "$stag:$rtag:$iv"
         val hash = mac.doFinal(data.toByteArray(Charsets.UTF_8))
         val secretKey = SecretKeySpec(hash, "AES")
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
@@ -203,8 +210,7 @@ class AnimeApi(
             val decrypted = cipher.doFinal(encryptedBytes)
             return if (shadow) {
                 val prefix = "$iv:$stag:$rtag:"
-                val result = String(decrypted, Charsets.UTF_8)
-                result.substringAfter(prefix)
+                String(decrypted, Charsets.UTF_8).substringAfter(prefix)
             } else {
                 String(decrypted, Charsets.UTF_8)
             }
@@ -213,9 +219,7 @@ class AnimeApi(
             val maxLen = max(0, encryptedBytes.size - 16)
             val noise = "$iv:$stag:$rtag:$maxLen:noise"
             var hash2 = -2128831035
-            for (ch in noise) {
-                hash2 = (hash2 xor ch.code) * 16777619
-            }
+            for (ch in noise) hash2 = (hash2 xor ch.code) * 16777619
             if (hash2 == 0) hash2 = 1
             val result = ByteArray(maxLen)
             var seed = hash2
@@ -242,7 +246,7 @@ class AnimeApi(
         return pattern.replace(input, currentDomain)
     }
 
-    // ==================== ANIMEDATASOURCE IMPLEMENTATION ====================
+    // ==================== AnimeDataSource IMPLEMENTATION ====================
 
     override suspend fun getUser(): Flow<User?> = flowOf(null)
 
@@ -251,38 +255,25 @@ class AnimeApi(
         throw UnsupportedOperationException("Not implemented yet")
     }
 
-    override suspend fun logout() {
-        // TODO
-    }
+    override suspend fun logout() = Unit
 
     override suspend fun getHomePage(): HomeData {
         ensureDomain()
-        val url = baseUrl
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("User-Agent", CloudflareManager.getCurrentUserAgent())
-            .build()
-        val response = client.newCall(request).execute()
-        if (!response.isSuccessful) {
-            throw IOException("Failed to load home page: ${response.code}")
-        }
-        val html = response.body?.string() ?: throw IOException("Empty response")
-        val doc = Jsoup.parse(html)
+        val doc = fetchHtml("/") ?: return HomeData(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
 
-        val carousel = doc.select(".carousel-item").map { parseAnimeCard(it) }
-        val thisSeason = doc.select(".season-item").map { parseAnimeCard(it) }
-        val lastUpdate = doc.select(".update-item").map { parseAnimeCard(it) }
-        val preRelease = doc.select(".pre-release-item").map { parseAnimeCard(it) }
-        val nominate = doc.select(".nominate-item").map { parseAnimeCard(it) }
-        val hotUpdate = doc.select(".hot-update-item").map { parseAnimeCard(it) }
+        fun parseSection(selector: String): List<AnimeCard> {
+            return doc.select(selector).mapNotNull { element ->
+                try { parseAnimeCard(element) } catch (_: Exception) { null }
+            }
+        }
 
         return HomeData(
-            thisSeason = thisSeason,
-            carousel = carousel,
-            lastUpdate = lastUpdate,
-            preRelease = preRelease,
-            nominate = nominate,
-            hotUpdate = hotUpdate
+            thisSeason = parseSection(".anime-moi-cap-nhat .mli"),
+            carousel = parseSection(".carousel .mli"),
+            lastUpdate = parseSection(".anime-moi-update .mli"),
+            preRelease = parseSection(".anime-sap-chieu .mli"),
+            nominate = parseSection(".anime-de-cu .mli"),
+            hotUpdate = parseSection(".anime-hot .mli")
         )
     }
 
@@ -365,20 +356,14 @@ class AnimeApi(
         return false
     }
 
-    override suspend fun toggleFollow(animeId: String, follow: Boolean) {
-        ensureDomain()
-        // TODO
-    }
+    override suspend fun toggleFollow(animeId: String, follow: Boolean) = Unit
 
     override suspend fun getNotifications(): NotificationData {
         ensureDomain()
         throw UnsupportedOperationException("Not implemented yet")
     }
 
-    override suspend fun onTrigger(trigger: Trigger) {
-        ensureDomain()
-        // TODO
-    }
+    override suspend fun onTrigger(trigger: Trigger) = Unit
 
     override suspend fun getComments(
         filmId: String,
@@ -417,6 +402,5 @@ class AnimeApi(
     }
 
     override fun encodeURI(url: String): String = URL(url).toString()
-
     override fun decodeURI(url: String): String = URL(url).toString()
 }
