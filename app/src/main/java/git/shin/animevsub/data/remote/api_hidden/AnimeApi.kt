@@ -1,6 +1,7 @@
 package git.shin.animevsub.data.remote.api_hidden
 
 import android.webkit.CookieManager
+import git.shin.animevsub.data.local.ApiStorage
 import git.shin.animevsub.data.model.*
 import git.shin.animevsub.data.remote.api.AnimeDataSource
 import git.shin.animevsub.utils.CloudflareManager
@@ -8,7 +9,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import java.io.IOException
 import java.net.URL
 import java.util.*
 import javax.crypto.Cipher
@@ -20,7 +24,8 @@ import kotlin.math.max
 class AnimeApi(
     private val client: OkHttpClient,
     private val json: Json,
-    private val cloudflareManager: CloudflareManager
+    private val cloudflareManager: CloudflareManager,
+    private val apiStorage: ApiStorage
 ) : AnimeDataSource {
 
     companion object {
@@ -32,9 +37,23 @@ class AnimeApi(
     override val baseUrl: String get() = "https://$currentDomain"
     override val loginUrl: String get() = "$baseUrl/login"
 
+    // ==================== AUTO FIND DOMAIN ====================
+
     private suspend fun initDomain() {
         if (isInitialized) return
+        try {
+            apiStorage.getString("dynamic_host").collect { savedDomain ->
+                if (!savedDomain.isNullOrEmpty()) {
+                    currentDomain = savedDomain
+                }
+            }
+        } catch (_: Exception) {}
         isInitialized = true
+    }
+
+    private suspend fun ensureDomain(): String {
+        if (!isInitialized) initDomain()
+        return currentDomain
     }
 
     fun getFullUrl(path: String): String = baseUrl + path
@@ -169,7 +188,6 @@ class AnimeApi(
         val keyBytes = decodeBase64(keyBase64)
         val mac = Mac.getInstance("HmacSHA256")
         mac.init(SecretKeySpec(keyBytes, "HmacSHA256"))
-
         val data = if (shadow) {
             "$stag:$rtag:$iv:0"
         } else {
@@ -177,11 +195,9 @@ class AnimeApi(
         }
         val hash = mac.doFinal(data.toByteArray(Charsets.UTF_8))
         val secretKey = SecretKeySpec(hash, "AES")
-
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         val gcmSpec = GCMParameterSpec(128, keyBytes)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec)
-
         val encryptedBytes = decodeBase64(encrypted.replace("-", "+").replace("_", "/"))
         try {
             val decrypted = cipher.doFinal(encryptedBytes)
@@ -226,48 +242,102 @@ class AnimeApi(
         return pattern.replace(input, currentDomain)
     }
 
-    // ==================== AnimeDataSource IMPLEMENTATION ====================
+    // ==================== ANIMEDATASOURCE IMPLEMENTATION ====================
 
     override suspend fun getUser(): Flow<User?> = flowOf(null)
 
     override suspend fun refreshUser(): User {
+        ensureDomain()
         throw UnsupportedOperationException("Not implemented yet")
     }
 
     override suspend fun logout() {
-        // TODO: Implement actual logic
+        // TODO
     }
 
     override suspend fun getHomePage(): HomeData {
-        // TODO: Implement from a.java logic
-        throw UnsupportedOperationException("Not implemented yet")
+        ensureDomain()
+        val url = baseUrl
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("User-Agent", CloudflareManager.getCurrentUserAgent())
+            .build()
+        val response = client.newCall(request).execute()
+        if (!response.isSuccessful) {
+            throw IOException("Failed to load home page: ${response.code}")
+        }
+        val html = response.body?.string() ?: throw IOException("Empty response")
+        val doc = Jsoup.parse(html)
+
+        val carousel = doc.select(".carousel-item").map { parseAnimeCard(it) }
+        val thisSeason = doc.select(".season-item").map { parseAnimeCard(it) }
+        val lastUpdate = doc.select(".update-item").map { parseAnimeCard(it) }
+        val preRelease = doc.select(".pre-release-item").map { parseAnimeCard(it) }
+        val nominate = doc.select(".nominate-item").map { parseAnimeCard(it) }
+        val hotUpdate = doc.select(".hot-update-item").map { parseAnimeCard(it) }
+
+        return HomeData(
+            thisSeason = thisSeason,
+            carousel = carousel,
+            lastUpdate = lastUpdate,
+            preRelease = preRelease,
+            nominate = nominate,
+            hotUpdate = hotUpdate
+        )
     }
 
-    override suspend fun getSchedule(): List<ScheduleDay> = emptyList()
+    override suspend fun getSchedule(): List<ScheduleDay> {
+        ensureDomain()
+        return emptyList()
+    }
 
-    override suspend fun getRankings(type: String): List<AnimeCard> = emptyList()
+    override suspend fun getRankings(type: String): List<AnimeCard> {
+        ensureDomain()
+        return emptyList()
+    }
 
-    override suspend fun getRankingTypes(): List<FilterOption> = emptyList()
+    override suspend fun getRankingTypes(): List<FilterOption> {
+        ensureDomain()
+        return emptyList()
+    }
 
-    override suspend fun preSearch(keyword: String): List<SearchSuggestion> = emptyList()
+    override suspend fun preSearch(keyword: String): List<SearchSuggestion> {
+        ensureDomain()
+        return emptyList()
+    }
 
-    override suspend fun search(keyword: String, page: Int): CategoryPage = CategoryPage(emptyList(), 0, 0)
+    override suspend fun search(keyword: String, page: Int): CategoryPage {
+        ensureDomain()
+        return CategoryPage(emptyList(), 0, 0)
+    }
 
-    override suspend fun getCategory(filters: List<SelectedFilter>, page: Int): CategoryPage = CategoryPage(emptyList(), 0, 0)
+    override suspend fun getCategory(filters: List<SelectedFilter>, page: Int): CategoryPage {
+        ensureDomain()
+        return CategoryPage(emptyList(), 0, 0)
+    }
 
-    override suspend fun getFilters(filters: List<SelectedFilter>): List<FilterGroup> = emptyList()
+    override suspend fun getFilters(filters: List<SelectedFilter>): List<FilterGroup> {
+        ensureDomain()
+        return emptyList()
+    }
 
     override suspend fun getAnimeDetail(animeId: String): AnimeDetail {
+        ensureDomain()
         throw UnsupportedOperationException("Not implemented yet")
     }
 
     override suspend fun getChapters(animeId: String): ChapterData {
+        ensureDomain()
         throw UnsupportedOperationException("Not implemented yet")
     }
 
-    override suspend fun getServers(chapter: ChapterInfo): List<ServerInfo> = emptyList()
+    override suspend fun getServers(chapter: ChapterInfo): List<ServerInfo> {
+        ensureDomain()
+        return emptyList()
+    }
 
     override suspend fun getPlayerLink(server: ServerInfo): PlayerData {
+        ensureDomain()
         throw UnsupportedOperationException("Not implemented yet")
     }
 
@@ -275,24 +345,39 @@ class AnimeApi(
         animeId: String,
         detail: AnimeDetail,
         chapter: ChapterInfo
-    ): InOutroEpisode? = null
+    ): InOutroEpisode? {
+        ensureDomain()
+        return null
+    }
 
-    override suspend fun getFollows(filters: List<SelectedFilter>, page: Int): CategoryPage = CategoryPage(emptyList(), 0, 0)
+    override suspend fun getFollows(filters: List<SelectedFilter>, page: Int): CategoryPage {
+        ensureDomain()
+        return CategoryPage(emptyList(), 0, 0)
+    }
 
-    override suspend fun getFollowFilters(filters: List<SelectedFilter>): List<FilterGroup> = emptyList()
+    override suspend fun getFollowFilters(filters: List<SelectedFilter>): List<FilterGroup> {
+        ensureDomain()
+        return emptyList()
+    }
 
-    override suspend fun checkFollow(animeId: String): Boolean = false
+    override suspend fun checkFollow(animeId: String): Boolean {
+        ensureDomain()
+        return false
+    }
 
     override suspend fun toggleFollow(animeId: String, follow: Boolean) {
-        // TODO: Implement actual logic
+        ensureDomain()
+        // TODO
     }
 
     override suspend fun getNotifications(): NotificationData {
+        ensureDomain()
         throw UnsupportedOperationException("Not implemented yet")
     }
 
     override suspend fun onTrigger(trigger: Trigger) {
-        // TODO: Implement actual logic
+        ensureDomain()
+        // TODO
     }
 
     override suspend fun getComments(
@@ -317,7 +402,8 @@ class AnimeApi(
         threadKey: String?
     ): PostCommentResponse = throw UnsupportedOperationException("Not implemented yet")
 
-    override suspend fun voteComment(commentId: String, voteType: VoteType): VoteResponse = throw UnsupportedOperationException("Not implemented yet")
+    override suspend fun voteComment(commentId: String, voteType: VoteType): VoteResponse =
+        throw UnsupportedOperationException("Not implemented yet")
 
     override suspend fun editComment(
         commentId: String,
@@ -325,7 +411,10 @@ class AnimeApi(
         isSpoiler: Boolean
     ): EditCommentResponse = throw UnsupportedOperationException("Not implemented yet")
 
-    override suspend fun getCommentSortOptions(): List<FilterOption> = emptyList()
+    override suspend fun getCommentSortOptions(): List<FilterOption> {
+        ensureDomain()
+        return emptyList()
+    }
 
     override fun encodeURI(url: String): String = URL(url).toString()
 
