@@ -46,7 +46,7 @@ class AnimeApi(
 ) : AnimeDataSource {
 
     companion object {
-        private var currentDomain = "animevietsub.pl"
+        private var currentDomain = "animevietsub.li"
         private var isInitialized = false
 
         private const val DYNAMIC_HOST = "dynamic_host"
