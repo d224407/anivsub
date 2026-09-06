@@ -24,9 +24,9 @@ detekt {
     "**/git/shin/animevsub/data/remote/api_example/**"
   )
 
-  val sourceRoot = file("app/src/main/java")
+  val sourceRoot = file("src/main/java")
 
-  setFrom(
+  source.setFrom(
     fileTree(sourceRoot) {
       exclude(excludePatterns)
     }
@@ -226,14 +226,13 @@ dependencies {
   implementation("com.google.accompanist:accompanist-swiperefresh:0.36.0")
   implementation("com.google.accompanist:accompanist-placeholder-material:0.36.0")
 
-  // Core
-  implementation("androidx.core:core-ktx:1.15.0")
-
   // Markdown
   implementation("com.github.jeziellago:compose-markdown:0.7.1")
 
   // Gemini AI SDK
   implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+  // (Removed duplicate androidx.core:core-ktx:1.15.0 — using 1.19.0 above)
 
   // Glance (Widgets)
   implementation("androidx.glance:glance-appwidget:1.1.1")
