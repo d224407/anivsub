@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.player.settings
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform

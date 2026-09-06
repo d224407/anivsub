@@ -1,5 +1,4 @@
 package git.shin.animevsub.utils
-import kotlin.time.Duration.Companion.milliseconds
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager

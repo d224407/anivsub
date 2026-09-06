@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.remote
-import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.local.PreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +18,7 @@ class DynamicDns(
   private val bootstrapClient: OkHttpClient
 ) : Dns {
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
   @Volatile
   private var delegate: Dns = Dns.SYSTEM
   init {

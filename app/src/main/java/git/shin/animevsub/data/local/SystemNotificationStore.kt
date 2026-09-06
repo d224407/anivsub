@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.local
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -16,6 +15,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 private val Context.systemNotificationDataStore: DataStore<Preferences> by preferencesDataStore(name = "system_notifications")
+
 @Singleton
 class SystemNotificationStore @Inject constructor(
   @ApplicationContext private val context: Context,

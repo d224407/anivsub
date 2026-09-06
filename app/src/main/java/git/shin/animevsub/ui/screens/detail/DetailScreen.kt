@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.detail
-import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -1247,6 +1246,7 @@ fun DetailScreen(
     }
   }
 }
+
 @Composable
 private fun DetailSkeleton() {
   Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -1383,6 +1383,7 @@ private fun DetailSkeleton() {
     RecommendSkeleton()
   }
 }
+
 @Composable
 private fun RecommendSkeleton() {
   Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -1416,6 +1417,7 @@ private fun RecommendSkeleton() {
     }
   }
 }
+
 @Composable
 private fun ChapterSkeleton() {
   LazyRow(

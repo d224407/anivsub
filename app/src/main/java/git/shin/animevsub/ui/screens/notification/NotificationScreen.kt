@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.notification
-import kotlin.time.Duration.Companion.milliseconds
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

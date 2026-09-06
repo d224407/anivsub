@@ -44,6 +44,7 @@ data class NotificationUiState(
   val searchQuery: String = "",
   val isAscending: Boolean = false
 )
+
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
   private val repository: AnimeRepository,

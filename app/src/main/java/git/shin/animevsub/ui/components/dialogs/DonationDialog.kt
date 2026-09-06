@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.dialogs
-import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.graphics.Bitmap

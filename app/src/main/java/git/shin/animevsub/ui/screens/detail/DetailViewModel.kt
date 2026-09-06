@@ -128,6 +128,7 @@ data class DetailUiState(
       return chapterData.chaps.indexOfFirst { it.id == currentChapter.id }
     }
 }
+
 @HiltViewModel
 class DetailViewModel @Inject constructor(
   private val repository: AnimeRepository,
@@ -286,6 +287,7 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
+
   /**
    * Switches between Seasons (or Virtual Seasons).
    * Updates activeDisplaySeasonId for UI selection and chapter range.
@@ -306,6 +308,7 @@ class DetailViewModel @Inject constructor(
     }
     updateDisplaySeasons()
   }
+
   /**
    * Split seasons with > 30 chapters into "Virtual Seasons" for better UX.
    */
@@ -978,6 +981,7 @@ class DetailViewModel @Inject constructor(
     return playlistRepository.deleteAnimeFromPlaylist(playlistId, _uiState.value.currentSeasonId)
       .map { }
   }
+
 //
 //  fun createPlaylistAndAddAnime(name: String) {
 //    val detail = _uiState.value.detail ?: return
@@ -1077,6 +1081,7 @@ class DetailViewModel @Inject constructor(
       }
     }
   }
+
   // ======== Comment Logic ========
   fun loadComments(append: Boolean = false, animeDetail: AnimeDetail? = null) {
     val filmId = _uiState.value.animeId

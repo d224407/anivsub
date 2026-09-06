@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.repository
-import kotlin.time.Duration.Companion.milliseconds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import git.shin.animevsub.data.local.ApiStorage
@@ -79,8 +78,10 @@ class AnimeRepository @Inject constructor(
   sealed class AuthEvent {
     object PromptForAction : AuthEvent()
   }
+
   // Home
   suspend fun getHomePage(): Result<HomeData> = runCatching { api.getHomePage() }
+
   // Detail
   suspend fun getAnimeDetail(animeId: String): Result<AnimeDetail> = runCatching {
     val result = api.getAnimeDetail(animeId)
@@ -90,6 +91,7 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
+
   // Chapters
   suspend fun getChapters(animeId: String): Result<ChapterData> = runCatching {
     val result = api.getChapters(animeId)
@@ -98,6 +100,7 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
+
   // Rankings
   suspend fun getRankingTypes(): Result<List<FilterOption>> = runCatching {
     api.getRankingTypes()
@@ -112,6 +115,7 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
+
   // Schedule
   suspend fun getSchedule(): Result<List<ScheduleDay>> = runCatching {
     val result = api.getSchedule()
@@ -120,6 +124,7 @@ class AnimeRepository @Inject constructor(
     }
     result
   }
+
   // Search
   suspend fun preSearch(keyword: String): Result<List<SearchSuggestion>> = runCatching {
     api.preSearch(keyword)
@@ -130,6 +135,7 @@ class AnimeRepository @Inject constructor(
     }
     api.search(keyword, page)
   }
+
   // Category
   suspend fun getCategory(
     filters: List<SelectedFilter>,
@@ -145,6 +151,7 @@ class AnimeRepository @Inject constructor(
   suspend fun getFilters(filters: List<SelectedFilter>): Result<List<FilterGroup>> = runCatching {
     api.getFilters(filters)
   }
+
   // Player
   suspend fun getServers(chapter: ChapterInfo): Result<List<ServerInfo>> = runCatching {
     api.getServers(chapter)
@@ -163,6 +170,7 @@ class AnimeRepository @Inject constructor(
       segmentDataInterceptor = api.segmentDataInterceptor
     )
   }
+
   // Skip Range
   suspend fun getSkipRange(
     animeId: String,
@@ -171,6 +179,7 @@ class AnimeRepository @Inject constructor(
   ): Result<InOutroEpisode?> = runCatching {
     api.getEpisodeSkip(animeId, detail, chapter)
   }
+
   // Auth
   val user: Flow<User?> = flow {
     emitAll(api.getUser())
@@ -210,6 +219,7 @@ class AnimeRepository @Inject constructor(
     }
   }
   val loginUrl: String get() = api.loginUrl
+
 //  suspend fun login(email: String, password: String): Result<User> = runCatching {
 //    val user = api.login(email, password)
 //    historyRepository.upsertUser(user)
@@ -222,6 +232,7 @@ class AnimeRepository @Inject constructor(
   suspend fun logout() {
     api.logout()
   }
+
   // Settings
   val autoNext = prefs.autoNext
   val autoSkip = prefs.autoSkip
@@ -308,10 +319,12 @@ class AnimeRepository @Inject constructor(
   suspend fun setPrioritizeTimeOverSize(value: Boolean) = prefs.setPrioritizeTimeOverSize(value)
   suspend fun setDnsMode(value: String) = prefs.setDnsMode(value)
   suspend fun setCustomDnsUrl(value: String) = prefs.setCustomDnsUrl(value)
+
   // Search History
   val searchHistory = prefs.searchHistory
   suspend fun addSearchHistory(query: String) = prefs.addSearchHistory(query)
   suspend fun clearSearchHistory() = prefs.clearSearchHistory()
+
   // Notifications
   suspend fun getNotifications(): Result<NotificationData> = runCatching {
     val data = api.getNotifications()
@@ -332,6 +345,7 @@ class AnimeRepository @Inject constructor(
   suspend fun onTrigger(trigger: Trigger): Result<Unit> = runCatching {
     api.onTrigger(trigger)
   }
+
   // Follows
   suspend fun getFollows(filters: List<SelectedFilter> = emptyList(), page: Int = 1): Result<CategoryPage> = runCatching {
     api.getFollows(filters, page)
@@ -348,6 +362,7 @@ class AnimeRepository @Inject constructor(
       param(FirebaseAnalytics.Param.ITEM_ID, animeId)
     }
   }
+
   // Comments
   suspend fun getComments(
     filmId: String,
@@ -384,6 +399,7 @@ class AnimeRepository @Inject constructor(
   ): Result<EditCommentResponse> = runCatching {
     api.editComment(commentId, content, isSpoiler)
   }
+
   // History
   suspend fun getHistory(page: Int) = historyRepository.getHistory(page)
   suspend fun getWatchProgress(seasonId: String) = historyRepository.getWatchProgress(seasonId)

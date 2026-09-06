@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.dialogs
-import kotlin.time.Duration.Companion.milliseconds
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.style.StyleSpan

@@ -1,5 +1,4 @@
 package git.shin.animevsub.utils
-import kotlin.time.Duration.Companion.milliseconds
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService

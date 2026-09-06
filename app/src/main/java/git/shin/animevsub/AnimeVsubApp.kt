@@ -1,5 +1,4 @@
 package git.shin.animevsub
-import kotlin.time.Duration.Companion.milliseconds
 import android.app.Application
 import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
@@ -22,6 +21,7 @@ class AnimeVsubApp :
     var instance: AnimeVsubApp? = null
       private set
   }
+
   @Inject
   lateinit var workerFactory: HiltWorkerFactory
   override fun onCreate() {

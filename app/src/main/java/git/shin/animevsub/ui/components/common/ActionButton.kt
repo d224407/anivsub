@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.common
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

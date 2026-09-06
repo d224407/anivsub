@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.detail
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -53,6 +52,7 @@ fun BottomSheetDragHandle() {
       .background(TextGrey)
   )
 }
+
 @Composable
 fun CommentSection(
   comments: List<Comment>,

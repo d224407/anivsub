@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.schedule
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +17,7 @@ data class ScheduleUiState(
   val error: String? = null,
   val selectedDay: Int = 0
 )
+
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
   private val repository: AnimeRepository

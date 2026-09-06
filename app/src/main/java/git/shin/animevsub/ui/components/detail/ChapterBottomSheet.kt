@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.detail
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet

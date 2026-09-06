@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.account
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -75,6 +74,7 @@ fun PlaylistListSection(
     }
   }
 }
+
 @Composable
 fun PlaylistItemRow(
   playlist: Playlist,
@@ -114,6 +114,7 @@ fun PlaylistItemRow(
     )
   }
 }
+
 @Composable
 fun PlaylistSkeletonItem() {
   Row(

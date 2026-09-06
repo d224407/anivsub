@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.remote
-import kotlin.time.Duration.Companion.milliseconds
 import android.net.Uri
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
@@ -67,6 +66,7 @@ class TransformableHttpDataSource(
     }
   }
 }
+
 @UnstableApi
 class TransformableDataSourceFactory(
   private val server: ServerInfo,

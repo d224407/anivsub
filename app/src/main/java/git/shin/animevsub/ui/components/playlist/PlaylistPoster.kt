@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.playlist
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio

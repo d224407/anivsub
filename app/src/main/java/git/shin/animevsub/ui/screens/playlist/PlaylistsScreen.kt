@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.playlist
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -144,6 +143,7 @@ fun PlaylistsScreen(
     )
   }
 }
+
 @Composable
 fun PlaylistVerticalRowSkeleton() {
   Row(
@@ -177,6 +177,7 @@ fun PlaylistVerticalRowSkeleton() {
     }
   }
 }
+
 @Composable
 fun PlaylistVerticalRow(
   playlist: Playlist,

@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.schedule
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -212,6 +211,7 @@ fun ScheduleScreen(
     }
   }
 }
+
 @Composable
 private fun ScheduleDayList(
   dayData: ScheduleDay,

@@ -1,5 +1,4 @@
 package git.shin.animevsub.widget
-import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -97,6 +96,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
       }
     }
   }
+
   @SuppressLint("RestrictedApi")
   @Composable
   private fun WidgetContent(
@@ -168,6 +168,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
       }
     }
   }
+
   @SuppressLint("RestrictedApi")
   @Composable
   private fun AnimeRow(
@@ -230,6 +231,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
       }
     }
   }
+
   @SuppressLint("RestrictedApi")
   @Composable
   private fun LatestCarouselItem(
@@ -299,6 +301,7 @@ class ToggleLatestModeAction : ActionCallback {
     LatestUpdateWidget().update(context, glanceId)
   }
 }
+
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface LatestUpdateWidgetEntryPoint {

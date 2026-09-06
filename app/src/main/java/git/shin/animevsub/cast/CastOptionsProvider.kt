@@ -1,5 +1,4 @@
 package git.shin.animevsub.cast
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider

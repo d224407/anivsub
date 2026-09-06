@@ -1,5 +1,4 @@
 package git.shin.animevsub.utils
-import kotlin.time.Duration.Companion.milliseconds
 import java.util.zip.Inflater
 fun inflateRaw(data: ByteArray): ByteArray {
   val inflater = Inflater(true) // true = raw (no zlib header)

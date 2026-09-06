@@ -289,6 +289,7 @@ fun AiChatBottomSheet(
     }
   }
 }
+
 @Composable
 private fun AiMessageBubble(
   content: String,
@@ -372,6 +373,7 @@ private fun AiMessageBubble(
     }
   }
 }
+
 @Composable
 private fun SuggestionChip(
   text: String,
@@ -394,6 +396,7 @@ private fun SuggestionChip(
     )
   }
 }
+
 @Composable
 private fun AiLoadingIndicator(modifier: Modifier = Modifier) {
   Row(
@@ -415,6 +418,7 @@ private fun AiLoadingIndicator(modifier: Modifier = Modifier) {
     }
   }
 }
+
 @Composable
 private fun AiLoadingSkeleton(modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxWidth()) {

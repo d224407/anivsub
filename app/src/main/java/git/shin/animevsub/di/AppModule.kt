@@ -1,5 +1,4 @@
 package git.shin.animevsub.di
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
@@ -27,68 +26,75 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-    @Provides
-    @Singleton
-    fun provideSupabaseClient(): SupabaseClient = createSupabaseClient(
-        supabaseUrl = BuildConfig.SUPABASE_URL,
-        supabaseKey = BuildConfig.SUPABASE_KEY
-    ) {
-        install(Postgrest)
-        install(Auth)
-    }
-    @Provides
-    @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-        encodeDefaults = true
-        isLenient = true
-    }
-    @Provides
-    @Singleton
-    @Named(DNS_BOOTSTRAP_CLIENT)
-    fun provideDnsBootstrapClient(): OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
-        .build()
-    @Provides
-    @Singleton
-    fun provideDynamicDns(
-        prefs: PreferencesManager,
-        @Named(DNS_BOOTSTRAP_CLIENT) dnsBootstrapClient: OkHttpClient
-    ): DynamicDns = DynamicDns(prefs, dnsBootstrapClient)
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(dynamicDns: DynamicDns): OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .followRedirects(false)
-        .followSslRedirects(true)
-        .cookieJar(WebViewCookieJar())
-        .dns(dynamicDns)
-        .build()
-    @Provides
-    @Singleton
-    fun provideAnimeDataSource(
-        client: OkHttpClient,
-        json: Json,
-        apiStorage: ApiStorage,
-        cloudflareManager: CloudflareManager
-    ): AnimeDataSource = AnimeApi(client, json, cloudflareManager)
-    @Provides
-    @Singleton
-    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(context)
-    }
-    @Provides
-    @Singleton
-    fun provideCloudflareManager(@ApplicationContext context: Context): CloudflareManager = CloudflareManager(context)
-    @Provides
-    @Singleton
-    fun providePreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
-    @Provides
-    @Singleton
-    fun provideApiStorage(@ApplicationContext context: Context): ApiStorage = ApiStorage(context)
-    private const val DNS_BOOTSTRAP_CLIENT = "dnsBootstrapClient"
+  @Provides
+  @Singleton
+  fun provideSupabaseClient(): SupabaseClient = createSupabaseClient(
+    supabaseUrl = BuildConfig.SUPABASE_URL,
+    supabaseKey = BuildConfig.SUPABASE_KEY
+  ) {
+    install(Postgrest)
+    install(Auth)
+  }
+
+  @Provides
+  @Singleton
+  fun provideJson(): Json = Json {
+    ignoreUnknownKeys = true
+    coerceInputValues = true
+    encodeDefaults = true
+    isLenient = true
+  }
+
+  @Provides
+  @Singleton
+  @Named(DNS_BOOTSTRAP_CLIENT)
+  fun provideDnsBootstrapClient(): OkHttpClient = OkHttpClient.Builder()
+    .connectTimeout(15, TimeUnit.SECONDS)
+    .readTimeout(15, TimeUnit.SECONDS)
+    .build()
+
+  @Provides
+  @Singleton
+  fun provideDynamicDns(
+    prefs: PreferencesManager,
+    @Named(DNS_BOOTSTRAP_CLIENT) dnsBootstrapClient: OkHttpClient
+  ): DynamicDns = DynamicDns(prefs, dnsBootstrapClient)
+
+  @Provides
+  @Singleton
+  fun provideOkHttpClient(dynamicDns: DynamicDns): OkHttpClient = OkHttpClient.Builder()
+    .connectTimeout(30, TimeUnit.SECONDS)
+    .readTimeout(30, TimeUnit.SECONDS)
+    .writeTimeout(30, TimeUnit.SECONDS)
+    .followRedirects(false)
+    .followSslRedirects(true)
+    .cookieJar(WebViewCookieJar())
+    .dns(dynamicDns)
+    .build()
+
+  @Provides
+  @Singleton
+  fun provideAnimeDataSource(
+    client: OkHttpClient,
+    json: Json,
+    apiStorage: ApiStorage,
+    cloudflareManager: CloudflareManager
+  ): AnimeDataSource = AnimeApi(client, json, cloudflareManager)
+
+  @Provides
+  @Singleton
+  fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+
+  @Provides
+  @Singleton
+  fun provideCloudflareManager(@ApplicationContext context: Context): CloudflareManager = CloudflareManager(context)
+
+  @Provides
+  @Singleton
+  fun providePreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
+
+  @Provides
+  @Singleton
+  fun provideApiStorage(@ApplicationContext context: Context): ApiStorage = ApiStorage(context)
+  private const val DNS_BOOTSTRAP_CLIENT = "dnsBootstrapClient"
 }

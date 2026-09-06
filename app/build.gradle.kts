@@ -18,7 +18,6 @@ plugins {
 detekt {
   buildUponDefaultConfig = true
   allRules = false
-  config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
 
   val excludePatterns = listOf(
     "**/git/shin/animevsub/data/remote/api_example/**"
@@ -62,7 +61,7 @@ android {
     return bytes.joinToString("") { "%02x".format(it) }
   }
 
-  val devPassword = localProperties.getProperty("PASSWORD_UNLOCK_DEVELOPER").toString()
+  val devPassword = localProperties.getProperty("PASSWORD_UNLOCK_DEVELOPER") ?: ""
   val hashedDevPassword = sha256(devPassword)
 
   defaultConfig {
@@ -134,7 +133,8 @@ android {
 }
 
 dependencies {
-  // Compose BOM
+  implementation("androidx.core:core-ktx:1.19.0")
+    // Compose BOM
   val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
   implementation(composeBom)
 

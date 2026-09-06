@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.home
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,6 +63,7 @@ fun QuickLinksRow(
     )
   }
 }
+
 @Composable
 private fun QuickLinkItem(
   label: String,

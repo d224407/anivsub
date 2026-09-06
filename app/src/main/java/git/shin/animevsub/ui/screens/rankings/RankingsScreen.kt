@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.rankings
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -162,6 +161,7 @@ fun RankingsScreen(
     }
   }
 }
+
 @Composable
 private fun RankingsListContent(
   uiState: RankingsUiState,
@@ -211,6 +211,7 @@ private fun RankingsListContent(
     }
   }
 }
+
 @Composable
 private fun RankingLoadingList(columns: Int) {
   if (columns > 1) {

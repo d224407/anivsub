@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.settings
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -185,6 +184,7 @@ fun AppIconSelector(
     }
   }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -661,6 +661,7 @@ fun SettingsScreen(
     }
   }
 }
+
 @Composable
 private fun GeminiApiKeySection(
   uiState: SettingsUiState,
@@ -797,6 +798,7 @@ private fun GeminiApiKeySection(
     )
   }
 }
+
 @Composable
 private fun OpenAIApiKeySection(
   uiState: SettingsUiState,
@@ -882,6 +884,7 @@ private fun OpenAIApiKeySection(
     )
   }
 }
+
 @Composable
 private fun ClaudeApiKeySection(
   uiState: SettingsUiState,

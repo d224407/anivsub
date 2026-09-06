@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.model
-import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.remote.SegmentDataInterceptor
 import git.shin.animevsub.data.remote.SegmentUrlInterceptor
 import kotlinx.serialization.Serializable
@@ -20,16 +19,19 @@ data class AnimeCard(
   val genre: List<CategoryLink> = emptyList(),
   val timeRelease: Long? = null
 )
+
 @Serializable
 data class CategoryLink(
   val name: String,
   val filters: List<SelectedFilter> = emptyList()
 )
+
 @Serializable
 data class Season(
   val id: String,
   val name: String
 )
+
 /**
  * Represents a Season displayed on the UI.
  * Can be a real season from the API or a "Virtual Season" split from a very long season.
@@ -79,6 +81,7 @@ data class AnimeDetail(
   val extra: Map<String, String> = emptyMap(),
   val externalPlatforms: List<ExternalPlatform> = emptyList()
 )
+
 @Serializable
 data class ChapterInfo(
   val id: String,
@@ -124,6 +127,7 @@ data class CategoryPage(
   val name: String = "",
   val title: String = ""
 )
+
 @Serializable
 data class User(
   val avatar: String? = null,
@@ -132,12 +136,14 @@ data class User(
   val sex: String? = null,
   val username: String
 )
+
 @Serializable
 data class Trigger(
   val id: String,
   val name: String? = null,
   val extra: Map<String, String> = emptyMap()
 )
+
 @Serializable
 data class NotificationItem(
   val id: String,
@@ -152,6 +158,7 @@ data class NotificationItem(
   @Serializable(with = InstantSerializer::class) val createdAt: Instant? = null,
   val closeTrigger: Trigger? = null
 )
+
 @Serializable
 data class FilterOption(
   val id: String,
@@ -164,6 +171,7 @@ data class FilterGroup(
   val isMultiple: Boolean = false,
   val default: String? = null
 )
+
 @Serializable
 data class SelectedFilter(
   val groupId: String,
@@ -172,6 +180,7 @@ data class SelectedFilter(
   val include: Boolean = true,
   val exclude: Boolean = false
 )
+
 @Serializable
 data class DoubleRange(
   val start: Double,
@@ -182,6 +191,7 @@ data class DoubleRange(
   operator fun contains(value: Double): Boolean = value in start..end
   operator fun contains(value: Long): Boolean = value.toDouble() in start..end
 }
+
 @Serializable
 data class InOutroEpisode(
   val intro: DoubleRange,

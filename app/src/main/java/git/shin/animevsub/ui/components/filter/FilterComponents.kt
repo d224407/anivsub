@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.filter
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -107,6 +106,7 @@ fun FilterActionRow(
     }
   }
 }
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun FiltersBottomSheet(

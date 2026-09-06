@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.player
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -310,6 +309,7 @@ fun EpisodeSelectorContent(
     }
   }
 }
+
 @Composable
 private fun SeasonItem(
   season: DisplaySeason,

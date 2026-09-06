@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.about
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -345,6 +344,7 @@ fun AboutScreen(
     )
   }
 }
+
 @Composable
 private fun InfoCard(
   title: String,

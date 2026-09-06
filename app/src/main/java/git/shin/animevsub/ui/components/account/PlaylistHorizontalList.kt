@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.account
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -84,6 +83,7 @@ fun PlaylistHorizontalList(
     }
   }
 }
+
 @Composable
 fun PlaylistHorizontalCard(
   playlist: Playlist,
@@ -119,6 +119,7 @@ fun PlaylistHorizontalCard(
     )
   }
 }
+
 @Composable
 fun PlaylistHorizontalItemSkeleton() {
   Column(modifier = Modifier.width(180.dp)) {

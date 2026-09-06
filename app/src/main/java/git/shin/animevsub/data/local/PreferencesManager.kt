@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.local
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

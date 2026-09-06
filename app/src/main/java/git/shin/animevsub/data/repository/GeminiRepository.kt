@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.repository
-import kotlin.time.Duration.Companion.milliseconds
 import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
@@ -39,6 +38,7 @@ enum class AiProvider {
   OPENAI,
   CLAUDE
 }
+
 @Singleton
 class GeminiRepository @Inject constructor(
   private val prefs: PreferencesManager
@@ -49,6 +49,7 @@ class GeminiRepository @Inject constructor(
   private val aiCache = object : LinkedHashMap<String, String>(16, 0.75f, true) {
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>): Boolean = size > MAX_AI_CACHE_ENTRIES
   }
+
   // OkHttpClient remains for listing models as the SDK doesn't expose this management API yet
   private val client = OkHttpClient.Builder()
     .connectTimeout(60, TimeUnit.SECONDS)
@@ -490,6 +491,7 @@ class GeminiRepository @Inject constructor(
           )
         }
       }
+
       @Suppress("SpreadOperator")
       val response = generativeModel.generateContent(*contents.toTypedArray())
       val rawText = response.text?.trim() ?: throw Exception("Empty response from AI")

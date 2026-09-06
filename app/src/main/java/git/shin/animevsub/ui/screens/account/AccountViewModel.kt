@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.account
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +36,7 @@ data class AccountUiState(
   val followSelectedFilters: List<SelectedFilter> = emptyList(),
   val isFollowFilterLoading: Boolean = false
 )
+
 @HiltViewModel
 class AccountViewModel @Inject constructor(
   private val repository: AnimeRepository,

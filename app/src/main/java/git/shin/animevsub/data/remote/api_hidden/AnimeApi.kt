@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.remote.api_hidden
-import kotlin.time.Duration.Companion.milliseconds
 import android.webkit.CookieManager
 import git.shin.animevsub.data.model.*
 import git.shin.animevsub.data.remote.api.AnimeDataSource
@@ -115,16 +114,14 @@ class AnimeApi(
     }
     return CategoryLink(name, filters)
   }
-  private fun extractPath(url: String): String {
-    return try {
-      URL(url).path
-    } catch (_: Exception) {
-      var path = url.removePrefix(baseUrl)
-      if (!path.startsWith("/")) {
-        path = "/$path"
-      }
-      path
+  private fun extractPath(url: String): String = try {
+    URL(url).path
+  } catch (_: Exception) {
+    var path = url.removePrefix(baseUrl)
+    if (!path.startsWith("/")) {
+      path = "/$path"
     }
+    path
   }
   private fun syncCookies(fromUrl: String, toUrl: String) {
     val cookieManager = CookieManager.getInstance()
@@ -139,6 +136,7 @@ class AnimeApi(
     }
     cookieManager.flush()
   }
+
   @Throws(Exception::class)
   private fun decryptAesGcm(
     encrypted: String,
@@ -202,74 +200,37 @@ class AnimeApi(
     val pattern = Regex("animevietsub\\.(\\w+)")
     return pattern.replace(input, currentDomain)
   }
+
   // ==================== AnimeDataSource Methods ====================
-  override suspend fun getUser(): Flow<User?> {
-    return flowOf(null)
-  }
-  override suspend fun refreshUser(): User {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
+  override suspend fun getUser(): Flow<User?> = flowOf(null)
+  override suspend fun refreshUser(): User = throw UnsupportedOperationException("Not implemented yet")
   override suspend fun logout() {
     // TODO: Implement actual logic
   }
-  override suspend fun getHomePage(): HomeData {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
-  override suspend fun getSchedule(): List<ScheduleDay> {
-    return emptyList()
-  }
-  override suspend fun getRankings(type: String): List<AnimeCard> {
-    return emptyList()
-  }
-  override suspend fun getRankingTypes(): List<FilterOption> {
-    return emptyList()
-  }
-  override suspend fun preSearch(keyword: String): List<SearchSuggestion> {
-    return emptyList()
-  }
-  override suspend fun search(keyword: String, page: Int): CategoryPage {
-    return CategoryPage(emptyList(), 0, 0)
-  }
-  override suspend fun getCategory(filters: List<SelectedFilter>, page: Int): CategoryPage {
-    return CategoryPage(emptyList(), 0, 0)
-  }
-  override suspend fun getFilters(filters: List<SelectedFilter>): List<FilterGroup> {
-    return emptyList()
-  }
-  override suspend fun getAnimeDetail(animeId: String): AnimeDetail {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
-  override suspend fun getChapters(animeId: String): ChapterData {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
-  override suspend fun getServers(chapter: ChapterInfo): List<ServerInfo> {
-    return emptyList()
-  }
-  override suspend fun getPlayerLink(server: ServerInfo): PlayerData {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
+  override suspend fun getHomePage(): HomeData = throw UnsupportedOperationException("Not implemented yet")
+  override suspend fun getSchedule(): List<ScheduleDay> = emptyList()
+  override suspend fun getRankings(type: String): List<AnimeCard> = emptyList()
+  override suspend fun getRankingTypes(): List<FilterOption> = emptyList()
+  override suspend fun preSearch(keyword: String): List<SearchSuggestion> = emptyList()
+  override suspend fun search(keyword: String, page: Int): CategoryPage = CategoryPage(emptyList(), 0, 0)
+  override suspend fun getCategory(filters: List<SelectedFilter>, page: Int): CategoryPage = CategoryPage(emptyList(), 0, 0)
+  override suspend fun getFilters(filters: List<SelectedFilter>): List<FilterGroup> = emptyList()
+  override suspend fun getAnimeDetail(animeId: String): AnimeDetail = throw UnsupportedOperationException("Not implemented yet")
+  override suspend fun getChapters(animeId: String): ChapterData = throw UnsupportedOperationException("Not implemented yet")
+  override suspend fun getServers(chapter: ChapterInfo): List<ServerInfo> = emptyList()
+  override suspend fun getPlayerLink(server: ServerInfo): PlayerData = throw UnsupportedOperationException("Not implemented yet")
   override suspend fun getEpisodeSkip(
     animeId: String,
     detail: AnimeDetail,
     chapter: ChapterInfo
-  ): InOutroEpisode? {
-    return null
-  }
-  override suspend fun getFollows(filters: List<SelectedFilter>, page: Int): CategoryPage {
-    return CategoryPage(emptyList(), 0, 0)
-  }
-  override suspend fun getFollowFilters(filters: List<SelectedFilter>): List<FilterGroup> {
-    return emptyList()
-  }
-  override suspend fun checkFollow(animeId: String): Boolean {
-    return false
-  }
+  ): InOutroEpisode? = null
+  override suspend fun getFollows(filters: List<SelectedFilter>, page: Int): CategoryPage = CategoryPage(emptyList(), 0, 0)
+  override suspend fun getFollowFilters(filters: List<SelectedFilter>): List<FilterGroup> = emptyList()
+  override suspend fun checkFollow(animeId: String): Boolean = false
   override suspend fun toggleFollow(animeId: String, follow: Boolean) {
     // TODO: Implement actual logic
   }
-  override suspend fun getNotifications(): NotificationData {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
+  override suspend fun getNotifications(): NotificationData = throw UnsupportedOperationException("Not implemented yet")
   override suspend fun onTrigger(trigger: Trigger) {
     // TODO: Implement actual logic
   }
@@ -278,16 +239,12 @@ class AnimeApi(
     anime: AnimeDetail,
     sort: FilterOption?,
     offset: Int
-  ): CommentResponse {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
+  ): CommentResponse = throw UnsupportedOperationException("Not implemented yet")
   override suspend fun getReplies(
     commentId: String,
     sort: FilterOption?,
     offset: Int
-  ): ReplyResponse {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
+  ): ReplyResponse = throw UnsupportedOperationException("Not implemented yet")
   override suspend fun postComment(
     filmId: String,
     content: String,
@@ -295,26 +252,14 @@ class AnimeApi(
     episodeId: String?,
     parentId: String,
     threadKey: String?
-  ): PostCommentResponse {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
-  override suspend fun voteComment(commentId: String, voteType: VoteType): VoteResponse {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
+  ): PostCommentResponse = throw UnsupportedOperationException("Not implemented yet")
+  override suspend fun voteComment(commentId: String, voteType: VoteType): VoteResponse = throw UnsupportedOperationException("Not implemented yet")
   override suspend fun editComment(
     commentId: String,
     content: String,
     isSpoiler: Boolean
-  ): EditCommentResponse {
-    throw UnsupportedOperationException("Not implemented yet")
-  }
-  override suspend fun getCommentSortOptions(): List<FilterOption> {
-    return emptyList()
-  }
-  override fun encodeURI(url: String): String {
-    return URL(url).toString()
-  }
-  override fun decodeURI(url: String): String {
-    return URL(url).toString()
-  }
+  ): EditCommentResponse = throw UnsupportedOperationException("Not implemented yet")
+  override suspend fun getCommentSortOptions(): List<FilterOption> = emptyList()
+  override fun encodeURI(url: String): String = URL(url).toString()
+  override fun decodeURI(url: String): String = URL(url).toString()
 }

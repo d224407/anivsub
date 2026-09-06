@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.badge
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape

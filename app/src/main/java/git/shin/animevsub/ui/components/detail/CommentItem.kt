@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.detail
-import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -131,6 +130,7 @@ fun CommentContent(
     }
   }
 }
+
 @Composable
 fun CommentItem(
   comment: Comment,
@@ -361,6 +361,7 @@ fun CommentItem(
     }
   }
 }
+
 @Composable
 private fun formatCommentTime(timestamp: Long): String {
   val now = System.currentTimeMillis() / 1000

@@ -1,5 +1,4 @@
 package git.shin.animevsub.widget
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -94,6 +93,7 @@ class ContinueWatchingWidget : GlanceAppWidget() {
       "%02d:%02d".format(m, sec)
     }
   }
+
   @Composable
   private fun WidgetContent(context: Context, history: HistoryItem?, poster: Bitmap?) {
     val widgetSize = LocalSize.current
@@ -270,6 +270,7 @@ class ContinueWatchingWidget : GlanceAppWidget() {
     }
   }
 }
+
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface WidgetEntryPoint {

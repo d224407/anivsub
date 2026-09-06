@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.player
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween

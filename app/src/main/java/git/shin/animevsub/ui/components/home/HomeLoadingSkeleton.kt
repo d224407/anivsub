@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.home
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -126,6 +125,7 @@ fun HomeLoadingSkeleton(windowSize: WindowSizeClass) {
     Spacer(modifier = Modifier.height(100.dp))
   }
 }
+
 @Composable
 private fun SectionSkeleton() {
   Box(

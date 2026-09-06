@@ -26,6 +26,7 @@ data class SearchUiState(
   val totalPages: Int = 1,
   val isRefreshing: Boolean = false
 )
+
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   private val repository: AnimeRepository

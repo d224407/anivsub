@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.notification.components
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,6 +66,7 @@ fun NotificationTabs(
     )
   }
 }
+
 @Composable
 private fun NotificationTabItem(
   title: String,

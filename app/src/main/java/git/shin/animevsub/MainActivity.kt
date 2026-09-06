@@ -1,5 +1,4 @@
 package git.shin.animevsub
-import kotlin.time.Duration.Companion.milliseconds
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -112,12 +111,16 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
+
   @Inject
   lateinit var updateManager: UpdateManager
+
   @Inject
   lateinit var cloudflareManager: CloudflareManager
+
   @Inject
   lateinit var animeRepository: AnimeRepository
+
   @Inject
   lateinit var preferencesManager: PreferencesManager
   private val _isInPipMode = MutableStateFlow(false)
@@ -146,6 +149,7 @@ class MainActivity : ComponentActivity() {
   private val _pipEvent = MutableSharedFlow<PipEvent>()
   val pipEvent = _pipEvent.asSharedFlow()
   private var isPipPlaying = false
+
   @SuppressLint("AppBundleLocaleChanges")
   override fun attachBaseContext(newBase: Context) {
     val prefs = PreferencesManager(newBase)
@@ -166,6 +170,7 @@ class MainActivity : ComponentActivity() {
     super.attachBaseContext(context)
   }
   private val intentFlow = MutableStateFlow<Intent?>(null)
+
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

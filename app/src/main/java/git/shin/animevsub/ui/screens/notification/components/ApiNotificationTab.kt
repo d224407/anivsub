@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.notification.components
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn

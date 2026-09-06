@@ -1,5 +1,4 @@
 package git.shin.animevsub.worker
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker

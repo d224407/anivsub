@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.utils
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import git.shin.animevsub.R
@@ -19,6 +18,7 @@ fun formatNumber(num: Int): String {
     else -> num.toString()
   }
 }
+
 @Composable
 fun formatScheduleUpdate(update: Triple<Int, Int, Int>): String {
   val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) // 1 = Sunday, 7 = Saturday
@@ -116,6 +116,7 @@ fun parseTimeAgo(timeAgo: String?): Instant? {
   }
   return Instant.ofEpochMilli(now - millis)
 }
+
 @Composable
 fun formatTimeAgo(instant: Instant?): String {
   if (instant == null) return ""

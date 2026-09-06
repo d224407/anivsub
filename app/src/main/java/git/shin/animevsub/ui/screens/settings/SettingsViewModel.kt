@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.settings
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -63,6 +62,7 @@ data class SettingsUiState(
   val testResult: String? = null,
   val testSuccess: Boolean = false
 )
+
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
   @param:ApplicationContext private val context: Context,

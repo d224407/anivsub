@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.login
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +18,7 @@ data class LoginUiState(
   val error: String? = null,
   val isSuccess: Boolean = false
 )
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
   private val repository: AnimeRepository,

@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.theme
-import kotlin.time.Duration.Companion.milliseconds
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -21,6 +20,7 @@ val StarColor = Color(0xFFFFD700)
 val ErrorColor = Color(0xFFCF6679)
 val SuccessColor = Color(0xFF4CAF50)
 val GithubBlue = Color(0xFF58A6FF)
+
 // Popular Colors
 val MainColor = Color(0xFF00D639)
 private val DarkColorScheme = darkColorScheme(
@@ -39,6 +39,7 @@ private val DarkColorScheme = darkColorScheme(
   onError = Color.White,
   outline = Color(0xFF3A4A6B)
 )
+
 @Composable
 fun AnimeVsubTheme(
   dynamicColor: Boolean = false,

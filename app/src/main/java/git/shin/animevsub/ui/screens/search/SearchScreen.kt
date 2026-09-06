@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.search
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -187,6 +186,7 @@ fun SearchScreen(
     }
   }
 }
+
 @Composable
 fun SearchHistoryList(
   history: List<String>,
@@ -247,6 +247,7 @@ fun SearchHistoryList(
     }
   }
 }
+
 @Composable
 fun SearchSuggestionsList(
   suggestions: List<SearchSuggestion>,
@@ -311,6 +312,7 @@ fun SearchSuggestionsList(
     }
   }
 }
+
 @Composable
 fun SearchSuggestionSkeleton() {
   val items = 5
@@ -349,6 +351,7 @@ fun SearchSuggestionSkeleton() {
     }
   }
 }
+
 @Composable
 fun EmptyState(message: String) {
   Box(

@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.playlist
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,6 +24,7 @@ data class PlaylistUiState(
   val isEditingName: Boolean = false,
   val isEditingDescription: Boolean = false
 )
+
 @HiltViewModel
 class PlaylistViewModel @Inject constructor(
   private val playlistRepository: PlaylistRepository,

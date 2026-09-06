@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.player
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton

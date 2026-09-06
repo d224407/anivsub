@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.player
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.pm.ActivityInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

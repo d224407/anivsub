@@ -1,5 +1,4 @@
 package git.shin.animevsub
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import androidx.startup.Initializer
 import com.google.firebase.crashlytics.FirebaseCrashlytics

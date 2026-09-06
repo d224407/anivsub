@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.anime
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -72,6 +71,7 @@ fun NotificationSkeleton(modifier: Modifier = Modifier) {
     }
   }
 }
+
 @Composable
 fun NotificationListSkeleton() {
   LazyColumn(userScrollEnabled = false) {

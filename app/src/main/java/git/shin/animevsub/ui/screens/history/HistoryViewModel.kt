@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.history
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +21,7 @@ data class HistoryUiState(
   val hasMore: Boolean = true,
   val isLoadingMore: Boolean = false
 )
+
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
   private val repository: HistoryRepository

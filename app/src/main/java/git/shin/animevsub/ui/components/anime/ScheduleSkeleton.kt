@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.anime
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,6 +69,7 @@ fun ScheduleItemSkeleton(modifier: Modifier = Modifier) {
     }
   }
 }
+
 @Composable
 fun ScheduleLoadingSkeleton(modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxSize()) {

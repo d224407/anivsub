@@ -1,5 +1,4 @@
 package git.shin.animevsub.widget
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -97,6 +96,7 @@ class HistoryWidget : GlanceAppWidget() {
       }
     }
   }
+
   @Composable
   private fun WidgetContent(
     context: Context,
@@ -170,6 +170,7 @@ class HistoryWidget : GlanceAppWidget() {
       }
     }
   }
+
   @Composable
   private fun HistoryRow(
     context: Context,
@@ -242,6 +243,7 @@ class HistoryWidget : GlanceAppWidget() {
       }
     }
   }
+
   @Composable
   private fun HistoryCarouselItem(
     context: Context,

@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.history
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -99,6 +98,7 @@ fun HistoryItemRow(
     }
   }
 }
+
 @Composable
 fun HistoryItemRowSkeleton() {
   Row(

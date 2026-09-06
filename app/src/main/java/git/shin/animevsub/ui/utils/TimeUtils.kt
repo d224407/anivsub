@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.utils
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.Context
 import android.text.format.DateUtils
 import git.shin.animevsub.R

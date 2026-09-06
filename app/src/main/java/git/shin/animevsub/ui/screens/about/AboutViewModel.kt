@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.about
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +23,7 @@ data class AboutUiState(
   val hideDonationPopup: Boolean = false,
   val loginUrl: String = ""
 )
+
 @HiltViewModel
 class AboutViewModel @Inject constructor(
   private val updateManager: UpdateManager,

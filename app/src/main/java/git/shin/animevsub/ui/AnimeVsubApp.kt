@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition

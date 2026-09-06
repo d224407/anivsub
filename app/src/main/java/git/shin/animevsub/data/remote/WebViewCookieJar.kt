@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.remote
-import kotlin.time.Duration.Companion.milliseconds
 import android.webkit.CookieManager
 import okhttp3.Cookie
 import okhttp3.CookieJar

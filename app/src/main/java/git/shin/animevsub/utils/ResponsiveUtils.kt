@@ -1,5 +1,4 @@
 package git.shin.animevsub.utils
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable

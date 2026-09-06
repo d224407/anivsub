@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.category
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +28,7 @@ data class CategoryUiState(
   val isFilterLoading: Boolean = false,
   val isRefreshing: Boolean = false
 )
+
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
   private val repository: AnimeRepository,

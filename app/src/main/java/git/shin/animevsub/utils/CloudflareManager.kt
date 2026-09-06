@@ -1,5 +1,4 @@
 package git.shin.animevsub.utils
-import kotlin.time.Duration.Companion.milliseconds
 import android.os.Handler
 import android.os.Looper
 import android.webkit.CookieManager
@@ -24,6 +23,7 @@ class CloudflareManager @Inject constructor(
 ) {
   companion object {
     const val DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+
     @Volatile
     private var instance: CloudflareManager? = null
     fun getCurrentUserAgent(): String = instance?.currentUserAgent() ?: DEFAULT_USER_AGENT

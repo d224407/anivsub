@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.detail
-import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.webkit.WebView
 import android.webkit.WebViewClient

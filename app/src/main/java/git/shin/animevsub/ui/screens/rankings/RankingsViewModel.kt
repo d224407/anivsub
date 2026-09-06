@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.rankings
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +21,7 @@ data class RankingsUiState(
   val selectedType: String = "",
   val rankingTypes: List<FilterOption> = emptyList()
 )
+
 @HiltViewModel
 class RankingsViewModel @Inject constructor(
   private val repository: AnimeRepository,

@@ -1,8 +1,7 @@
 package git.shin.animevsub.data.remote.api_hidden
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.Serializable
 @Serializable
 data class EpisodeProgress(
-    val current: String,
-    val total: String
+  val current: String,
+  val total: String
 )

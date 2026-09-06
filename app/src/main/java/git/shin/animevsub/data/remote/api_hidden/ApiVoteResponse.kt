@@ -1,10 +1,9 @@
 package git.shin.animevsub.data.remote.api_hidden
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.Serializable
 @Serializable
 data class ApiVoteResponse(
-    val success: Boolean,
-    val votesUp: Int = 0,
-    val votesDown: Int = 0,
-    val error: String? = null
+  val success: Boolean,
+  val votesUp: Int = 0,
+  val votesDown: Int = 0,
+  val error: String? = null
 )

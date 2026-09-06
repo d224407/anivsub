@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.utils
-import kotlin.time.Duration.Companion.milliseconds
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable

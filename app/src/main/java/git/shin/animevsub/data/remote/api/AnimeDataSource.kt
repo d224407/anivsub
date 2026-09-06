@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.remote.api
-import kotlin.time.Duration.Companion.milliseconds
 import git.shin.animevsub.data.model.AnimeCard
 import git.shin.animevsub.data.model.AnimeDetail
 import git.shin.animevsub.data.model.CategoryPage

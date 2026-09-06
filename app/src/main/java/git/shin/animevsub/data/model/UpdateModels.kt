@@ -1,5 +1,4 @@
 package git.shin.animevsub.data.model
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 @Serializable
@@ -8,6 +7,7 @@ data class GitHubRelease(
   @SerialName("body") val body: String,
   @SerialName("assets") val assets: List<GitHubAsset>
 )
+
 @Serializable
 data class GitHubAsset(
   @SerialName("name") val name: String,

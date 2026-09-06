@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.detail
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -112,6 +111,7 @@ fun SummaryBottomSheet(
     }
   }
 }
+
 @Composable
 fun SummarySkeleton(modifier: Modifier = Modifier) {
   Column(modifier = modifier.fillMaxWidth()) {
@@ -164,6 +164,7 @@ fun SummarySkeleton(modifier: Modifier = Modifier) {
     )
   }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecapBottomSheet(

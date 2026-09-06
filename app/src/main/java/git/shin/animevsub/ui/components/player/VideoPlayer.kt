@@ -160,6 +160,7 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.roundToInt
 private const val PLAYBACK_START_TIMEOUT_MS = 15_000L
+
 // import androidx.mediarouter.media.MediaRouter
 // import androidx.mediarouter.app.MediaRouteChooserDialog
 // import androidx.mediarouter.app.MediaRouteControllerDialog
@@ -350,7 +351,7 @@ fun VideoPlayer(
                   isNotificationClickable = false
                   showNotification = true
                   scope.launch {
-                    delay(3000.milliseconds.milliseconds)
+                    delay(3000.milliseconds)
                     showNotification = false
                   }
                 }
@@ -384,6 +385,7 @@ fun VideoPlayer(
               }
             }
           }
+
 //        override fun onRenderedFirstFrame() {
 //          isFirstFrameRendered = true
 //        }
@@ -425,7 +427,7 @@ fun VideoPlayer(
     if (isDragging || showDoubleTapIndicator) {
       isSeeking = true
     } else {
-      delay(1500.milliseconds.milliseconds)
+      delay(1500.milliseconds)
       isSeeking = false
     }
   }
@@ -437,7 +439,7 @@ fun VideoPlayer(
       notificationIcon = Icons.Default.SkipNext
       isNotificationClickable = true
       showNotification = true
-      delay(3000.milliseconds.milliseconds)
+      delay(3000.milliseconds)
       if (isAutoNexting) {
         isAutoNexting = false
       }
@@ -495,7 +497,7 @@ fun VideoPlayer(
 //        duration = exoPlayer.duration.coerceAtLeast(0L)
         bufferedPosition = exoPlayer.bufferedPosition
       }
-      delay(500.milliseconds.milliseconds)
+      delay(500.milliseconds)
     }
   }
   LaunchedEffect(
@@ -512,7 +514,7 @@ fun VideoPlayer(
     showSkipNotification
   ) {
     if (isControlsVisible && !isDragging && isPlaying && !isBuffering && !showSpeedMenu && !showQualityMenu && !showEpisodeSideMenu && !showServerSideMenu && !showSettingsBottomSheet && !showSettingsSideMenu && !showSkipNotification) {
-      delay(5000.milliseconds.milliseconds)
+      delay(5000.milliseconds)
       isControlsVisible = false
     }
   }
@@ -585,7 +587,7 @@ fun VideoPlayer(
   LaunchedEffect(playerConfig, currentEpisode?.id, errorMessage) {
     if (playerData == null || playerData.link.isEmpty() || errorMessage != null) return@LaunchedEffect
     val watchedEpisodeId = currentEpisode?.id
-    delay(PLAYBACK_START_TIMEOUT_MS.milliseconds.milliseconds)
+    delay(PLAYBACK_START_TIMEOUT_MS.milliseconds)
     if (
       playerConfig == playerConfig &&
       currentEpisode?.id == watchedEpisodeId &&
@@ -637,7 +639,7 @@ fun VideoPlayer(
                       doubleTapSide = "left"
                       doubleTapText = "-10s"
                       showDoubleTapIndicator = true
-                      scope.launch { delay(800.milliseconds.milliseconds); showDoubleTapIndicator = false }
+                      scope.launch { delay(800.milliseconds); showDoubleTapIndicator = false }
                     }
                     true
                   }
@@ -649,7 +651,7 @@ fun VideoPlayer(
                       doubleTapSide = "right"
                       doubleTapText = "+10s"
                       showDoubleTapIndicator = true
-                      scope.launch { delay(800.milliseconds.milliseconds); showDoubleTapIndicator = false }
+                      scope.launch { delay(800.milliseconds); showDoubleTapIndicator = false }
                     }
                     true
                   }
@@ -976,7 +978,7 @@ fun VideoPlayer(
           var longPressTriggered = false
           val touchSlop = viewConfiguration.touchSlop
           val longPressJob = scope.launch {
-            delay(500.milliseconds.milliseconds)
+            delay(500.milliseconds)
             longPressTriggered = true
             if (isControlsVisible) isControlsVisible = false
             originalSpeedBeforeLongPress = playbackSpeed
@@ -1074,7 +1076,7 @@ fun VideoPlayer(
             }
             showDoubleTapIndicator = true
             scope.launch {
-              delay(800.milliseconds.milliseconds)
+              delay(800.milliseconds)
               showDoubleTapIndicator = false
             }
           }

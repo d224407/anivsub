@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.follow
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +24,7 @@ data class FollowUiState(
   val selectedFilters: List<SelectedFilter> = emptyList(),
   val isFilterLoading: Boolean = false
 )
+
 @HiltViewModel
 class FollowViewModel @Inject constructor(
   private val repository: AnimeRepository

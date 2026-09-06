@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.components.account
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,6 +70,7 @@ fun HistoryHorizontalList(
     }
   }
 }
+
 @Composable
 fun HistoryItemSkeleton() {
   Column(modifier = Modifier.width(200.dp)) {

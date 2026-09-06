@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.login
-import kotlin.time.Duration.Companion.milliseconds
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView

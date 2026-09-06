@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.navigation
-import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.ui.graphics.vector.ImageVector
 sealed class Screen(val route: String) {
   data object Home : Screen("home")

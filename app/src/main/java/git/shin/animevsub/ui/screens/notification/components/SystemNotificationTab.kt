@@ -1,5 +1,4 @@
 package git.shin.animevsub.ui.screens.notification.components
-import kotlin.time.Duration.Companion.milliseconds
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.background
@@ -139,6 +138,7 @@ fun SystemNotificationTab(
     }
   }
 }
+
 @Composable
 private fun SystemNotificationItem(
   notification: SystemNotification,
@@ -241,6 +241,7 @@ private fun SystemNotificationItem(
     }
   }
 }
+
 @Composable
 private fun getTypeIcon(type: SystemNotificationType): ImageVector = when (type) {
   SystemNotificationType.APP_UPDATE -> Icons.Default.SystemUpdate
@@ -251,6 +252,7 @@ private fun getTypeIcon(type: SystemNotificationType): ImageVector = when (type)
   SystemNotificationType.SECURITY -> Icons.Default.Security
   SystemNotificationType.GENERAL -> Icons.Default.Campaign
 }
+
 @Composable
 private fun getTypeColor(type: SystemNotificationType): Color = when (type) {
   SystemNotificationType.APP_UPDATE -> Color(0xFF4CAF50)
@@ -261,6 +263,7 @@ private fun getTypeColor(type: SystemNotificationType): Color = when (type) {
   SystemNotificationType.SECURITY -> Color(0xFFF44336)
   SystemNotificationType.GENERAL -> AccentMain
 }
+
 @Composable
 private fun EmptySystemNotifications() {
   Column(
