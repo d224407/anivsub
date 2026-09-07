@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player.settings
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.R
+
 @Composable
 fun SettingsSubMenuContainer(title: String, onBack: () -> Unit, content: @Composable () -> Unit) {
   Column {

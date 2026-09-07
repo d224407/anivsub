@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player
+
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -7,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.DarkSurface
+
 @Composable
 fun BedtimeReminderDialog(
   onDismiss: () -> Unit,

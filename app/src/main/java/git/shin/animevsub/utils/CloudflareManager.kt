@@ -1,4 +1,5 @@
 package git.shin.animevsub.utils
+
 import android.os.Handler
 import android.os.Looper
 import android.webkit.CookieManager
@@ -17,6 +18,7 @@ import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 import javax.inject.Singleton
+
 @Singleton
 class CloudflareManager @Inject constructor(
   @param:dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context
@@ -26,22 +28,29 @@ class CloudflareManager @Inject constructor(
 
     @Volatile
     private var instance: CloudflareManager? = null
+
     fun getCurrentUserAgent(): String = instance?.currentUserAgent() ?: DEFAULT_USER_AGENT
   }
+
   init {
     instance = this
   }
+
   private val _bypassUrl = MutableStateFlow<String?>(null)
   val bypassUrl = _bypassUrl.asStateFlow()
+
   private var _userAgent = MutableStateFlow<String?>(null)
   val userAgent = _userAgent.asStateFlow()
+
   private val mutex = Mutex()
   private var currentDeferred: CompletableDeferred<Boolean>? = null
+
   suspend fun startBypass(url: String): Boolean {
     // Try headless first
     if (tryHeadlessBypass(url)) {
       return true
     }
+
     // Fallback to dialog if headless fails
     val deferred = mutex.withLock {
       if (_bypassUrl.value != null) {
@@ -53,7 +62,9 @@ class CloudflareManager @Inject constructor(
         newDeferred
       }
     } ?: return false
+
     val success = deferred.await()
+
     mutex.withLock {
       if (currentDeferred == deferred) {
         _bypassUrl.value = null
@@ -62,20 +73,25 @@ class CloudflareManager @Inject constructor(
     }
     return success
   }
+
   private suspend fun tryHeadlessBypass(url: String): Boolean = withContext(Dispatchers.Main) {
     val deferred = CompletableDeferred<Boolean>()
     val handler = Handler(Looper.getMainLooper())
+
     val webView = WebView(context).apply {
       settings.javaScriptEnabled = true
       settings.domStorageEnabled = true
       settings.userAgentString = currentUserAgent()
       // updateUserAgent(settings.userAgentString)
+
       webViewClient = object : WebViewClient() {
         private var checkJob: Runnable? = null
+
         override fun onPageFinished(view: WebView?, url: String?) {
           super.onPageFinished(view, url)
           scheduleCheck(view)
         }
+
         private fun scheduleCheck(view: WebView?) {
           checkJob?.let { handler.removeCallbacks(it) }
           val runnable = object : Runnable {
@@ -100,19 +116,23 @@ class CloudflareManager @Inject constructor(
           checkJob = runnable
           handler.postDelayed(runnable, 2000)
         }
+
         override fun shouldOverrideUrlLoading(
           view: WebView?,
           request: WebResourceRequest?
         ): Boolean = false
       }
     }
+
     webView.loadUrl(url)
+
     // Timeout for headless
     handler.postDelayed({
       if (!deferred.isCompleted) {
         deferred.complete(false)
       }
     }, 15000)
+
     val result = try {
       deferred.await()
     } catch (e: Exception) {
@@ -124,17 +144,22 @@ class CloudflareManager @Inject constructor(
     }
     result
   }
+
   fun onBypassCompleted(url: String) {
     print(url)
     currentDeferred?.complete(true)
   }
+
   fun updateUserAgent(ua: String) {
     _userAgent.value = ua
   }
+
   fun currentUserAgent(): String = _userAgent.value ?: DEFAULT_USER_AGENT
+
   fun cancelBypass() {
     currentDeferred?.complete(false)
   }
+
   suspend fun clearCookies(url: String) = withContext(Dispatchers.Main) {
     val cookieManager = CookieManager.getInstance()
     val cookieString = cookieManager.getCookie(url)
@@ -147,14 +172,17 @@ class CloudflareManager @Inject constructor(
       cookieManager.flush()
     }
   }
+
   suspend fun fetch(
     client: OkHttpClient,
     request: Request,
     retryCount: Int = 0
   ): Response = withContext(Dispatchers.IO) {
     val response = client.newCall(request).execute()
+
     // Check for Cloudflare Challenge by peeking the body to avoid consuming the original stream
     val peekBody = response.peekBody(1024 * 100).string() // Check within the first 100KB
+
     if (isCloudflareChallenge(response, peekBody)) {
       if (retryCount < 1) {
         response.close()
@@ -166,8 +194,10 @@ class CloudflareManager @Inject constructor(
         }
       }
     }
+
     response
   }
+
   private fun isCloudflareChallenge(response: Response, body: String): Boolean {
     val hasCfHeaders =
       response.code in 403..503 && (body.contains("cf-challenge") || body.contains("ray-id") || response.header("cf-mitigated") == "challenge")
@@ -177,8 +207,10 @@ class CloudflareManager @Inject constructor(
       body.contains("cf-browser-verification") ||
       body.contains("Lỗi Server") ||
       body.contains("Xác minh khu vực")
+
     // Detection for empty title with JS redirect (Anti-bot JS challenge)
     val isJsRedirect = (response.header("content-type")?.contains("text/html") == true) && body.contains("<title></title>")
+
     return hasCfHeaders || hasKeywords || isJsRedirect
   }
 }

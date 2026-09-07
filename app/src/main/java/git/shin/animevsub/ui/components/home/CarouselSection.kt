@@ -1,5 +1,5 @@
 package git.shin.animevsub.ui.components.home
-import kotlin.time.Duration.Companion.milliseconds
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,6 +50,7 @@ import git.shin.animevsub.ui.theme.StarColor
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.math.absoluteValue
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CarouselSection(
@@ -59,24 +60,28 @@ fun CarouselSection(
   windowSize: WindowSizeClass
 ) {
   val pagerState = rememberPagerState(pageCount = { items.size })
+
   // Auto-scroll
   LaunchedEffect(pagerState) {
     while (true) {
-      delay(5000.milliseconds)
+      delay(5000)
       if (items.isNotEmpty()) {
         val nextPage = (pagerState.currentPage + 1) % items.size
         pagerState.animateScrollToPage(nextPage)
       }
     }
   }
+
   val aspectRatio = when {
     windowSize.heightSizeClass == WindowHeightSizeClass.Compact -> {
       if (windowSize.widthSizeClass == WindowWidthSizeClass.Expanded) 16f / 4f else 16f / 5f
     }
+
     windowSize.widthSizeClass == WindowWidthSizeClass.Expanded -> 16f / 6f
     windowSize.widthSizeClass == WindowWidthSizeClass.Medium -> 16f / 8f
     else -> 16f / 9.5f
   }
+
   Column(modifier = Modifier.fillMaxWidth()) {
     HorizontalPager(
       state = pagerState,
@@ -88,8 +93,10 @@ fun CarouselSection(
       val pageOffset = (
         (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
         ).absoluteValue
+
       val scale = 1f - (pageOffset * 0.02f).coerceIn(0f, 0.02f)
       val alpha = 1f - (pageOffset * 0.05f).coerceIn(0f, 0.05f)
+
       Box(
         modifier = Modifier
           .graphicsLayer {
@@ -106,6 +113,7 @@ fun CarouselSection(
           contentScale = ContentScale.Crop,
           modifier = Modifier.fillMaxSize()
         )
+
         // Improved Gradient overlay
         Box(
           modifier = Modifier
@@ -120,6 +128,7 @@ fun CarouselSection(
               )
             )
         )
+
         // Info
         Column(
           modifier = Modifier
@@ -127,10 +136,12 @@ fun CarouselSection(
             .padding(16.dp)
         ) {
           Spacer(modifier = Modifier.weight(1f))
+
           if (!item.quality.isNullOrEmpty()) {
             QualityBadge(quality = item.quality, isCarousel = true)
             Spacer(modifier = Modifier.height(6.dp))
           }
+
           Text(
             text = item.name,
             color = Color.White,
@@ -139,7 +150,9 @@ fun CarouselSection(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
           )
+
           Spacer(modifier = Modifier.height(4.dp))
+
           Row(verticalAlignment = Alignment.CenterVertically) {
             if (item.rate > 0) {
               Icon(
@@ -161,15 +174,18 @@ fun CarouselSection(
                 fontSize = 12.sp
               )
             }
+
             val metaInfo = mutableListOf<String>()
             item.year?.let { metaInfo.add(it.toString()) }
             item.process?.let { metaInfo.add(it) }
+
             Text(
               text = metaInfo.joinToString(" | "),
               color = Color.White.copy(alpha = 0.8f),
               fontSize = 12.sp
             )
           }
+
           if (item.genre.isNotEmpty()) {
             Spacer(modifier = Modifier.height(4.dp))
             Row(
@@ -190,6 +206,7 @@ fun CarouselSection(
               }
             }
           }
+
           val description = item.description?.trim()
           if (!description.isNullOrBlank()) {
             Spacer(modifier = Modifier.height(6.dp))
@@ -205,6 +222,7 @@ fun CarouselSection(
         }
       }
     }
+
     // Indicators
     Row(
       modifier = Modifier

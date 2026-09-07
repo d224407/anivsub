@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.search
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +62,7 @@ import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.shimmerEffect
 import git.shin.animevsub.ui.utils.tvFocusScale
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
@@ -70,10 +72,12 @@ fun SearchScreen(
 ) {
   val uiState by viewModel.uiState.collectAsState()
   val focusManager = LocalFocusManager.current
+
   val gridState = rememberLazyGridState()
   val gridColumns = git.shin.animevsub.utils.ResponsiveUtils.calculateGridColumns(
     windowSizeClass = windowSizeClass
   )
+
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -130,6 +134,7 @@ fun SearchScreen(
         .tvFocusScale()
         .clip(RoundedCornerShape(12.dp))
     )
+
     // Content
     Box(modifier = Modifier.fillMaxSize()) {
       if (uiState.isSearching) {
@@ -178,6 +183,7 @@ fun SearchScreen(
           }
         )
       }
+
       if (uiState.error != null && uiState.searchResults.isEmpty()) {
         EmptyState(message = uiState.error!!)
       } else if (!uiState.isLoading && uiState.isSearching && uiState.searchResults.isEmpty()) {
@@ -219,6 +225,7 @@ fun SearchHistoryList(
           )
         }
       }
+
       LazyColumn {
         items(history) { item ->
           Row(
@@ -291,6 +298,7 @@ fun SearchSuggestionsList(
         }
       }
     }
+
     if (suggestions.isNotEmpty()) {
       item {
         Box(

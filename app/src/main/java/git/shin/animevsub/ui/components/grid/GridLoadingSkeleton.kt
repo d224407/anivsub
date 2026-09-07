@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.grid
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.ui.components.anime.SkeletonCard
+
 @Composable
 fun GridLoadingSkeleton(
   modifier: Modifier = Modifier,

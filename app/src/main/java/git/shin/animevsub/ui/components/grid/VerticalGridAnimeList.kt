@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.grid
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import git.shin.animevsub.data.model.AnimeCard
 import git.shin.animevsub.ui.components.anime.AnimeCardItem
 import git.shin.animevsub.ui.theme.AccentMain
+
 @Composable
 fun VerticalGridAnimeList(
   items: List<AnimeCard>,
@@ -39,6 +41,7 @@ fun VerticalGridAnimeList(
       onLoadMore()
     }
   }
+
   LazyVerticalGrid(
     state = state,
     columns = GridCells.Fixed(columns),
@@ -54,6 +57,7 @@ fun VerticalGridAnimeList(
         showRating = true
       )
     }
+
     if (isLoadingMore) {
       item(span = { GridItemSpan(columns) }) {
         Box(
@@ -69,6 +73,7 @@ fun VerticalGridAnimeList(
         }
       }
     }
+
     item(span = { GridItemSpan(columns) }) {
       Spacer(modifier = Modifier.height(80.dp))
     }

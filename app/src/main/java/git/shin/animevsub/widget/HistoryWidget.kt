@@ -1,4 +1,5 @@
 package git.shin.animevsub.widget
+
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -57,21 +58,27 @@ import dagger.hilt.android.EntryPointAccessors
 import git.shin.animevsub.MainActivity
 import git.shin.animevsub.R
 import git.shin.animevsub.data.model.HistoryItem
+
 class HistoryWidget : GlanceAppWidget() {
+
   companion object {
     val KEY_CAROUSEL_MODE = booleanPreferencesKey("carousel_mode")
     suspend fun refresh(context: Context) {
       HistoryWidget().updateAll(context)
     }
   }
+
   override val sizeMode: SizeMode = SizeMode.Exact
   override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     val historyRepository = EntryPointAccessors.fromApplication(
       context,
       WidgetEntryPoint::class.java
     ).historyRepository()
+
     val history = historyRepository.getHistory(1).getOrNull() ?: emptyList()
+
     val posterBitmaps = history.take(10).associate { item ->
       item.seasonId to try {
         val loader = Coil.imageLoader(context)
@@ -88,6 +95,7 @@ class HistoryWidget : GlanceAppWidget() {
         null
       }
     }
+
     provideContent {
       val prefs = currentState<Preferences>()
       val isCarousel = prefs[KEY_CAROUSEL_MODE] ?: false
@@ -105,6 +113,7 @@ class HistoryWidget : GlanceAppWidget() {
     isCarousel: Boolean
   ) {
     val widgetSize = LocalSize.current
+
     Column(
       modifier = GlanceModifier
         .fillMaxSize()
@@ -124,6 +133,7 @@ class HistoryWidget : GlanceAppWidget() {
           ),
           modifier = GlanceModifier.defaultWeight()
         )
+
         Image(
           provider = ImageProvider(if (isCarousel) R.drawable.ic_view_list else R.drawable.ic_view_carousel),
           contentDescription = "Toggle Mode",
@@ -133,12 +143,14 @@ class HistoryWidget : GlanceAppWidget() {
           colorFilter = androidx.glance.ColorFilter.tint(ColorProvider(Color.White))
         )
       }
+
       if (history.isNotEmpty()) {
         if (isCarousel) {
           val itemsToShow = if (widgetSize.width > 300.dp) history.take(3) else history.take(2)
           val availableHeight = widgetSize.height - 48.dp // Header + Padding
           val itemHeight = (availableHeight - 55.dp).coerceAtLeast(60.dp) // Leave space for text
           val itemWidth = itemHeight * 16 / 9
+
           Row(
             modifier = GlanceModifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -185,6 +197,7 @@ class HistoryWidget : GlanceAppWidget() {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
       }
     )
+
     Row(
       modifier = GlanceModifier
         .fillMaxWidth()
@@ -209,7 +222,9 @@ class HistoryWidget : GlanceAppWidget() {
             .background(ColorProvider(Color(0xFF1E2D4A)))
         ) {}
       }
+
       Spacer(modifier = GlanceModifier.width(8.dp))
+
       Column(modifier = GlanceModifier.defaultWeight()) {
         Text(
           text = item.name,
@@ -260,6 +275,7 @@ class HistoryWidget : GlanceAppWidget() {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
       }
     )
+
     Column(
       modifier = GlanceModifier
         .width(width)
@@ -280,6 +296,7 @@ class HistoryWidget : GlanceAppWidget() {
               .background(ColorProvider(Color(0xFF1E2D4A)))
           ) {}
         }
+
         val progress = if (item.dur > 0) (item.cur / item.dur).toFloat() else 0f
         if (progress > 0) {
           Box(
@@ -309,6 +326,7 @@ class HistoryWidget : GlanceAppWidget() {
     }
   }
 }
+
 class ToggleModeAction : ActionCallback {
   override suspend fun onAction(
     context: Context,
@@ -324,6 +342,7 @@ class ToggleModeAction : ActionCallback {
     HistoryWidget().update(context, glanceId)
   }
 }
+
 class HistoryWidgetReceiver : GlanceAppWidgetReceiver() {
   override val glanceAppWidget: GlanceAppWidget = HistoryWidget()
 }

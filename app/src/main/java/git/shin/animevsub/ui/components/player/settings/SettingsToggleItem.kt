@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player.settings
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.MainColor
+
 @Composable
 fun SettingsToggleItem(
   icon: ImageVector,

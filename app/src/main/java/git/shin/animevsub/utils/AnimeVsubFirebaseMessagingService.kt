@@ -1,4 +1,5 @@
 package git.shin.animevsub.utils
+
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -14,13 +15,18 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class AnimeVsubFirebaseMessagingService : FirebaseMessagingService() {
+
   @Inject
   lateinit var notificationStore: SystemNotificationStore
+
   private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
   companion object {
     private const val TAG = "FCMService"
+
     fun subscribeToTopics() {
       FirebaseMessaging.getInstance().subscribeToTopic("all_users")
         .addOnCompleteListener { task ->
@@ -40,10 +46,13 @@ class AnimeVsubFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
   }
+
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
+
     val data = remoteMessage.data
     if (data.isEmpty()) return
+
     val title = data["title"] ?: getString(git.shin.animevsub.R.string.app_name)
     val body = data["body"] ?: ""
     val typeString = data["type"] ?: "general"
@@ -51,10 +60,13 @@ class AnimeVsubFirebaseMessagingService : FirebaseMessagingService() {
     val deepLink = data["deep_link"]
     val animeId = data["anime_id"]
     val chapterId = data["chapter_id"]
+
     val notificationType = runCatching {
       SystemNotificationType.valueOf(typeString.uppercase())
     }.getOrDefault(SystemNotificationType.GENERAL)
+
     val notificationId = data["id"] ?: UUID.randomUUID().toString()
+
     val systemNotification = SystemNotification(
       id = notificationId,
       title = title,
@@ -67,9 +79,11 @@ class AnimeVsubFirebaseMessagingService : FirebaseMessagingService() {
       createdAt = Instant.now(),
       isRead = false
     )
+
     serviceScope.launch {
       notificationStore.save(systemNotification)
     }
+
     val helper = NotificationHelper(this@AnimeVsubFirebaseMessagingService)
     helper.showNotification(
       title = title,
@@ -81,8 +95,10 @@ class AnimeVsubFirebaseMessagingService : FirebaseMessagingService() {
       notificationType = typeString
     )
   }
+
   override fun onNewToken(token: String) {
     super.onNewToken(token)
+
     subscribeToTopics()
   }
 }

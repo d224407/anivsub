@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player.settings
+
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -32,6 +33,7 @@ import androidx.core.net.toUri
 import git.shin.animevsub.R
 import git.shin.animevsub.data.model.ServerInfo
 import java.util.Locale
+
 @Composable
 fun SettingsBottomSheetContent(
   settingsSubMenu: String?,
@@ -79,6 +81,7 @@ fun SettingsBottomSheetContent(
     }
     onDismiss()
   }
+
   Column(
     modifier = Modifier
       .fillMaxWidth()
@@ -173,6 +176,7 @@ fun SettingsBottomSheetContent(
                   val seconds = sleepTimerRemainingSeconds % 60
                   stringResource(R.string.sleep_timer_remaining, String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds))
                 }
+
                 else -> stringResource(R.string.sleep_timer_off)
               },
               onClick = { onSubMenuChange("sleepTimer") }
@@ -201,6 +205,7 @@ fun SettingsBottomSheetContent(
             )
           }
         }
+
         "sleepTimer" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.sleep_timer),
@@ -239,6 +244,7 @@ fun SettingsBottomSheetContent(
             )
           }
         }
+
         "server" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.server_label),
@@ -253,6 +259,7 @@ fun SettingsBottomSheetContent(
             }
           }
         }
+
         "quality" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.quality),
@@ -272,6 +279,7 @@ fun SettingsBottomSheetContent(
             }
           }
         }
+
         "speed" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.playback_speed),
@@ -286,6 +294,7 @@ fun SettingsBottomSheetContent(
             }
           }
         }
+
         "sync" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.sync_mode),
@@ -308,6 +317,7 @@ fun SettingsBottomSheetContent(
             )
           }
         }
+
         "doubleTapSkip" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.double_tap_skip),
@@ -322,6 +332,7 @@ fun SettingsBottomSheetContent(
             }
           }
         }
+
         "longPressSpeed" -> {
           SettingsSubMenuContainer(
             title = stringResource(R.string.long_press_speed),

@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.login
+
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 data class LoginUiState(
   val loginUrl: String = "",
   val isLoading: Boolean = false,
@@ -25,8 +27,10 @@ class LoginViewModel @Inject constructor(
   val cloudflareManager: CloudflareManager,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
+
   private val _uiState = MutableStateFlow(LoginUiState(loginUrl = repository.loginUrl))
   val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
   fun checkLoginStatus() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoading = true, error = null)

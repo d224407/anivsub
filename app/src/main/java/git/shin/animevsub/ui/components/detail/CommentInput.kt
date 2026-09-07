@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.detail
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import git.shin.animevsub.R
+
 @Composable
 fun CommentInput(
   onPost: (String) -> Unit,
@@ -39,6 +41,7 @@ fun CommentInput(
   onCancel: (() -> Unit)? = null
 ) {
   var text by remember { mutableStateOf(initialText) }
+
   Row(verticalAlignment = Alignment.Top) {
     AsyncImage(
       model = ImageRequest.Builder(LocalContext.current)
@@ -51,7 +54,9 @@ fun CommentInput(
         .clip(CircleShape),
       contentScale = ContentScale.Crop
     )
+
     Spacer(modifier = Modifier.width(12.dp))
+
     Column(modifier = Modifier.weight(1f)) {
       TextField(
         value = text,
@@ -65,6 +70,7 @@ fun CommentInput(
         ),
         maxLines = 5
       )
+
       if (text.isNotBlank() || onCancel != null) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
           TextButton(onClick = {

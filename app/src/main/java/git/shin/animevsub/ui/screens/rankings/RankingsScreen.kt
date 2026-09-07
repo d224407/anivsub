@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.rankings
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,7 @@ import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun RankingsScreen(
@@ -54,7 +56,9 @@ fun RankingsScreen(
 ) {
   val uiState by viewModel.uiState.collectAsState()
   val rankingTypes = uiState.rankingTypes
+
   val selectedIndex = rankingTypes.indexOfFirst { it.id == uiState.selectedType }.coerceAtLeast(0)
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -86,6 +90,7 @@ fun RankingsScreen(
       if (rankingTypes.isNotEmpty()) {
         val pagerState = rememberPagerState(initialPage = selectedIndex) { rankingTypes.size }
         val scope = rememberCoroutineScope()
+
         // Sync pager with ViewModel when swiping
         LaunchedEffect(pagerState.currentPage) {
           val typeId = rankingTypes[pagerState.currentPage].id
@@ -93,12 +98,14 @@ fun RankingsScreen(
             viewModel.loadRankings(typeId)
           }
         }
+
         // Sync pager when selectedIndex changes
         LaunchedEffect(selectedIndex) {
           if (selectedIndex != pagerState.currentPage) {
             pagerState.animateScrollToPage(selectedIndex)
           }
         }
+
         ScrollableTabRow(
           selectedTabIndex = pagerState.currentPage,
           containerColor = DarkBackground,
@@ -130,6 +137,7 @@ fun RankingsScreen(
             )
           }
         }
+
         HorizontalPager(
           state = pagerState,
           modifier = Modifier.weight(1f)
@@ -174,6 +182,7 @@ private fun RankingsListContent(
     WindowWidthSizeClass.Medium -> 2
     else -> 3
   }
+
   when {
     uiState.isLoading && uiState.items.isEmpty() -> RankingLoadingList(columns = columns)
     (uiState.error != null || uiState.errorRes != null) && uiState.items.isEmpty() -> {
@@ -182,6 +191,7 @@ private fun RankingsListContent(
         onRetry = onRetry
       )
     }
+
     else -> {
       if (columns > 1) {
         Box(modifier = Modifier.fillMaxSize()) {

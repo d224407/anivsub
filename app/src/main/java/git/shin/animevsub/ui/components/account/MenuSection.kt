@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.account
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextGrey
+
 @Composable
 fun MenuSection(
   title: String,

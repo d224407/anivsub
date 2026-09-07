@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.anime
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import git.shin.animevsub.data.model.AnimeCard
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
+
 @Composable
 fun RankingItem(
   rank: Int,
@@ -54,6 +56,7 @@ fun RankingItem(
       fontWeight = FontWeight.Bold,
       modifier = Modifier.width(40.dp)
     )
+
     // Thumbnail
     AsyncImage(
       model = item.image,
@@ -64,7 +67,9 @@ fun RankingItem(
         .clip(RoundedCornerShape(6.dp))
         .background(TextGrey.copy(alpha = 0.1f))
     )
+
     Spacer(modifier = Modifier.width(12.dp))
+
     Column(modifier = Modifier.weight(1f)) {
       Text(
         text = item.name,
@@ -74,6 +79,7 @@ fun RankingItem(
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
       )
+
       item.lastEpisode?.let {
         Text(
           text = stringResource(id = R.string.episode_label, it.name),
@@ -83,6 +89,7 @@ fun RankingItem(
           overflow = TextOverflow.Ellipsis
         )
       }
+
       Row(verticalAlignment = Alignment.CenterVertically) {
         if (item.rate > 0) {
           Text(

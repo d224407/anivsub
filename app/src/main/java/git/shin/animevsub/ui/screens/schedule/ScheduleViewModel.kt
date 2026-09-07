@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.schedule
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
+
 data class ScheduleUiState(
   val isLoading: Boolean = true,
   val isRefreshing: Boolean = false,
@@ -22,11 +24,14 @@ data class ScheduleUiState(
 class ScheduleViewModel @Inject constructor(
   private val repository: AnimeRepository
 ) : ViewModel() {
+
   private val _uiState = MutableStateFlow(ScheduleUiState())
   val uiState: StateFlow<ScheduleUiState> = _uiState.asStateFlow()
+
   init {
     loadSchedule()
   }
+
   fun refresh() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isRefreshing = true)
@@ -45,6 +50,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
   }
+
   fun loadSchedule() {
     viewModelScope.launch {
       _uiState.value = _uiState.value.copy(isLoading = true, error = null)
@@ -57,6 +63,7 @@ class ScheduleViewModel @Inject constructor(
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
           }.timeInMillis
+
           val todayIndex = days.indexOfFirst {
             val dayCal = Calendar.getInstance().apply { timeInMillis = it.date }
             dayCal.set(Calendar.HOUR_OF_DAY, 0)
@@ -65,6 +72,7 @@ class ScheduleViewModel @Inject constructor(
             dayCal.set(Calendar.MILLISECOND, 0)
             dayCal.timeInMillis == today
           }
+
           _uiState.value = _uiState.value.copy(
             isLoading = false,
             days = days,
@@ -79,6 +87,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
   }
+
   fun selectDay(index: Int) {
     _uiState.value = _uiState.value.copy(selectedDay = index)
   }

@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.account
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,6 +66,7 @@ import git.shin.animevsub.ui.theme.ErrorColor
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.tvFocusScale
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
@@ -80,6 +82,7 @@ fun AccountScreen(
 ) {
   val uiState by viewModel.uiState.collectAsState()
   val context = LocalContext.current
+
   LaunchedEffect(Unit) {
     viewModel.uiEvent.collect { event ->
       when (event) {
@@ -90,8 +93,10 @@ fun AccountScreen(
       }
     }
   }
+
   var showUpdateDialog by remember { mutableStateOf<git.shin.animevsub.data.model.UpdateInfo?>(null) }
   var showFollowFilterSheet by remember { mutableStateOf(false) }
+
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -167,6 +172,7 @@ fun AccountScreen(
           .padding(bottom = 16.dp)
       ) {
         Spacer(modifier = Modifier.height(8.dp))
+
         // Profile section
         Box(modifier = Modifier.padding(horizontal = 16.dp)) {
           if (!uiState.isAuthReady) {
@@ -269,8 +275,10 @@ fun AccountScreen(
             }
           }
         }
+
         if (uiState.isLoggedIn) {
           Spacer(modifier = Modifier.height(24.dp))
+
           HistoryHorizontalList(
             histories = uiState.histories,
             isLoading = uiState.isLoadingHistory,
@@ -281,7 +289,9 @@ fun AccountScreen(
               onNavigateToDetail(item.seasonId, item.chapId)
             }
           )
+
           Spacer(modifier = Modifier.height(24.dp))
+
           FollowHorizontalList(
             follows = uiState.follows,
             isLoading = uiState.isLoadingFollows,
@@ -291,8 +301,11 @@ fun AccountScreen(
             onItemClick = { anime -> onNavigateToDetail(anime.animeId, null) },
             onFilterClick = { showFollowFilterSheet = true }
           )
+
           Spacer(modifier = Modifier.height(24.dp))
+
           var showCreatePlaylistDialog by remember { mutableStateOf(false) }
+
           PlaylistHorizontalList(
             playlists = uiState.playlists,
             isLoading = uiState.isLoadingPlaylists,
@@ -304,6 +317,7 @@ fun AccountScreen(
               onNavigateToPlaylist(playlist.id.toString())
             }
           )
+
           if (showCreatePlaylistDialog) {
             git.shin.animevsub.ui.components.playlist.CreatePlaylistDialog(
               onDismiss = { showCreatePlaylistDialog = false },
@@ -314,9 +328,11 @@ fun AccountScreen(
             )
           }
         }
+
         Spacer(modifier = Modifier.height(80.dp))
       }
     }
+
     showUpdateDialog?.let { info ->
       UpdateDialog(
         info = info,
@@ -327,6 +343,7 @@ fun AccountScreen(
         }
       )
     }
+
     if (showFollowFilterSheet) {
       FiltersBottomSheet(
         groups = uiState.followFilterGroups,

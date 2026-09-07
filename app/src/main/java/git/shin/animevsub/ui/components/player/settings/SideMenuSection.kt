@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player.settings
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -8,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.TextSecondary
+
 @Composable
 fun SideMenuSection(title: String, content: @Composable () -> Unit) {
   Column(modifier = Modifier.padding(vertical = 8.dp)) {

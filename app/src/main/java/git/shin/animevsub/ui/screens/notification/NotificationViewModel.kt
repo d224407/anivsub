@@ -1,5 +1,5 @@
 package git.shin.animevsub.ui.screens.notification
-import kotlin.time.Duration.Companion.milliseconds
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,9 +23,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 sealed class NotificationUiEvent {
   data class ShowToast(val messageRes: Int? = null, val message: String? = null) : NotificationUiEvent()
 }
+
 data class NotificationUiState(
   val isLoading: Boolean = true,
   val isRefreshing: Boolean = false,
@@ -52,10 +54,13 @@ class NotificationViewModel @Inject constructor(
   private val preferencesManager: PreferencesManager,
   private val systemNotificationStore: SystemNotificationStore
 ) : ViewModel() {
+
   private val _uiState = MutableStateFlow(NotificationUiState())
   val uiState: StateFlow<NotificationUiState> = _uiState.asStateFlow()
+
   private val _uiEvent = MutableSharedFlow<NotificationUiEvent>()
   val uiEvent: SharedFlow<NotificationUiEvent> = _uiEvent.asSharedFlow()
+
   init {
     viewModelScope.launch {
       launch {
@@ -76,26 +81,31 @@ class NotificationViewModel @Inject constructor(
           }
         }
       }
+
       launch {
         repository.notifications.collect { data ->
           _uiState.update { it.copy(data = data) }
         }
       }
+
       launch {
         notificationDbRepository.dbNotifications.collect { items ->
           _uiState.update { it.copy(dbNotifications = items) }
         }
       }
+
       launch {
         notificationDbRepository.dbNotificationCount.collect { count ->
           _uiState.update { it.copy(dbNotificationCount = count) }
         }
       }
+
       launch {
         repository.autoSyncNotify.collect { enabled ->
           _uiState.update { it.copy(autoSync = enabled) }
         }
       }
+
       launch {
         systemNotificationStore.notifications.collect { notifications ->
           _uiState.update { it.copy(systemNotifications = notifications) }
@@ -103,6 +113,7 @@ class NotificationViewModel @Inject constructor(
       }
     }
   }
+
   fun loadNotifications(isRefreshing: Boolean = false) {
     viewModelScope.launch {
       _uiState.update {
@@ -133,9 +144,12 @@ class NotificationViewModel @Inject constructor(
         }
     }
   }
+
   private var loadDbJob: Job? = null
+
   fun loadDbNotifications(isRefreshing: Boolean = false) {
     if (_uiState.value.isLoadingDb && !isRefreshing) return
+
     loadDbJob?.cancel()
     loadDbJob = viewModelScope.launch {
       _uiState.update { it.copy(isLoadingDb = true, isRefreshing = isRefreshing) }
@@ -144,7 +158,7 @@ class NotificationViewModel @Inject constructor(
         val currentPage = if (isRefreshing) 1 else state.dbPage
         notificationDbRepository.queryNotify(
           page = currentPage,
-          query = state.searchQuery.ifBlank { null },
+          query = if (state.searchQuery.isBlank()) null else state.searchQuery,
           asc = state.isAscending
         )
           .onSuccess { items ->
@@ -160,19 +174,23 @@ class NotificationViewModel @Inject constructor(
       }
     }
   }
+
   fun startSync() {
     viewModelScope.launch {
       repository.startSyncNotifications()
     }
   }
+
   fun refresh() {
     loadNotifications(isRefreshing = true)
     loadDbNotifications(isRefreshing = true)
   }
+
   fun retry() {
     loadNotifications()
     loadDbNotifications()
   }
+
   fun onTrigger(trigger: git.shin.animevsub.data.model.Trigger) {
     viewModelScope.launch {
       repository.onTrigger(trigger)
@@ -187,6 +205,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
   }
+
   fun deleteDbNotification(season: String, chapId: String? = null) {
     viewModelScope.launch {
       notificationDbRepository.deleteNotify(season, chapId)
@@ -195,34 +214,41 @@ class NotificationViewModel @Inject constructor(
         }
     }
   }
+
   fun markSystemNotificationAsRead(id: String) {
     viewModelScope.launch {
       systemNotificationStore.markAsRead(id)
     }
   }
+
   fun deleteSystemNotification(id: String) {
     viewModelScope.launch {
       systemNotificationStore.delete(id)
     }
   }
+
   fun clearSystemNotifications() {
     viewModelScope.launch {
       systemNotificationStore.clearAll()
     }
   }
+
   private var searchJob: Job? = null
+
   fun onSearchQueryChanged(query: String) {
     _uiState.update { it.copy(searchQuery = query) }
     searchJob?.cancel()
     searchJob = viewModelScope.launch {
-      delay(500.milliseconds)
+      delay(500)
       loadDbNotifications(isRefreshing = true)
     }
   }
+
   fun toggleOrder() {
     _uiState.update { it.copy(isAscending = !it.isAscending) }
     loadDbNotifications(isRefreshing = true)
   }
+
   fun setAutoSync(enabled: Boolean) {
     viewModelScope.launch {
       preferencesManager.setAutoSyncNotify(enabled)

@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.anime
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import git.shin.animevsub.ui.utils.shimmerEffect
+
 @Composable
 fun SkeletonCard(modifier: Modifier = Modifier) {
   Column(modifier = modifier) {

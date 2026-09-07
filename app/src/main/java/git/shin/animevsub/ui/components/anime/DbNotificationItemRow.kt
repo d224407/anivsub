@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.anime
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.formatTimeAgo
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DbNotificationItemRow(
@@ -49,6 +51,7 @@ fun DbNotificationItemRow(
   onDelete: (String, String?) -> Unit
 ) {
   val latestEpisode = item.episodes.firstOrNull()
+
   Column(
     modifier = Modifier
       .fillMaxWidth()
@@ -72,6 +75,7 @@ fun DbNotificationItemRow(
           maxLines = 1,
           overflow = TextOverflow.Ellipsis
         )
+
         if (latestEpisode != null) {
           Text(
             text = stringResource(R.string.episode_label, latestEpisode.name),
@@ -81,13 +85,16 @@ fun DbNotificationItemRow(
             modifier = Modifier.padding(vertical = 2.dp)
           )
         }
+
         Text(
           text = formatTimeAgo(item.latestChapTime ?: item.createdAt),
           color = TextGrey,
           fontSize = 13.sp
         )
       }
+
       Spacer(modifier = Modifier.width(12.dp))
+
       AsyncImage(
         model = item.image,
         contentDescription = null,
@@ -99,6 +106,7 @@ fun DbNotificationItemRow(
           .background(DarkSurface)
           .clickable { onClick(item.season, latestEpisode?.chapId ?: "") }
       )
+
       IconButton(
         onClick = { onDelete(item.season, null) },
         modifier = Modifier.padding(start = 4.dp)
@@ -111,7 +119,9 @@ fun DbNotificationItemRow(
         )
       }
     }
+
     Spacer(modifier = Modifier.height(12.dp))
+
     FlowRow(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp),

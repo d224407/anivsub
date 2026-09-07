@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.badge
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextGrey
+
 @Composable
 fun Badge(
   text: String,

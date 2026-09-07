@@ -1,5 +1,5 @@
 package git.shin.animevsub.widget
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -61,21 +61,27 @@ import git.shin.animevsub.MainActivity
 import git.shin.animevsub.R
 import git.shin.animevsub.data.model.AnimeCard
 import git.shin.animevsub.data.repository.AnimeRepository
+
 class LatestUpdateWidget : GlanceAppWidget() {
+
   companion object {
     val KEY_CAROUSEL_MODE = booleanPreferencesKey("carousel_mode")
     suspend fun refresh(context: Context) {
       LatestUpdateWidget().updateAll(context)
     }
   }
+
   override val sizeMode: SizeMode = SizeMode.Exact
   override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     val animeRepository = EntryPointAccessors.fromApplication(
       context,
       LatestUpdateWidgetEntryPoint::class.java
     ).animeRepository()
+
     val latestUpdates = animeRepository.getHomePage().getOrNull()?.lastUpdate ?: emptyList()
+
     val posterBitmaps = latestUpdates.take(10).associate { item ->
       item.animeId to try {
         val loader = Coil.imageLoader(context)
@@ -88,6 +94,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
         null
       }
     }
+
     provideContent {
       val prefs = currentState<Preferences>()
       val isCarousel = prefs[KEY_CAROUSEL_MODE] ?: false
@@ -97,7 +104,6 @@ class LatestUpdateWidget : GlanceAppWidget() {
     }
   }
 
-  @SuppressLint("RestrictedApi")
   @Composable
   private fun WidgetContent(
     context: Context,
@@ -106,6 +112,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
     isCarousel: Boolean
   ) {
     val widgetSize = LocalSize.current
+
     Column(
       modifier = GlanceModifier
         .fillMaxSize()
@@ -117,7 +124,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
         verticalAlignment = Alignment.CenterVertically
       ) {
         Text(
-          text = context.run { getString(R.string.last_updated) },
+          text = context.getString(R.string.last_updated),
           style = TextStyle(
             color = ColorProvider(Color.White),
             fontSize = 16.sp,
@@ -134,12 +141,14 @@ class LatestUpdateWidget : GlanceAppWidget() {
           colorFilter = androidx.glance.ColorFilter.tint(ColorProvider(Color.White))
         )
       }
+
       if (updates.isNotEmpty()) {
         if (isCarousel) {
           val itemsToShow = if (widgetSize.width > 300.dp) updates.take(3) else updates.take(2)
           val availableHeight = widgetSize.height - 48.dp
           val itemHeight = (availableHeight - 35.dp).coerceAtLeast(70.dp)
           val itemWidth = itemHeight * 2 / 3
+
           Row(modifier = GlanceModifier.fillMaxWidth()) {
             itemsToShow.forEachIndexed { index, item ->
               LatestCarouselItem(context, item, posters[item.animeId], itemWidth, itemHeight)
@@ -169,7 +178,6 @@ class LatestUpdateWidget : GlanceAppWidget() {
     }
   }
 
-  @SuppressLint("RestrictedApi")
   @Composable
   private fun AnimeRow(
     context: Context,
@@ -183,6 +191,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
       }
     )
+
     Row(
       modifier = GlanceModifier
         .fillMaxWidth()
@@ -207,7 +216,9 @@ class LatestUpdateWidget : GlanceAppWidget() {
             .background(ColorProvider(Color(0xFF1E2D4A)))
         ) {}
       }
+
       Spacer(modifier = GlanceModifier.width(8.dp))
+
       Column(modifier = GlanceModifier.defaultWeight()) {
         Text(
           text = item.name,
@@ -232,7 +243,6 @@ class LatestUpdateWidget : GlanceAppWidget() {
     }
   }
 
-  @SuppressLint("RestrictedApi")
   @Composable
   private fun LatestCarouselItem(
     context: Context,
@@ -248,6 +258,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
       }
     )
+
     Column(
       modifier = GlanceModifier
         .width(width)
@@ -286,6 +297,7 @@ class LatestUpdateWidget : GlanceAppWidget() {
     }
   }
 }
+
 class ToggleLatestModeAction : ActionCallback {
   override suspend fun onAction(
     context: Context,
@@ -307,6 +319,7 @@ class ToggleLatestModeAction : ActionCallback {
 interface LatestUpdateWidgetEntryPoint {
   fun animeRepository(): AnimeRepository
 }
+
 class LatestUpdateWidgetReceiver : GlanceAppWidgetReceiver() {
   override val glanceAppWidget: GlanceAppWidget = LatestUpdateWidget()
 }

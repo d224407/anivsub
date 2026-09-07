@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player
+
 import android.content.pm.ActivityInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.ui.theme.DarkSurface
+
 @Composable
 fun PlayerSideMenu(
   visible: Boolean,
@@ -58,6 +60,7 @@ fun PlayerSideMenu(
           )
       )
     }
+
     // Side Menu
     AnimatedVisibility(
       visible = visible,
