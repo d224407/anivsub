@@ -9,6 +9,7 @@ import git.shin.animevsub.data.remote.api.AnimeDataSource
 import git.shin.animevsub.utils.CloudflareManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import okhttp3.FormBody
@@ -213,12 +214,11 @@ class AnimeApi(
     private suspend fun ensureDomain(): String {
         if (!isInitialized) {
             try {
-                apiStorage.getString(DYNAMIC_HOST).collect { saved ->
-                    if (!saved.isNullOrBlank()) {
-                        currentDomain = saved.removePrefix("https://")
-                            .removePrefix("http://")
-                            .trimEnd('/')
-                    }
+                val saved = apiStorage.getString(DYNAMIC_HOST).firstOrNull()
+                if (!saved.isNullOrBlank()) {
+                    currentDomain = saved.removePrefix("https://")
+                        .removePrefix("http://")
+                        .trimEnd('/')
                 }
             } catch (_: Exception) {
                 // Keep the compiled-in fallback domain.
