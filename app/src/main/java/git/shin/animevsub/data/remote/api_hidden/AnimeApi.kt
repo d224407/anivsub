@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.parseToJsonElement
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -46,8 +45,8 @@ import kotlin.math.max
 class AnimeApi(
     private val client: OkHttpClient,
     private val json: Json,
-    private val cloudflareManager: CloudflareManager,
-    private val apiStorage: ApiStorage
+    private val apiStorage: ApiStorage,
+    private val cloudflareManager: CloudflareManager
 ) : AnimeDataSource {
 
     companion object {
@@ -415,7 +414,7 @@ class AnimeApi(
             runCatching { parseAnimeCard(it) }.getOrNull()
         }
 
-    override suspend fun getUser(): Flow<User?> = flowOf(null)
+    override fun getUser(): Flow<User?> = flowOf(null)
 
     // TODO(API-AUTH): The exact authenticated profile endpoint/HTML selectors
     // are not recovered from the original coroutine. Login URL is known to be
