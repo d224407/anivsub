@@ -193,7 +193,7 @@ class AnimeApi(
         get() = "https://$currentDomain"
 
     override val loginUrl: String
-        get() = "$baseUrl/login"
+        get() = "$baseUrl/account/login/"
 
     override val segmentUrlInterceptor: SegmentUrlInterceptor?
         get() = null
