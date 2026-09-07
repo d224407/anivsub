@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.playlist
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import git.shin.animevsub.ui.theme.DarkCard
+
 @Composable
 fun PlaylistPoster(
   modifier: Modifier = Modifier,
@@ -40,6 +42,7 @@ fun PlaylistPoster(
         .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
         .background(Color.White.copy(alpha = 0.2f))
     )
+
     // Main poster container
     Box(
       modifier = Modifier

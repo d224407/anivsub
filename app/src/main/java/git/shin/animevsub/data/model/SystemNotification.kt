@@ -1,7 +1,9 @@
 package git.shin.animevsub.data.model
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
+
 @Serializable
 enum class SystemNotificationType {
   @SerialName("general")

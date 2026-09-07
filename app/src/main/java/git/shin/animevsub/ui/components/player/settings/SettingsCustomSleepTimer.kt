@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player.settings
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,10 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.MainColor
+
 @Composable
 fun SettingsCustomSleepTimer(onSleepTimerChange: (Int) -> Unit, isSideMenu: Boolean) {
   var showInput by remember { mutableStateOf(false) }
   var value by remember { mutableStateOf("") }
+
   if (!showInput) {
     if (isSideMenu) {
       SideMenuOptionChip(

@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.common
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import git.shin.animevsub.R
 import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.ErrorColor
+
 @Composable
 fun ErrorRetrySection(
   onRetry: () -> Unit,

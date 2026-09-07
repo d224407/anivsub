@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.anime
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.StarColor
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.tvFocusScale
+
 @Composable
 fun AnimeCardItem(
   anime: AnimeCard,
@@ -66,6 +68,7 @@ fun AnimeCardItem(
       .crossfade(true)
       .build()
   }
+
   Column(
     modifier = modifier
       .tvFocusScale()
@@ -83,6 +86,7 @@ fun AnimeCardItem(
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
       )
+
       // Gradient overlay at bottom
       Box(
         modifier = Modifier
@@ -95,12 +99,14 @@ fun AnimeCardItem(
             )
           )
       )
+
       @Suppress("DEPRECATION")
       val badgeTextStyle = TextStyle(
         platformStyle = PlatformTextStyle(
           includeFontPadding = false
         )
       )
+
       // Chapter badge
       if (anime.lastEpisode != null) {
         Text(
@@ -119,6 +125,7 @@ fun AnimeCardItem(
             .padding(horizontal = 6.dp, vertical = 2.dp)
         )
       }
+
       // Quality badge
       if (showQuality && !anime.quality.isNullOrEmpty()) {
         QualityBadge(
@@ -128,6 +135,7 @@ fun AnimeCardItem(
             .padding(6.dp)
         )
       }
+
       // Trending index with custom images
       if (trendingIndex != null) {
         val rankResId = when (trendingIndex) {
@@ -143,6 +151,7 @@ fun AnimeCardItem(
           10 -> R.drawable.bangumi_rank_ic_10
           else -> null
         }
+
         if (rankResId != null) {
           Image(
             painter = painterResource(id = rankResId),
@@ -155,6 +164,7 @@ fun AnimeCardItem(
           )
         }
       }
+
       // Rating
       if (showRating && anime.rate > 0) {
         Row(
@@ -182,7 +192,9 @@ fun AnimeCardItem(
         }
       }
     }
+
     Spacer(modifier = Modifier.height(6.dp))
+
     Text(
       text = anime.name,
       color = TextPrimary,

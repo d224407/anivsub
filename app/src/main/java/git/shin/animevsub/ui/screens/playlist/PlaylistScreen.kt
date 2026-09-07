@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.playlist
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -77,6 +78,7 @@ import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistScreen(
@@ -87,10 +89,12 @@ fun PlaylistScreen(
   val uiState by viewModel.uiState.collectAsState()
   val scrollState = rememberLazyListState()
   rememberCoroutineScope()
+
   var showEditNameDialog by remember { mutableStateOf(false) }
   var showEditDescriptionDialog by remember { mutableStateOf(false) }
   var showDeleteConfirmDialog by remember { mutableStateOf(false) }
   var selectedItemForMenu by remember { mutableStateOf<PlaylistItem?>(null) }
+
   LaunchedEffect(scrollState) {
     snapshotFlow { scrollState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
       .collect { lastIndex ->
@@ -99,6 +103,7 @@ fun PlaylistScreen(
         }
       }
   }
+
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -153,6 +158,7 @@ fun PlaylistScreen(
               onDeletePlaylist = { showDeleteConfirmDialog = true }
             )
           }
+
           item {
             Row(
               modifier = Modifier
@@ -162,6 +168,7 @@ fun PlaylistScreen(
               horizontalArrangement = Arrangement.SpaceBetween
             ) {
               var showSortMenu by remember { mutableStateOf(false) }
+
               Button(
                 onClick = { showSortMenu = true },
                 colors = ButtonDefaults.buttonColors(containerColor = DarkCard),
@@ -179,6 +186,7 @@ fun PlaylistScreen(
                   },
                   fontSize = 14.sp
                 )
+
                 DropdownMenu(
                   expanded = showSortMenu,
                   onDismissRequest = { showSortMenu = false },
@@ -202,6 +210,7 @@ fun PlaylistScreen(
               }
             }
           }
+
           if (uiState.items.isEmpty() && !uiState.isLoadingMore && !uiState.isRefreshing) {
             item {
               Box(
@@ -223,6 +232,7 @@ fun PlaylistScreen(
                 onMenuClick = { selectedItemForMenu = item }
               )
             }
+
             if (uiState.isLoadingMore) {
               items(3) {
                 PlaylistItemSkeleton()
@@ -232,6 +242,7 @@ fun PlaylistScreen(
         }
       }
     }
+
     // Dialogs and Menus
     if (showEditNameDialog) {
       var name by remember { mutableStateOf(uiState.playlist?.name ?: "") }
@@ -261,6 +272,7 @@ fun PlaylistScreen(
         }
       )
     }
+
     if (showEditDescriptionDialog) {
       var description by remember { mutableStateOf(uiState.playlist?.description ?: "") }
       AlertDialog(
@@ -289,6 +301,7 @@ fun PlaylistScreen(
         }
       )
     }
+
     if (showDeleteConfirmDialog) {
       AlertDialog(
         onDismissRequest = { showDeleteConfirmDialog = false },
@@ -311,8 +324,10 @@ fun PlaylistScreen(
         }
       )
     }
+
     if (selectedItemForMenu != null) {
       var showAddToPlaylistSheet by remember { mutableStateOf(false) }
+
       ModalBottomSheet(
         onDismissRequest = { selectedItemForMenu = null },
         containerColor = DarkSurface
@@ -344,6 +359,7 @@ fun PlaylistScreen(
           )
         }
       }
+
       if (showAddToPlaylistSheet) {
         AddToPlaylistBottomSheet(
           animeId = selectedItemForMenu!!.seasonId,
@@ -375,6 +391,7 @@ fun PlaylistHeader(
     PlaylistHeaderSkeleton()
     return
   }
+
   Box(
     modifier = Modifier.fillMaxWidth()
   ) {
@@ -388,6 +405,7 @@ fun PlaylistHeader(
         .blur(40.dp)
         .background(Color.Black.copy(alpha = 0.6f))
     )
+
     // Gradient overlay
     Box(
       modifier = Modifier
@@ -402,6 +420,7 @@ fun PlaylistHeader(
           )
         )
     )
+
     Column(
       modifier = Modifier
         .fillMaxWidth()
@@ -434,7 +453,9 @@ fun PlaylistHeader(
           modifier = Modifier.fillMaxSize()
         )
       }
+
       Spacer(modifier = Modifier.height(20.dp))
+
       // Playlist Name and Edit
       Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -459,6 +480,7 @@ fun PlaylistHeader(
           )
         }
       }
+
       // Info
       Text(
         text = pluralStringResource(
@@ -469,6 +491,7 @@ fun PlaylistHeader(
         color = TextGrey,
         fontSize = 14.sp
       )
+
       // Actions
       Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         IconButton(
@@ -481,7 +504,9 @@ fun PlaylistHeader(
           Icon(Icons.Default.Delete, contentDescription = null, tint = TextPrimary)
         }
       }
+
       Spacer(modifier = Modifier.height(20.dp))
+
       // Description
       Row(
         modifier = Modifier
@@ -569,7 +594,9 @@ fun PlaylistItemSkeleton() {
         .clip(RoundedCornerShape(8.dp))
         .background(DarkCard)
     )
+
     Spacer(modifier = Modifier.width(12.dp))
+
     Column(modifier = Modifier.weight(1f)) {
       Box(
         modifier = Modifier
@@ -613,7 +640,9 @@ fun PlaylistItemRow(
         .clip(RoundedCornerShape(8.dp))
         .background(DarkCard)
     )
+
     Spacer(modifier = Modifier.width(12.dp))
+
     Column(modifier = Modifier.weight(1f)) {
       Text(
         text = item.name,
@@ -630,12 +659,14 @@ fun PlaylistItemRow(
             append(item.seasonName)
             append(" - ")
           }
+
           append(stringResource(R.string.episode_label, item.chapName ?: "unknown"))
         },
         color = TextGrey,
         fontSize = 13.sp
       )
     }
+
     IconButton(onClick = onMenuClick) {
       Icon(Icons.Default.MoreVert, contentDescription = null, tint = TextGrey)
     }

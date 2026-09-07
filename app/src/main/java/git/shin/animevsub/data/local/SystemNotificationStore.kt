@@ -1,4 +1,5 @@
 package git.shin.animevsub.data.local
+
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -14,6 +15,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
+
 private val Context.systemNotificationDataStore: DataStore<Preferences> by preferencesDataStore(name = "system_notifications")
 
 @Singleton
@@ -22,6 +24,7 @@ class SystemNotificationStore @Inject constructor(
   private val json: Json
 ) {
   private val notificationsKey = stringPreferencesKey("system_notifications_list")
+
   val notifications: Flow<List<SystemNotification>> = context.systemNotificationDataStore.data.map { prefs ->
     val jsonString = prefs[notificationsKey] ?: return@map emptyList()
     try {
@@ -30,6 +33,7 @@ class SystemNotificationStore @Inject constructor(
       emptyList()
     }
   }
+
   private fun Preferences.getCurrentList(): List<SystemNotification> {
     val jsonString = this[notificationsKey] ?: return emptyList()
     return try {
@@ -38,6 +42,7 @@ class SystemNotificationStore @Inject constructor(
       emptyList()
     }
   }
+
   suspend fun save(notification: SystemNotification) {
     context.systemNotificationDataStore.edit { prefs ->
       val currentList = prefs.getCurrentList()
@@ -45,11 +50,13 @@ class SystemNotificationStore @Inject constructor(
       prefs[notificationsKey] = json.encodeToString(updatedList)
     }
   }
+
   suspend fun saveAll(notifications: List<SystemNotification>) {
     context.systemNotificationDataStore.edit { prefs ->
       prefs[notificationsKey] = json.encodeToString(notifications)
     }
   }
+
   suspend fun markAsRead(id: String) {
     context.systemNotificationDataStore.edit { prefs ->
       val currentList = prefs.getCurrentList()
@@ -57,6 +64,7 @@ class SystemNotificationStore @Inject constructor(
       prefs[notificationsKey] = json.encodeToString(updatedList)
     }
   }
+
   suspend fun delete(id: String) {
     context.systemNotificationDataStore.edit { prefs ->
       val currentList = prefs.getCurrentList()
@@ -64,11 +72,13 @@ class SystemNotificationStore @Inject constructor(
       prefs[notificationsKey] = json.encodeToString(updatedList)
     }
   }
+
   suspend fun clearAll() {
     context.systemNotificationDataStore.edit { prefs ->
       prefs.remove(notificationsKey)
     }
   }
+
   suspend fun getUnreadCount(): Int {
     val prefs = context.systemNotificationDataStore.data.first()
     return prefs.getCurrentList().count { !it.isRead }

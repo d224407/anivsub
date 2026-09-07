@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.settings
+
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -107,6 +108,7 @@ import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.formatDurationMinutes
 import git.shin.animevsub.ui.utils.formatTimeMinutes
 import kotlinx.coroutines.launch
+
 @Composable
 fun AppIconSelector(
   selectedIcon: String,
@@ -120,6 +122,7 @@ fun AppIconSelector(
     "neon" to R.drawable.ic_launcher_foreground_neon,
     "ai" to R.drawable.ic_launcher_foreground_ai
   )
+
   Column(
     modifier = Modifier
       .fillMaxWidth()
@@ -196,6 +199,7 @@ fun SettingsScreen(
   val uiState by viewModel.uiState.collectAsState()
   var showStartTimePicker by remember { mutableStateOf(false) }
   var showEndTimePicker by remember { mutableStateOf(false) }
+
   if (showStartTimePicker) {
     val state = rememberTimePickerState(
       initialHour = (uiState.bedtimeReminderStartTime / 60).toInt(),
@@ -213,6 +217,7 @@ fun SettingsScreen(
       TimePicker(state = state)
     }
   }
+
   if (showEndTimePicker) {
     val state = rememberTimePickerState(
       initialHour = (uiState.bedtimeReminderEndTime / 60).toInt(),
@@ -229,6 +234,7 @@ fun SettingsScreen(
       TimePicker(state = state)
     }
   }
+
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -282,7 +288,9 @@ fun SettingsScreen(
           onCheckedChange = { viewModel.setAutoSkip(it) }
         )
       }
+
       Spacer(modifier = Modifier.height(16.dp))
+
       MenuSection(title = stringResource(R.string.gesture_controls)) {
         SettingsToggle(
           label = stringResource(R.string.volume_gesture),
@@ -297,7 +305,9 @@ fun SettingsScreen(
           onCheckedChange = { viewModel.setBrightnessGesture(it) }
         )
       }
+
       Spacer(modifier = Modifier.height(16.dp))
+
       MenuSection(title = stringResource(R.string.general)) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
           SettingsToggle(
@@ -307,6 +317,7 @@ fun SettingsScreen(
             onCheckedChange = { viewModel.setDynamicColor(it) }
           )
         }
+
         AppIconSelector(
           selectedIcon = uiState.appIcon,
           onIconSelected = {
@@ -314,6 +325,7 @@ fun SettingsScreen(
             (context as? MainActivity)?.setAppIcon(it)
           }
         )
+
         val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
           if (uri != null) {
             scope.launch {
@@ -321,6 +333,7 @@ fun SettingsScreen(
             }
           }
         }
+
         MenuItem(
           icon = Icons.Default.Image,
           label = stringResource(R.string.custom_shortcut),
@@ -328,6 +341,7 @@ fun SettingsScreen(
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
           }
         )
+
         SettingsSelector(
           label = stringResource(R.string.screen_transition),
           selectedOption = uiState.screenTransition,
@@ -340,6 +354,7 @@ fun SettingsScreen(
           ),
           onOptionSelected = { viewModel.setScreenTransition(it) }
         )
+
         SettingsToggle(
           label = stringResource(R.string.remind_me_to_take_a_break),
           icon = Icons.Default.Timer,
@@ -357,6 +372,7 @@ fun SettingsScreen(
             valueText = stringResource(R.string.reminder_every_format, formatDurationMinutes(uiState.breakReminderInterval))
           )
         }
+
         SettingsToggle(
           label = stringResource(R.string.remind_me_when_its_bedtime),
           icon = Icons.Default.Bedtime,
@@ -381,7 +397,9 @@ fun SettingsScreen(
           )
         }
       }
+
       Spacer(modifier = Modifier.height(16.dp))
+
       MenuSection(title = stringResource(R.string.video_buffer_settings)) {
         SettingsSlider(
           label = stringResource(R.string.min_buffer_ms),
@@ -392,6 +410,7 @@ fun SettingsScreen(
           steps = 21,
           valueText = stringResource(R.string.seconds_label, uiState.minBufferMs / 1000)
         )
+
         SettingsSlider(
           label = stringResource(R.string.max_buffer_ms),
           value = uiState.maxBufferMs / 1000,
@@ -401,6 +420,7 @@ fun SettingsScreen(
           steps = 27,
           valueText = stringResource(R.string.seconds_label, uiState.maxBufferMs / 1000)
         )
+
         SettingsSlider(
           label = stringResource(R.string.buffer_for_playback_ms),
           value = uiState.bufferForPlaybackMs / 1000,
@@ -410,6 +430,7 @@ fun SettingsScreen(
           steps = 29,
           valueText = stringResource(R.string.seconds_label, uiState.bufferForPlaybackMs / 1000)
         )
+
         SettingsSlider(
           label = stringResource(R.string.buffer_for_playback_after_rebuffer_ms),
           value = uiState.bufferForPlaybackAfterRebufferMs / 1000,
@@ -419,6 +440,7 @@ fun SettingsScreen(
           steps = 59,
           valueText = stringResource(R.string.seconds_label, uiState.bufferForPlaybackAfterRebufferMs / 1000)
         )
+
         SettingsToggle(
           label = stringResource(R.string.prioritize_time_over_size),
           description = stringResource(R.string.prioritize_time_over_size_desc),
@@ -427,7 +449,9 @@ fun SettingsScreen(
           onCheckedChange = { viewModel.setPrioritizeTimeOverSize(it) }
         )
       }
+
       Spacer(modifier = Modifier.height(16.dp))
+
       MenuSection(title = stringResource(R.string.network_settings)) {
         SettingsSelector(
           label = stringResource(R.string.dns_mode),
@@ -442,6 +466,7 @@ fun SettingsScreen(
           ),
           onOptionSelected = { viewModel.setDnsMode(it) }
         )
+
         if (uiState.dnsMode == "custom") {
           OutlinedTextField(
             value = uiState.customDnsUrl,
@@ -460,12 +485,14 @@ fun SettingsScreen(
             )
           )
         }
+
         MenuItem(
           icon = Icons.Default.Info,
           label = stringResource(R.string.dns_info_webview),
           description = stringResource(R.string.dns_info_desc),
           onClick = {}
         )
+
         MenuItem(
           icon = Icons.AutoMirrored.Filled.OpenInNew,
           label = stringResource(R.string.open_system_dns_settings),
@@ -477,7 +504,9 @@ fun SettingsScreen(
           }
         )
       }
+
       Spacer(modifier = Modifier.height(16.dp))
+
       MenuSection(title = stringResource(R.string.notification_settings)) {
         SettingsToggle(
           label = stringResource(R.string.enable_notifications),
@@ -516,9 +545,12 @@ fun SettingsScreen(
           valueText = stringResource(R.string.minutes_label, uiState.dbNotifyInterval)
         )
       }
+
       Spacer(modifier = Modifier.height(16.dp))
+
       var showAiGuide by remember { mutableStateOf(false) }
       val uriHandler = LocalUriHandler.current
+
       MenuSection(title = stringResource(R.string.ai_features)) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
           Row(
@@ -542,6 +574,7 @@ fun SettingsScreen(
               var expanded by remember { mutableStateOf(false) }
               val providers = listOf("gemini" to stringResource(R.string.ai_provider_gemini), "openai" to stringResource(R.string.ai_provider_openai), "claude" to stringResource(R.string.ai_provider_claude))
               val currentProvider = providers.find { it.first == uiState.aiProvider }?.second ?: stringResource(R.string.ai_provider_gemini)
+
               OutlinedTextField(
                 value = currentProvider,
                 onValueChange = { },
@@ -575,19 +608,24 @@ fun SettingsScreen(
               }
             }
           }
+
           Spacer(modifier = Modifier.height(12.dp))
+
           when (uiState.aiProvider) {
             "gemini" -> {
               GeminiApiKeySection(uiState, viewModel, showAiGuide, uriHandler) { showAiGuide = it }
             }
+
             "openai" -> {
               OpenAIApiKeySection(uiState, viewModel)
             }
+
             "claude" -> {
               ClaudeApiKeySection(uiState, viewModel)
             }
           }
         }
+
         SettingsToggle(
           label = stringResource(R.string.ai_summary_enabled),
           description = stringResource(R.string.ai_summary_desc),
@@ -603,6 +641,7 @@ fun SettingsScreen(
           onCheckedChange = { viewModel.setAiRecapEnabled(it) }
         )
       }
+
       if (showAiGuide) {
         AlertDialog(
           onDismissRequest = { showAiGuide = false },
@@ -616,6 +655,7 @@ fun SettingsScreen(
           containerColor = DarkCard
         )
       }
+
       if (uiState.isDeveloperMode) {
         Spacer(modifier = Modifier.height(16.dp))
         MenuSection(title = stringResource(R.string.developer_options_title)) {
@@ -641,6 +681,7 @@ fun SettingsScreen(
             steps = 11,
             valueText = stringResource(R.string.seconds_label, uiState.historySyncInterval)
           )
+
           Button(
             onClick = { viewModel.testNotification() },
             colors = ButtonDefaults.buttonColors(containerColor = AccentMain),
@@ -690,7 +731,9 @@ private fun GeminiApiKeySection(
         unfocusedBorderColor = TextSecondary.copy(alpha = 0.5f)
       )
     )
+
     Spacer(modifier = Modifier.height(8.dp))
+
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -708,6 +751,7 @@ private fun GeminiApiKeySection(
           Text(stringResource(R.string.test_api_key))
         }
       }
+
       Button(
         onClick = { uriHandler.openUri("https://aistudio.google.com/app/apikey") },
         colors = ButtonDefaults.buttonColors(containerColor = DarkSurface),
@@ -716,6 +760,7 @@ private fun GeminiApiKeySection(
         Text(stringResource(R.string.get_api_key), color = TextPrimary)
       }
     }
+
     uiState.testResult?.let { result ->
       val isSuccess = uiState.testSuccess
       Text(
@@ -725,7 +770,9 @@ private fun GeminiApiKeySection(
         modifier = Modifier.padding(top = 4.dp)
       )
     }
+
     Spacer(modifier = Modifier.height(8.dp))
+
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -784,6 +831,7 @@ private fun GeminiApiKeySection(
       }
     }
   }
+
   if (showAiGuide) {
     AlertDialog(
       onDismissRequest = { onShowGuideChange(false) },
@@ -819,7 +867,9 @@ private fun OpenAIApiKeySection(
         unfocusedBorderColor = TextSecondary.copy(alpha = 0.5f)
       )
     )
+
     Spacer(modifier = Modifier.height(8.dp))
+
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -837,6 +887,7 @@ private fun OpenAIApiKeySection(
           Text(stringResource(R.string.test_api_key))
         }
       }
+
       Button(
         onClick = { },
         colors = ButtonDefaults.buttonColors(containerColor = DarkSurface),
@@ -845,6 +896,7 @@ private fun OpenAIApiKeySection(
         Text(stringResource(R.string.get_api_key), color = TextPrimary)
       }
     }
+
     uiState.testResult?.let { result ->
       Text(
         text = result,
@@ -853,7 +905,9 @@ private fun OpenAIApiKeySection(
         modifier = Modifier.padding(top = 4.dp)
       )
     }
+
     Spacer(modifier = Modifier.height(8.dp))
+
     OutlinedTextField(
       value = uiState.openaiModel,
       onValueChange = { viewModel.setOpenaiModel(it) },
@@ -867,7 +921,9 @@ private fun OpenAIApiKeySection(
         unfocusedBorderColor = TextSecondary.copy(alpha = 0.5f)
       )
     )
+
     Spacer(modifier = Modifier.height(8.dp))
+
     OutlinedTextField(
       value = uiState.openaiEndpoint,
       onValueChange = { viewModel.setOpenaiEndpoint(it) },
@@ -905,7 +961,9 @@ private fun ClaudeApiKeySection(
         unfocusedBorderColor = TextSecondary.copy(alpha = 0.5f)
       )
     )
+
     Spacer(modifier = Modifier.height(8.dp))
+
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -923,6 +981,7 @@ private fun ClaudeApiKeySection(
           Text(stringResource(R.string.test_api_key))
         }
       }
+
       Button(
         onClick = { },
         colors = ButtonDefaults.buttonColors(containerColor = DarkSurface),
@@ -931,6 +990,7 @@ private fun ClaudeApiKeySection(
         Text(stringResource(R.string.get_api_key), color = TextPrimary)
       }
     }
+
     uiState.testResult?.let { result ->
       Text(
         text = result,
@@ -939,7 +999,9 @@ private fun ClaudeApiKeySection(
         modifier = Modifier.padding(top = 4.dp)
       )
     }
+
     Spacer(modifier = Modifier.height(8.dp))
+
     OutlinedTextField(
       value = uiState.claudeModel,
       onValueChange = { viewModel.setClaudeModel(it) },
@@ -953,7 +1015,9 @@ private fun ClaudeApiKeySection(
         unfocusedBorderColor = TextSecondary.copy(alpha = 0.5f)
       )
     )
+
     Spacer(modifier = Modifier.height(8.dp))
+
     OutlinedTextField(
       value = uiState.claudeEndpoint,
       onValueChange = { viewModel.setClaudeEndpoint(it) },

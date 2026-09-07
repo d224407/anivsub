@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.account
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
+
 @Composable
 fun FollowHorizontalList(
   follows: List<AnimeCard>,
@@ -85,6 +87,7 @@ fun FollowHorizontalList(
         )
       }
     }
+
     if (isLoading) {
       LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),

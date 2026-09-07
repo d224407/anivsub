@@ -1,6 +1,8 @@
 package git.shin.animevsub.data.model
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
 @Serializable
 data class Playlist(
   val id: Int,

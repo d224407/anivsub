@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.rankings
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 data class RankingsUiState(
   val isLoading: Boolean = true,
   val items: List<AnimeCard> = emptyList(),
@@ -27,10 +29,13 @@ class RankingsViewModel @Inject constructor(
   private val repository: AnimeRepository,
   private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
   private val _uiState = MutableStateFlow(RankingsUiState())
   val uiState: StateFlow<RankingsUiState> = _uiState.asStateFlow()
+
   init {
     val initialType = savedStateHandle.get<String?>("type")
+
     if (!initialType.isNullOrEmpty()) {
       _uiState.update { it.copy(selectedType = initialType) }
       loadRankings(initialType)
@@ -39,11 +44,13 @@ class RankingsViewModel @Inject constructor(
       loadRankingTypes(shouldPickDefault = true)
     }
   }
+
   private fun loadRankingTypes(shouldPickDefault: Boolean) {
     viewModelScope.launch {
       repository.getRankingTypes()
         .onSuccess { types ->
           _uiState.update { it.copy(rankingTypes = types) }
+
           if (shouldPickDefault && types.isNotEmpty()) {
             val firstType = types.first().id
             _uiState.update { it.copy(selectedType = firstType) }
@@ -64,6 +71,7 @@ class RankingsViewModel @Inject constructor(
         }
     }
   }
+
   fun loadRankings(type: String) {
     savedStateHandle["type"] = type
     _uiState.update {
@@ -97,6 +105,7 @@ class RankingsViewModel @Inject constructor(
         }
     }
   }
+
   fun retry() {
     val currentType = _uiState.value.selectedType
     if (currentType.isEmpty()) {

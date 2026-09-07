@@ -1,5 +1,7 @@
 package git.shin.animevsub.data.model
+
 import kotlinx.serialization.Serializable
+
 @Serializable
 enum class VoteType {
   UP,

@@ -1,5 +1,5 @@
 package git.shin.animevsub.ui.screens.notification.components
-import android.annotation.SuppressLint
+
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,7 +59,7 @@ import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.formatRelativeTime
-@SuppressLint("LocalContextResourcesRead")
+
 @Composable
 fun SystemNotificationTab(
   notifications: List<SystemNotification>,
@@ -71,11 +71,13 @@ fun SystemNotificationTab(
 ) {
   val ctx = androidx.compose.ui.platform.LocalContext.current
   var isAscending by remember { mutableStateOf(false) }
+
   val sortedNotifications = notifications.sortedWith(
     compareByDescending<SystemNotification> { it.createdAt }.let {
       if (isAscending) it.reversed() else it
     }
   )
+
   if (isLoading) {
     Box(
       modifier = Modifier.fillMaxSize(),
@@ -100,6 +102,7 @@ fun SystemNotificationTab(
           fontSize = 13.sp,
           fontWeight = FontWeight.Medium
         )
+
         Row {
           IconButton(onClick = { isAscending = !isAscending }) {
             Icon(
@@ -108,6 +111,7 @@ fun SystemNotificationTab(
               tint = TextGrey
             )
           }
+
           IconButton(onClick = onClearAll) {
             Icon(
               imageVector = Icons.Default.Delete,
@@ -117,6 +121,7 @@ fun SystemNotificationTab(
           }
         }
       }
+
       LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -142,7 +147,7 @@ fun SystemNotificationTab(
 @Composable
 private fun SystemNotificationItem(
   notification: SystemNotification,
-  context: Context,
+  context: android.content.Context,
   onMarkRead: (String) -> Unit,
   onDelete: (String) -> Unit,
   onClick: () -> Unit
@@ -170,7 +175,9 @@ private fun SystemNotificationItem(
         modifier = Modifier.size(20.dp)
       )
     }
+
     Spacer(modifier = Modifier.width(12.dp))
+
     Column(modifier = Modifier.weight(1f)) {
       Row(
         modifier = Modifier.fillMaxWidth(),
@@ -186,6 +193,7 @@ private fun SystemNotificationItem(
           overflow = TextOverflow.Ellipsis,
           modifier = Modifier.weight(1f)
         )
+
         if (!notification.isRead) {
           Box(
             modifier = Modifier
@@ -195,7 +203,9 @@ private fun SystemNotificationItem(
           )
         }
       }
+
       Spacer(modifier = Modifier.height(4.dp))
+
       Text(
         text = notification.body,
         color = TextGrey,
@@ -203,7 +213,9 @@ private fun SystemNotificationItem(
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
       )
+
       Spacer(modifier = Modifier.height(6.dp))
+
       if (!notification.imageUrl.isNullOrEmpty()) {
         AsyncImage(
           model = notification.imageUrl,
@@ -216,6 +228,7 @@ private fun SystemNotificationItem(
         )
         Spacer(modifier = Modifier.height(6.dp))
       }
+
       Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -226,6 +239,7 @@ private fun SystemNotificationItem(
           color = TextGrey.copy(alpha = 0.7f),
           fontSize = 11.sp
         )
+
         IconButton(
           onClick = { onDelete(notification.id) },
           modifier = Modifier.size(24.dp)

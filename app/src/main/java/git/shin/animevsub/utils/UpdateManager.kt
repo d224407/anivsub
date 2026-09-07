@@ -1,4 +1,5 @@
 package git.shin.animevsub.utils
+
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -21,6 +22,7 @@ import okhttp3.Request
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+
 @Singleton
 class UpdateManager @Inject constructor(
   @ApplicationContext private val context: Context,
@@ -31,11 +33,13 @@ class UpdateManager @Inject constructor(
   private val githubRepo = "anime-vsub/app"
   private val activeCheckUrl =
     "https://raw.githubusercontent.com/anime-vsub/app/refs/heads/main/native-active"
+
   suspend fun checkAppActive(): Result<Boolean> = withContext(Dispatchers.IO) {
     try {
       val request = Request.Builder()
         .url(activeCheckUrl)
         .build()
+
       val response = client.newCall(request).execute()
       response.use { res ->
         if (res.isSuccessful) {
@@ -51,21 +55,27 @@ class UpdateManager @Inject constructor(
       Result.failure(e)
     }
   }
+
   suspend fun checkForUpdate(): Result<UpdateInfo> = withContext(Dispatchers.IO) {
     try {
       val request = Request.Builder()
         .url("https://api.github.com/repos/$githubRepo/releases/latest")
         .header("Accept", "application/vnd.github.v3+json")
         .build()
+
       val response = cloudflareManager.fetch(client, request)
       response.use { res ->
         if (!res.isSuccessful) return@use Result.failure(Exception("Failed to fetch release: ${res.code}"))
+
         val body = res.body.string()
         val release = json.decodeFromString<GitHubRelease>(body)
+
         val latestVersion = release.tagName.removePrefix("v")
+
         val isNewer = isVersionNewer(latestVersion)
         val apkAsset = release.assets.find { it.name == "app-release-signed.apk" }
           ?: release.assets.find { it.name.endsWith(".apk") }
+
         Result.success(
           UpdateInfo(
             version = latestVersion,
@@ -79,18 +89,22 @@ class UpdateManager @Inject constructor(
       Result.failure(e)
     }
   }
+
   private fun isVersionNewer(latest: String): Boolean {
     val latestParts = latest.split(".").mapNotNull { it.toIntOrNull() }
     val currentParts = BuildConfig.VERSION_NAME.split(".").mapNotNull { it.toIntOrNull() }
+
     for (i in 0 until minOf(latestParts.size, currentParts.size)) {
       if (latestParts[i] > currentParts[i]) return true
       if (latestParts[i] < currentParts[i]) return false
     }
     return latestParts.size > currentParts.size
   }
+
   fun downloadAndInstall(url: String, fileName: String) {
     val destination = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
     if (destination.exists()) destination.delete()
+
     val request = DownloadManager.Request(url.toUri())
       .setTitle(context.getString(git.shin.animevsub.R.string.update_downloading_title))
       .setDescription(context.getString(git.shin.animevsub.R.string.update_downloading_description))
@@ -98,8 +112,10 @@ class UpdateManager @Inject constructor(
       .setDestinationUri(Uri.fromFile(destination))
       .setAllowedOverMetered(true)
       .setAllowedOverRoaming(true)
+
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     val downloadId = downloadManager.enqueue(request)
+
     val onComplete = object : BroadcastReceiver() {
       override fun onReceive(context: Context, intent: Intent) {
         val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
@@ -114,6 +130,7 @@ class UpdateManager @Inject constructor(
         }
       }
     }
+
     val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
     ContextCompat.registerReceiver(
       context,
@@ -122,6 +139,7 @@ class UpdateManager @Inject constructor(
       ContextCompat.RECEIVER_EXPORTED
     )
   }
+
   private fun installApk(file: File) {
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
     val intent = Intent(Intent.ACTION_VIEW).apply {

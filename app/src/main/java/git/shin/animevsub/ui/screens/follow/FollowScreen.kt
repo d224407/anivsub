@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.follow
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.utils.ResponsiveUtils
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowScreen(
@@ -49,6 +51,7 @@ fun FollowScreen(
   val uiState by viewModel.uiState.collectAsState()
   val gridState = rememberLazyGridState()
   var showFilterSheet by remember { mutableStateOf(false) }
+
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -84,6 +87,7 @@ fun FollowScreen(
           },
           colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
         )
+
         if (uiState.filterGroups.isNotEmpty()) {
           FilterActionRow(
             groups = uiState.filterGroups,
@@ -110,6 +114,7 @@ fun FollowScreen(
               onRetry = { viewModel.retry() }
             )
           }
+
           else -> {
             VerticalGridAnimeList(
               items = uiState.items,
@@ -126,6 +131,7 @@ fun FollowScreen(
       }
     }
   }
+
   if (showFilterSheet) {
     FiltersBottomSheet(
       groups = uiState.filterGroups,

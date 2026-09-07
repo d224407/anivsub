@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.detail
+
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -9,6 +10,7 @@ import git.shin.animevsub.ui.components.player.EpisodeSelectorContent
 import git.shin.animevsub.ui.screens.detail.DetailUiState
 import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextGrey
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChapterBottomSheet(
@@ -23,6 +25,7 @@ fun ChapterBottomSheet(
 //  val screenWidth = configuration.screenWidthDp.dp
 //  val videoHeight = screenWidth * 9 / 16
 //  val sheetHeight = configuration.screenHeightDp.dp - videoHeight
+
   ModalBottomSheet(
     onDismissRequest = onDismissRequest,
     sheetState = sheetState,

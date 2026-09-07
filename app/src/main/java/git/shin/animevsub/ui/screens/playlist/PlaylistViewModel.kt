@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.playlist
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 data class PlaylistUiState(
   val playlist: Playlist? = null,
   val items: List<PlaylistItem> = emptyList(),
@@ -30,6 +32,7 @@ class PlaylistViewModel @Inject constructor(
   private val playlistRepository: PlaylistRepository,
   savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
   private val playlistIdString: String = checkNotNull(savedStateHandle["playlistId"])
   private val playlistId: Int = try {
     // Vue version uses atob(route.params.playlist.toString()).split("-")[1]
@@ -40,29 +43,39 @@ class PlaylistViewModel @Inject constructor(
     // Fallback for encoded ID if necessary, but usually in Android we pass raw IDs
     0
   }
+
   private val _uiState = MutableStateFlow(PlaylistUiState())
   val uiState: StateFlow<PlaylistUiState> = _uiState.asStateFlow()
+
   private var currentPage = 1
+
   init {
     refresh()
   }
+
   fun refresh() {
     viewModelScope.launch {
       _uiState.update { it.copy(isRefreshing = true, error = null) }
+
       // Get playlist metadata
       val playlistsResult = playlistRepository.getPlaylists()
       val meta = playlistsResult.getOrNull()?.find { it.id == playlistId }
+
       if (meta == null) {
         _uiState.update { it.copy(isRefreshing = false, error = "Playlist not found") }
         return@launch
       }
+
       val posterResult = playlistRepository.getPosterPlaylist(playlistId)
       val playlistWithPoster = meta.copy(poster = posterResult.getOrNull() ?: meta.poster)
+
       _uiState.update { it.copy(playlist = playlistWithPoster) }
+
       // Get items
       currentPage = 1
       val itemsResult =
         playlistRepository.getAnimesFromPlaylist(playlistId, currentPage, _uiState.value.sorter)
+
       itemsResult.onSuccess { items ->
         _uiState.update {
           it.copy(
@@ -76,13 +89,17 @@ class PlaylistViewModel @Inject constructor(
       }
     }
   }
+
   fun loadMore() {
     if (_uiState.value.isLoadingMore || !_uiState.value.hasMore) return
+
     viewModelScope.launch {
       _uiState.update { it.copy(isLoadingMore = true) }
       currentPage++
+
       val result =
         playlistRepository.getAnimesFromPlaylist(playlistId, currentPage, _uiState.value.sorter)
+
       result.onSuccess { newItems ->
         _uiState.update {
           it.copy(
@@ -96,11 +113,13 @@ class PlaylistViewModel @Inject constructor(
       }
     }
   }
+
   fun setSorter(sorter: String) {
     if (_uiState.value.sorter == sorter) return
     _uiState.update { it.copy(sorter = sorter) }
     refresh()
   }
+
   fun updatePlaylistName(newName: String) {
     viewModelScope.launch {
       val oldName = _uiState.value.playlist?.name ?: return@launch
@@ -114,6 +133,7 @@ class PlaylistViewModel @Inject constructor(
       }
     }
   }
+
   fun updatePlaylistDescription(newDescription: String) {
     viewModelScope.launch {
       playlistRepository.setDescriptionPlaylist(playlistId, newDescription).onSuccess {
@@ -126,6 +146,7 @@ class PlaylistViewModel @Inject constructor(
       }
     }
   }
+
   fun deletePlaylist(onDeleted: () -> Unit) {
     viewModelScope.launch {
       playlistRepository.deletePlaylist(playlistId).onSuccess {
@@ -133,6 +154,7 @@ class PlaylistViewModel @Inject constructor(
       }
     }
   }
+
   fun removeAnimeFromPlaylist(seasonId: String) {
     viewModelScope.launch {
       playlistRepository.deleteAnimeFromPlaylist(playlistId, seasonId).onSuccess {
@@ -149,6 +171,7 @@ class PlaylistViewModel @Inject constructor(
       }
     }
   }
+
   suspend fun addToOtherPlaylist(targetPlaylistId: Int, item: PlaylistItem): Result<Unit> = playlistRepository.addAnimeToPlaylist(
     id = targetPlaylistId,
     seasonId = item.seasonId,
@@ -158,10 +181,13 @@ class PlaylistViewModel @Inject constructor(
     chapId = item.chapId,
     chapName = item.chapName
   ).map { }
+
   suspend fun removeAnimeFromOtherPlaylist(targetPlaylistId: Int, seasonId: String): Result<Unit> = playlistRepository.deleteAnimeFromPlaylist(targetPlaylistId, seasonId).map { }
+
   fun toggleEditName(editing: Boolean) {
     _uiState.update { it.copy(isEditingName = editing) }
   }
+
   fun toggleEditDescription(editing: Boolean) {
     _uiState.update { it.copy(isEditingDescription = editing) }
   }

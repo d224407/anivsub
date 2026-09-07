@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.account
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.tvFocusScale
+
 @Composable
 fun PlaylistHorizontalList(
   playlists: List<Playlist>,
@@ -50,6 +52,7 @@ fun PlaylistHorizontalList(
       onAddClick = onAddClick,
       compactArrow = true
     )
+
     if (isLoading) {
       LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),

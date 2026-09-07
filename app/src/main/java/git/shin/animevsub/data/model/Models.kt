@@ -1,8 +1,10 @@
 package git.shin.animevsub.data.model
+
 import git.shin.animevsub.data.remote.SegmentDataInterceptor
 import git.shin.animevsub.data.remote.SegmentUrlInterceptor
 import kotlinx.serialization.Serializable
 import java.time.Instant
+
 @Serializable
 data class AnimeCard(
   val animeId: String,
@@ -43,6 +45,7 @@ data class DisplaySeason(
   val range: IntRange? = null, // Index range of chapters in the real season (if virtual)
   val isVirtual: Boolean = false
 )
+
 data class HomeData(
   val thisSeason: List<AnimeCard>,
   val carousel: List<AnimeCard>,
@@ -51,11 +54,13 @@ data class HomeData(
   val nominate: List<AnimeCard>,
   val hotUpdate: List<AnimeCard>
 )
+
 data class ExternalPlatform(
   val href: String,
   val name: String,
   val logo: String?
 )
+
 data class AnimeDetail(
   val name: String,
   val othername: String?,
@@ -88,38 +93,45 @@ data class ChapterInfo(
   val name: String,
   val extra: Map<String, String> = emptyMap()
 )
+
 data class ServerInfo(
   val name: String,
   val extra: Map<String, String> = emptyMap()
 )
+
 data class PlayerData(
   val link: String,
   val type: String,
   val headers: Map<String, String>? = null,
   val isContent: Boolean = false
 )
+
 class PlayerConfig(
   val playerData: PlayerData,
   val server: ServerInfo,
   val segmentUrlInterceptor: SegmentUrlInterceptor?,
   val segmentDataInterceptor: SegmentDataInterceptor?
 )
+
 data class ChapterData(
   val chaps: List<ChapterInfo>,
   val update: Triple<Int, Int, Int>?,
   val image: String,
   val poster: String
 )
+
 data class ScheduleDay(
   val date: Long,
   val items: List<AnimeCard>
 )
+
 data class SearchSuggestion(
   val animeId: String,
   val image: String,
   val name: String,
   val status: String
 )
+
 data class CategoryPage(
   val items: List<AnimeCard>,
   val totalPages: Int,
@@ -164,6 +176,7 @@ data class FilterOption(
   val id: String,
   val name: String
 )
+
 data class FilterGroup(
   val id: String,
   val name: String,

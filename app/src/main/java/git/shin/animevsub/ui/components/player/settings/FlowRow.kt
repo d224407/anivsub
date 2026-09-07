@@ -1,5 +1,7 @@
 package git.shin.animevsub.ui.components.player.settings
+
 import androidx.compose.runtime.Composable
+
 @Composable
 fun FlowRow(spacing: androidx.compose.ui.unit.Dp, content: @Composable () -> Unit) {
   androidx.compose.ui.layout.Layout(content = content) { measurables, constraints ->

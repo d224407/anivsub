@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.anime
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.formatTimeAgo
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationItemRow(
@@ -60,6 +62,7 @@ fun NotificationItemRow(
       }
     }
   )
+
   SwipeToDismissBox(
     state = dismissState,
     enableDismissFromStartToEnd = false,
@@ -102,7 +105,9 @@ fun NotificationItemRow(
           .clip(RoundedCornerShape(8.dp))
           .background(DarkSurface)
       )
+
       Spacer(modifier = Modifier.width(12.dp))
+
       Column(modifier = Modifier.weight(1f)) {
         Text(
           text = notification.title,
@@ -128,6 +133,7 @@ fun NotificationItemRow(
           fontSize = 12.sp
         )
       }
+
       Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.SpaceBetween,
@@ -140,6 +146,7 @@ fun NotificationItemRow(
 //            .clip(CircleShape)
 //            .background(AccentMain)
 //        )
+
         notification.closeTrigger?.let { trigger ->
           IconButton(
             onClick = { onClose(trigger) },

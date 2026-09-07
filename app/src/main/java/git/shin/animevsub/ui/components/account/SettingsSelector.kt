@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.account
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.tvFocusScale
+
 @Composable
 fun SettingsSelector(
   label: String,
@@ -35,6 +37,7 @@ fun SettingsSelector(
   onOptionSelected: (String) -> Unit
 ) {
   var expanded by remember { mutableStateOf(false) }
+
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -64,6 +67,7 @@ fun SettingsSelector(
         fontSize = 13.sp
       )
     }
+
     Box {
       DropdownMenu(
         expanded = expanded,

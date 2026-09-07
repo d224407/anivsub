@@ -1,5 +1,5 @@
 package git.shin.animevsub.ui.components.detail
-import android.annotation.SuppressLint
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,6 +57,7 @@ import git.shin.animevsub.data.model.Trigger
 import git.shin.animevsub.data.model.VoteType
 import java.util.Calendar
 import java.util.Date
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CommentContent(
@@ -85,6 +86,7 @@ fun CommentContent(
     }
     result
   }
+
   if (parts.none { it.second }) {
     Text(
       text = content,
@@ -145,11 +147,12 @@ fun CommentItem(
   isMine: Boolean = false,
   currentUserId: Int? = null,
   currentUserAvatar: String? = null,
-  @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+  modifier: Modifier = Modifier
 ) {
   var showReplyInput by remember { mutableStateOf(false) }
   var showEditInput by remember { mutableStateOf(false) }
   var showMenu by remember { mutableStateOf(false) }
+
   Row(modifier = modifier.fillMaxWidth()) {
     AsyncImage(
       model = ImageRequest.Builder(LocalContext.current)
@@ -162,7 +165,9 @@ fun CommentItem(
         .clip(CircleShape),
       contentScale = ContentScale.Crop
     )
+
     Spacer(modifier = Modifier.width(12.dp))
+
     Column(modifier = Modifier.weight(1f)) {
       Row(
         modifier = Modifier.fillMaxWidth(),
@@ -237,7 +242,9 @@ fun CommentItem(
           }
         }
       }
+
       Spacer(modifier = Modifier.height(4.dp))
+
       if (showEditInput) {
         CommentInput(
           onPost = {
@@ -262,7 +269,9 @@ fun CommentItem(
           )
         }
       }
+
       Spacer(modifier = Modifier.height(8.dp))
+
       Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = { onVote(comment.id, VoteType.UP) }, modifier = Modifier.size(24.dp)) {
           Icon(
@@ -278,7 +287,9 @@ fun CommentItem(
           color = MaterialTheme.colorScheme.onSurfaceVariant,
           modifier = Modifier.padding(horizontal = 4.dp)
         )
+
         Spacer(modifier = Modifier.width(8.dp))
+
         IconButton(
           onClick = { onVote(comment.id, VoteType.DOWN) },
           modifier = Modifier.size(24.dp)
@@ -290,7 +301,9 @@ fun CommentItem(
             modifier = Modifier.size(18.dp)
           )
         }
+
         Spacer(modifier = Modifier.width(16.dp))
+
         Text(
           text = stringResource(R.string.reply_label),
           style = MaterialTheme.typography.bodySmall,
@@ -299,6 +312,7 @@ fun CommentItem(
           modifier = Modifier.clickable { showReplyInput = !showReplyInput }
         )
       }
+
       if (showReplyInput) {
         Spacer(modifier = Modifier.height(8.dp))
         CommentInput(
@@ -313,6 +327,7 @@ fun CommentItem(
           onCancel = { showReplyInput = false }
         )
       }
+
       if (replies.isNotEmpty()) {
         Spacer(modifier = Modifier.height(8.dp))
         replies.forEach { reply ->
@@ -323,7 +338,7 @@ fun CommentItem(
             onEdit = onEdit,
             onTrigger = onTrigger,
             isMine = reply.userId == currentUserId,
-            replies = emptyList(),
+            replies = emptyList<Comment>(),
             hasMoreReplies = false,
             onLoadReplies = {},
             isReply = true,
@@ -332,6 +347,7 @@ fun CommentItem(
           )
         }
       }
+
       if (hasMoreReplies) {
         TextButton(onClick = { onLoadReplies(replies.isNotEmpty()) }) {
           Row(verticalAlignment = Alignment.CenterVertically) {
@@ -366,6 +382,7 @@ fun CommentItem(
 private fun formatCommentTime(timestamp: Long): String {
   val now = System.currentTimeMillis() / 1000
   val diff = now - timestamp
+
   return when {
     diff < 60 -> stringResource(R.string.just_now)
     diff < 3600 -> stringResource(R.string.minutes_ago, diff / 60)

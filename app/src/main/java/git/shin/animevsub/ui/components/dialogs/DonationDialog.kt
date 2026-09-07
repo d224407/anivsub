@@ -1,5 +1,5 @@
 package git.shin.animevsub.ui.components.dialogs
-import android.annotation.SuppressLint
+
 import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -43,7 +43,7 @@ import git.shin.animevsub.R
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Calendar
-@SuppressLint("LocalContextResourcesRead")
+
 @Composable
 fun DonationDialog(
   onDismiss: () -> Unit
@@ -51,6 +51,7 @@ fun DonationDialog(
   val context = LocalContext.current
   val currentYear = Calendar.getInstance().get(Calendar.YEAR)
   val yearsActive = currentYear - 2022
+
   val saveQrToGallery = {
     try {
       val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.timo_qr)
@@ -75,6 +76,7 @@ fun DonationDialog(
         val image = File(file, filename)
         FileOutputStream(image)
       }
+
       outputStream?.use {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
         Toast.makeText(context, context.getString(R.string.donation_qr_saved), Toast.LENGTH_SHORT).show()
@@ -83,6 +85,7 @@ fun DonationDialog(
       Toast.makeText(context, context.getString(R.string.donation_save_error, e.message), Toast.LENGTH_SHORT).show()
     }
   }
+
   AlertDialog(
     onDismissRequest = onDismiss,
     containerColor = Color(0xFF1A1A1A),
@@ -108,12 +111,14 @@ fun DonationDialog(
           textAlign = TextAlign.Center,
           lineHeight = 22.sp
         )
+
         Text(
           stringResource(R.string.donation_message),
           color = Color.White,
           fontWeight = FontWeight.Medium,
           textAlign = TextAlign.Center
         )
+
         // QR Code
         Box(
           modifier = Modifier
@@ -128,6 +133,7 @@ fun DonationDialog(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
           )
+
           // Nút Lưu QR
           IconButton(
             onClick = { saveQrToGallery() },
@@ -145,6 +151,7 @@ fun DonationDialog(
             )
           }
         }
+
         Text(
           stringResource(R.string.donation_bank_info, "Timo (BVBank)", "9021454964386", "NGUYEN TIEN THANH"),
           color = Color.Cyan,

@@ -1,8 +1,10 @@
 package git.shin.animevsub.ui.utils
+
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
+
 data class ScreenUtils(
   val isLandscape: Boolean,
   val isTV: Boolean

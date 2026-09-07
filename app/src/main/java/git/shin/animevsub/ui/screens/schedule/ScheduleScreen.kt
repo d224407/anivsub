@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.schedule
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,6 +65,7 @@ import git.shin.animevsub.ui.utils.formatTime
 import git.shin.animevsub.ui.utils.isToday
 import kotlinx.coroutines.launch
 import java.util.Calendar
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreen(
@@ -72,6 +74,7 @@ fun ScheduleScreen(
   viewModel: ScheduleViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsState()
+
   Scaffold(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     topBar = {
@@ -116,23 +119,27 @@ fun ScheduleScreen(
           uiState.error != null -> {
             ErrorScreen(error = uiState.error, onRetry = { viewModel.loadSchedule() })
           }
+
           else -> {
             if (uiState.days.isNotEmpty()) {
               val pagerState =
                 rememberPagerState(initialPage = uiState.selectedDay) { uiState.days.size }
               val scope = rememberCoroutineScope()
+
               // Sync pager with ViewModel
               LaunchedEffect(pagerState.currentPage) {
                 if (pagerState.currentPage != uiState.selectedDay) {
                   viewModel.selectDay(pagerState.currentPage)
                 }
               }
+
               // Sync pager when selectedDay changes in ViewModel (e.g. initial load)
               LaunchedEffect(uiState.selectedDay) {
                 if (uiState.selectedDay != pagerState.currentPage) {
                   pagerState.animateScrollToPage(uiState.selectedDay)
                 }
               }
+
               ScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = DarkBackground,
@@ -153,6 +160,7 @@ fun ScheduleScreen(
                   val isTodayDay = isToday(day.date)
                   val (shortDay, dateStr) = formatShortDayAndDate(day.date)
                   val isSelected = pagerState.currentPage == index
+
                   Tab(
                     selected = isSelected,
                     onClick = {
@@ -194,6 +202,7 @@ fun ScheduleScreen(
                   )
                 }
               }
+
               HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f)
@@ -223,6 +232,7 @@ private fun ScheduleDayList(
       if (it.timeRelease != null) formatTime(it.timeRelease * 1000) else "--:--"
     }.toSortedMap()
   }
+
   if (dayData.items.isEmpty()) {
     Box(
       modifier = Modifier
@@ -249,6 +259,7 @@ private fun ScheduleDayList(
           -1
         }
         val isCurrentHour = itemHour == currentHour && isToday(dayData.date)
+
         item {
           Text(
             text = time,
@@ -258,6 +269,7 @@ private fun ScheduleDayList(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
           )
         }
+
         items(items) { item ->
           Row(
             modifier = Modifier
@@ -288,10 +300,12 @@ private fun ScheduleDayList(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
               )
+
               val subInfo = listOfNotNull(
                 item.year?.toString(),
                 item.process?.let { stringResource(id = R.string.episode_label, it) }
               ).joinToString(" | ")
+
               if (subInfo.isNotEmpty()) {
                 Text(
                   text = subInfo,
@@ -301,6 +315,7 @@ private fun ScheduleDayList(
                   modifier = Modifier.padding(top = 2.dp)
                 )
               }
+
               if (!item.description.isNullOrEmpty()) {
                 Text(
                   text = item.description,

@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.playlist
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
@@ -18,12 +19,14 @@ import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.DarkSurface
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
+
 @Composable
 fun CreatePlaylistDialog(
   onDismiss: () -> Unit,
   onCreate: (String) -> Unit
 ) {
   var playlistName by remember { mutableStateOf("") }
+
   AlertDialog(
     onDismissRequest = onDismiss,
     title = { Text(stringResource(R.string.create_playlist), color = TextPrimary) },

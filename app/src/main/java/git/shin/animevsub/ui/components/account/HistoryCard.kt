@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.account
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.utils.formatDuration
 import git.shin.animevsub.ui.utils.tvFocusScale
+
 @Composable
 fun HistoryCard(
   item: HistoryItem,
@@ -56,6 +58,7 @@ fun HistoryCard(
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
       )
+
       // Bottom progress and time
       Box(
         modifier = Modifier
@@ -82,6 +85,7 @@ fun HistoryCard(
           }
         }
       }
+
       Text(
         text = "${formatDuration((item.cur * 1000).toLong())} / ${formatDuration((item.dur * 1000).toLong())}",
         color = Color.White,
@@ -91,6 +95,7 @@ fun HistoryCard(
           .padding(end = 8.dp, bottom = 8.dp)
       )
     }
+
     Spacer(modifier = Modifier.height(6.dp))
     Text(
       text = item.name,

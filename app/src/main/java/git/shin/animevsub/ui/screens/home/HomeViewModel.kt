@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.home
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,30 +10,63 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-sealed class HomeUiState {
-  object Loading : HomeUiState()
-  data class Success(val data: HomeData) : HomeUiState()
-  data class Error(val message: String) : HomeUiState()
-}
+
+data class HomeUiState(
+  val isLoading: Boolean = true,
+  val data: HomeData? = null,
+  val error: String? = null,
+  val isRefreshing: Boolean = false
+)
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
   private val repository: AnimeRepository
 ) : ViewModel() {
-  private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+
+  private val _uiState = MutableStateFlow(HomeUiState())
   val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
   init {
-    loadHomeData()
+    loadHomePage()
   }
-  fun loadHomeData() {
+
+  fun loadHomePage() {
     viewModelScope.launch {
-      _uiState.value = HomeUiState.Loading
-      val result = repository.getHomePage()
-      result.onSuccess { data ->
-        _uiState.value = HomeUiState.Success(data)
-      }.onFailure { error ->
-        _uiState.value = HomeUiState.Error(error.message ?: "Unknown error")
-      }
+      _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+      repository.getHomePage()
+        .onSuccess { data ->
+          _uiState.value = _uiState.value.copy(
+            isLoading = false,
+            data = data,
+            error = null
+          )
+        }
+        .onFailure { e ->
+          _uiState.value = _uiState.value.copy(
+            isLoading = false,
+            error = e.message ?: "Unknown error"
+          )
+        }
+    }
+  }
+
+  fun refresh() {
+    viewModelScope.launch {
+      _uiState.value = _uiState.value.copy(isRefreshing = true)
+      repository.getHomePage()
+        .onSuccess { data ->
+          _uiState.value = _uiState.value.copy(
+            isRefreshing = false,
+            data = data,
+            error = null
+          )
+        }
+        .onFailure { e ->
+          _uiState.value = _uiState.value.copy(
+            isRefreshing = false,
+            error = e.message
+          )
+        }
     }
   }
 }

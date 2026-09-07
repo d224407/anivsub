@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.player
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -67,6 +68,7 @@ import git.shin.animevsub.ui.theme.TextGrey
 import git.shin.animevsub.ui.theme.TextPrimary
 import git.shin.animevsub.ui.theme.TextSecondary
 import git.shin.animevsub.ui.utils.shimmerEffect
+
 @Composable
 fun EpisodeSelectorContent(
   displaySeasons: List<DisplaySeason>,
@@ -88,7 +90,9 @@ fun EpisodeSelectorContent(
   val seasonListState = rememberLazyListState()
   val verticalSeasonListState = rememberLazyListState()
   val episodeGridState = rememberLazyGridState()
+
   val currentSeasonIndex = displaySeasons.indexOfFirst { it.id == activeDisplaySeasonId }
+
   // Scroll to current season
   LaunchedEffect(currentSeasonIndex, showVerticalSeasons) {
     if (currentSeasonIndex >= 0) {
@@ -99,6 +103,7 @@ fun EpisodeSelectorContent(
       }
     }
   }
+
   val activeSeason = displaySeasons.find { it.id == activeDisplaySeasonId }
   val filteredChaps = remember(episodes, activeDisplaySeasonId, searchQuery) {
     if (searchQuery.isEmpty()) {
@@ -111,6 +116,7 @@ fun EpisodeSelectorContent(
       episodes.filter { it.name.contains(searchQuery, ignoreCase = true) }
     }
   }
+
   // Scroll to current episode
   val currentEpisodeIndex = remember(filteredChaps, currentEpisodeId) {
     filteredChaps.indexOfFirst { it.id == currentEpisodeId }
@@ -120,6 +126,7 @@ fun EpisodeSelectorContent(
       episodeGridState.animateScrollToItem(currentEpisodeIndex)
     }
   }
+
   Column(modifier = modifier.fillMaxSize()) {
     Row(
       modifier = Modifier
@@ -134,6 +141,7 @@ fun EpisodeSelectorContent(
         fontWeight = FontWeight.Bold,
         modifier = Modifier.weight(1f)
       )
+
       if (onSyncModeToggle != null && !showVerticalSeasons) {
         IconButton(onClick = onSyncModeToggle) {
           Icon(
@@ -152,6 +160,7 @@ fun EpisodeSelectorContent(
           )
         }
       }
+
       IconButton(onClick = {
         showVerticalSeasons = !showVerticalSeasons
         if (showVerticalSeasons) searchQuery = ""
@@ -163,6 +172,7 @@ fun EpisodeSelectorContent(
           modifier = Modifier.size(20.dp)
         )
       }
+
       if (onClose != null) {
         IconButton(onClick = onClose) {
           Icon(
@@ -174,6 +184,7 @@ fun EpisodeSelectorContent(
         }
       }
     }
+
     AnimatedVisibility(
       visible = !showVerticalSeasons,
       enter = fadeIn() + expandVertically(),
@@ -213,6 +224,7 @@ fun EpisodeSelectorContent(
         )
       )
     }
+
     if (showVerticalSeasons) {
       LazyColumn(
         state = verticalSeasonListState,
@@ -252,6 +264,7 @@ fun EpisodeSelectorContent(
           }
         }
       }
+
       AnimatedContent(
         targetState = Pair(isLoading, activeDisplaySeasonId),
         transitionSpec = {

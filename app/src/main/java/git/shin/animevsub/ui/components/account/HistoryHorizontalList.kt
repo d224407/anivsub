@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.components.account
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import git.shin.animevsub.ui.components.common.ErrorRetrySection
 import git.shin.animevsub.ui.components.common.SectionHeader
 import git.shin.animevsub.ui.theme.DarkCard
 import git.shin.animevsub.ui.theme.TextGrey
+
 @Composable
 fun HistoryHorizontalList(
   histories: List<HistoryItem>,
@@ -40,6 +42,7 @@ fun HistoryHorizontalList(
       title = stringResource(R.string.history),
       onViewAll = onHeaderClick
     )
+
     if (isLoading) {
       LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),

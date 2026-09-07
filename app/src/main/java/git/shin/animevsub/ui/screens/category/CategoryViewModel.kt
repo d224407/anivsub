@@ -1,4 +1,5 @@
 package git.shin.animevsub.ui.screens.category
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+
 data class CategoryUiState(
   val isLoading: Boolean = true,
   val items: List<AnimeCard> = emptyList(),
@@ -34,8 +36,10 @@ class CategoryViewModel @Inject constructor(
   private val repository: AnimeRepository,
   private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
   private val _uiState = MutableStateFlow(CategoryUiState())
   val uiState: StateFlow<CategoryUiState> = _uiState.asStateFlow()
+
   init {
     val filtersJson = savedStateHandle.get<String>("filters") ?: "[]"
     val filters = try {
@@ -44,6 +48,7 @@ class CategoryViewModel @Inject constructor(
       print(e)
       emptyList()
     }
+
     _uiState.update {
       it.copy(
         selectedFilters = filters,
@@ -53,6 +58,7 @@ class CategoryViewModel @Inject constructor(
     loadPage(1)
     loadFilters()
   }
+
   private fun loadFilters() {
     viewModelScope.launch {
       _uiState.update { it.copy(isFilterLoading = true) }
@@ -76,6 +82,7 @@ class CategoryViewModel @Inject constructor(
         }
     }
   }
+
   fun loadPage(page: Int, isRefreshing: Boolean = false) {
     viewModelScope.launch {
       if (page == 1) {
@@ -87,6 +94,7 @@ class CategoryViewModel @Inject constructor(
       } else {
         _uiState.update { it.copy(isLoadingMore = true) }
       }
+
       repository.getCategory(
         filters = _uiState.value.selectedFilters,
         page = page
@@ -120,31 +128,38 @@ class CategoryViewModel @Inject constructor(
       }
     }
   }
+
   fun refresh() {
     loadPage(1, isRefreshing = true)
   }
+
   fun updateFilter(filter: SelectedFilter) {
     val current = _uiState.value.selectedFilters.toMutableList()
     val group = _uiState.value.filterGroups.find { it.id == filter.groupId }
     val isMultiple = group?.isMultiple == true
+
     if (!isMultiple) {
       current.removeAll { it.groupId == filter.groupId }
     }
+
     val existingIndex = current.indexOfFirst { it.id == filter.id && it.groupId == filter.groupId }
     if (existingIndex != -1) {
       current.removeAt(existingIndex)
     } else {
       current.add(filter)
     }
+
     _uiState.update { it.copy(selectedFilters = current) }
     savedStateHandle["filters"] = Json.encodeToString(current)
     loadPage(1)
   }
+
   fun loadMore() {
     if (!_uiState.value.isLoadingMore && _uiState.value.currentPage < _uiState.value.totalPages) {
       loadPage(_uiState.value.currentPage + 1)
     }
   }
+
   fun retry() {
     loadPage(1)
   }
