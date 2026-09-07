@@ -10,6 +10,8 @@ import git.shin.animevsub.utils.CloudflareManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.parseToJsonElement
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,6 +23,9 @@ import org.jsoup.nodes.Element
 import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Locale
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 import javax.crypto.Cipher
@@ -46,10 +51,15 @@ class AnimeApi(
 ) : AnimeDataSource {
 
     companion object {
-        private var currentDomain = "animevietsub.pl"
+        private var currentDomain = "animevietsub.li"
         private var isInitialized = false
 
         private const val DYNAMIC_HOST = "dynamic_host"
+
+        // TODO(API-DOMAIN): The APK proves that dynamic_host is read from
+        // ApiStorage, but the exact code which refreshes that value from
+        // https://bit.ly/animevietsubtv has not been recovered yet.
+        // Do not hard-code a permanent domain beyond this safe fallback.
 
         private fun origin(url: String): String {
             return try {
@@ -213,6 +223,26 @@ class AnimeApi(
                 }
             } catch (_: Exception) {
                 // Keep the compiled-in fallback domain.
+            }
+
+            // The APK only proves that the resolved dynamic_host value is read
+            // from storage. The supplied site pages prove that bit.ly/animevietsubtv
+            // is the canonical redirect used to discover the current domain.
+            // Refresh it once when storage has no usable value.
+            if (currentDomain == "animevietsub.li") {
+                runCatching {
+                    val probe = Request.Builder()
+                        .url("https://bit.ly/animevietsubtv")
+                        .get()
+                        .header("User-Agent", CloudflareManager.getCurrentUserAgent())
+                        .build()
+                    client.newCall(probe).execute().use { response ->
+                        val host = response.request.url.host
+                        if (host.isNotBlank() && host.contains("animevietsub.")) {
+                            currentDomain = host.removePrefix("www.")
+                        }
+                    }
+                }
             }
             isInitialized = true
         }
@@ -387,6 +417,10 @@ class AnimeApi(
 
     override suspend fun getUser(): Flow<User?> = flowOf(null)
 
+    // TODO(API-AUTH): The exact authenticated profile endpoint/HTML selectors
+    // are not recovered from the original coroutine. Login URL is known to be
+    // /account/login/, but the exact _fxRef construction and profile endpoint
+    // are still unresolved.
     override suspend fun refreshUser(): User {
         val doc = fetchHtml("/user") ?: fetchHtml("/login")
             ?: throw IllegalStateException("Unable to load user page")
@@ -431,96 +465,168 @@ class AnimeApi(
             emptyList(), emptyList(), emptyList()
         )
 
-        return HomeData(
-            thisSeason = parseSections(doc, ".anime-moi-cap-nhat .mli"),
-            carousel = parseSections(doc, ".carousel .mli"),
-            lastUpdate = parseSections(doc, ".anime-moi-update .mli"),
-            preRelease = parseSections(doc, ".anime-sap-chieu .mli"),
-            nominate = parseSections(doc, ".anime-de-cu .mli"),
-            hotUpdate = parseSections(doc, ".anime-hot .mli")
-        )
-    }
-
-    override suspend fun getSchedule(): List<ScheduleDay> {
-        val doc = fetchHtml("/lich-chieu") ?: return emptyList()
-        val days = mutableListOf<ScheduleDay>()
-
-        val dayNodes = doc.select(
-            "[data-date].schedule-day,.schedule-day,.lich-chieu-day"
-        )
-
-        if (dayNodes.isNotEmpty()) {
-            for (node in dayNodes) {
-                val date = node.attr("data-date").toLongOrNull()
-                    ?: Regex("""\d+""").find(node.text())?.value?.toLongOrNull()
-                    ?: continue
-                val items = node.select(".mli").mapNotNull {
-                    runCatching { parseAnimeCard(it) }.getOrNull()
-                }
-                if (items.isNotEmpty()) days += ScheduleDay(date, items)
+        // Current HTML uses TPost/B cards rather than the legacy .mli class.
+        // Keep the legacy selectors as fallbacks because older domains may still
+        // serve them. Sections are located by their visible widget headings.
+        fun sectionByTitle(vararg needles: String): List<AnimeCard> {
+            val section = doc.select("section.widget-area, .Wdgt, .widget-area").firstOrNull { node ->
+                val title = node.selectFirst(".Title, h2, h3, h4")?.text()?.lowercase(Locale.ROOT).orEmpty()
+                needles.any { title.contains(it.lowercase(Locale.ROOT)) }
             }
+            val cards = section?.select(".TPost.B, .TPost.C, .mli")
+                ?.mapNotNull { runCatching { parseAnimeCard(it) }.getOrNull() }
+                ?.distinctBy { it.animeId }
+                .orEmpty()
+            if (cards.isNotEmpty()) return cards
+            return section?.select("ul.MovieList a[href*='/phim/']")
+                ?.mapNotNull { link ->
+                    val href = link.absUrl("href")
+                    val id = extractIdFromPath(href)
+                    val name = link.selectFirst("span:first-child")?.text()?.trim()
+                        ?: link.text().trim()
+                    val episode = link.selectFirst("span:nth-child(2)")?.text()?.trim().orEmpty()
+                    if (id.isBlank() || name.isBlank()) null else AnimeCard(
+                        animeId = id, image = "", name = name,
+                        lastEpisode = episode.takeIf { it.isNotBlank() }?.let { ChapterInfo(it, it) }
+                    )
+                }
+                ?.distinctBy { it.animeId }
+                .orEmpty()
         }
 
-        return days
+        val latest = sectionByTitle("anime mới cập nhật", "mới cập nhật")
+        val hot = sectionByTitle("hot tuần", "hot")
+        val pre = sectionByTitle("sắp chiếu")
+        val nominate = sectionByTitle("đề cử", "nominate")
+        val carousel = doc.select(".owl-carousel .TPost.B, .carousel .TPost.B, .carousel .mli")
+            .mapNotNull { runCatching { parseAnimeCard(it) }.getOrNull() }
+            .distinctBy { it.animeId }
+
+        return HomeData(
+            thisSeason = latest,
+            carousel = carousel,
+            lastUpdate = latest,
+            preRelease = pre,
+            nominate = nominate,
+            hotUpdate = hot
+        )
     }
 
-    override suspend fun getRankings(type: String): List<AnimeCard> {
-        val path = "/xep-hang/${urlEncode(type)}"
-        val doc = fetchHtml(path) ?: fetchHtml("/top/${urlEncode(type)}")
+    // Schedule section structure confirmed by schedule.html.
+    override suspend fun getSchedule(): List<ScheduleDay> {
+        val doc = fetchHtml("/lich-chieu-phim.html")
+            ?: fetchHtml("/lich-chieu-phim")
             ?: return emptyList()
 
-        return doc.select(".mli,.film_list-wrap .flw-item,.film_list .item")
-            .mapNotNull { runCatching { parseAnimeCard(it) }.getOrNull() }
+        val year = LocalDate.now().year
+        val zone = ZoneId.systemDefault()
+
+        return doc.select("section.Homeschedule").mapNotNull { section ->
+            val heading = section.selectFirst(".Top h1")?.text()?.trim().orEmpty()
+            val date = Regex("Ngày\\s+(\\d{1,2})\\s+tháng\\s+(\\d{1,2})")
+                .find(heading)
+                ?.let { match ->
+                    runCatching {
+                        LocalDate.of(year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
+                            .atStartOfDay(zone).toInstant().toEpochMilli()
+                    }.getOrNull()
+                } ?: return@mapNotNull null
+
+            val items = section.select("article.TPost.C").mapNotNull {
+                runCatching { parseAnimeCard(it) }.getOrNull()
+            }.distinctBy { it.animeId }
+
+            if (items.isEmpty()) null else ScheduleDay(date, items)
+        }
     }
 
-    override suspend fun getRankingTypes(): List<FilterOption> {
-        val doc = fetchHtml("/xep-hang") ?: fetchHtml("/top") ?: return emptyList()
+    // Ranking routes confirmed by ranking.html.
+    override suspend fun getRankings(type: String): List<AnimeCard> {
+        val slug = when (type.lowercase(Locale.ROOT)) {
+            "day", "daily", "ngày" -> "day"
+            "voted", "rating", "đánh giá", "favorite" -> "voted"
+            "month", "tháng" -> "month"
+            "season", "mùa" -> "season"
+            "year", "năm" -> "year"
+            else -> type.trim().trim('/').ifBlank { "day" }
+        }
+        val path = if (slug == "day") "/bang-xep-hang/day.html" else "/bang-xep-hang/$slug.html"
+        val doc = fetchHtml(path) ?: fetchHtml("/bang-xep-hang.html") ?: return emptyList()
 
-        return doc.select(
-            "select option,.ranking-type a,.filter-option a"
-        ).mapNotNull {
-            val id = it.attr("value").ifBlank {
-                it.attr("href").substringAfterLast('/').ifBlank { it.text() }
-            }
-            val name = it.text().trim()
-            if (id.isBlank() || name.isBlank()) null else FilterOption(id, name)
-        }.distinctBy { it.id }
+        return doc.select("ul.bxh-movie-phimletv > li").mapNotNull { li ->
+            val link = li.selectFirst(".title-item a, h3.title-item a") ?: return@mapNotNull null
+            val href = link.absUrl("href")
+            val image = li.selectFirst("img")?.let { it.attr("data-cfsrc").ifBlank { it.absUrl("src") } }.orEmpty()
+            val name = link.text().trim()
+            val scoreText = li.selectFirst(".rank-score .score")?.text()?.trim().orEmpty()
+            val rate = Regex("\\d+(?:[.,]\\d+)?").find(scoreText)?.value?.replace(',', '.')?.toFloatOrNull() ?: 0f
+            val episode = scoreText.takeIf { it.isNotBlank() }
+            if (href.isBlank() || name.isBlank()) null else AnimeCard(
+                animeId = extractIdFromPath(href), image = image, name = name,
+                lastEpisode = episode?.let { ChapterInfo(it, it) }, rate = rate
+            )
+        }
     }
 
+    // Ranking type options confirmed by ranking.html.
+    override suspend fun getRankingTypes(): List<FilterOption> = listOf(
+        FilterOption("day", "Ngày"),
+        FilterOption("voted", "Đánh Giá"),
+        FilterOption("month", "Tháng"),
+        FilterOption("season", "Mùa"),
+        FilterOption("year", "Năm")
+    )
+
+    // Search suggestion AJAX endpoint confirmed by home-v1.js.
     override suspend fun preSearch(keyword: String): List<SearchSuggestion> {
         if (keyword.isBlank()) return emptyList()
-
-        val url = "$baseUrl/tim-kiem?keyword=${urlEncode(keyword)}"
-        val doc = fetchHtml(url) ?: return emptyList()
-
-        return doc.select(
-            ".search-suggest .ss-item,.search-suggest .item,.flw-item"
-        ).mapNotNull { item ->
-            val href = item.selectFirst("a")?.attr("href").orEmpty()
+        val body = FormBody.Builder()
+            .add("ajaxSearch", "1")
+            .add("keysearch", keyword)
+            .build()
+        val html = fetchText("$baseUrl/ajax/suggest", "POST", body) ?: return emptyList()
+        val doc = Jsoup.parseBodyFragment(html, baseUrl)
+        return doc.select("a[href*='/phim/']").mapNotNull { a ->
+            val href = a.absUrl("href")
             val id = extractIdFromPath(href)
-            val image = item.selectFirst("img")
-                ?.let { it.attr("data-cfsrc").ifBlank { it.attr("src") } }
-                .orEmpty()
-            val name = item.selectFirst(".Title,.title,.film-name")?.text()?.trim()
-                ?: item.selectFirst("a")?.text()?.trim()
-                ?: ""
-            val status = item.selectFirst(".mli-eps,.status,.film-infor")?.text()?.trim().orEmpty()
-
-            if (id.isBlank() || name.isBlank()) null
-            else SearchSuggestion(id, image, name, status)
-        }
+            val image = a.selectFirst("img")?.let { it.attr("data-cfsrc").ifBlank { it.absUrl("src") } }.orEmpty()
+            val name = a.selectFirst(".Title,.title")?.text()?.trim() ?: a.text().trim()
+            val status = a.selectFirst(".mli-eps,.status")?.text()?.trim().orEmpty()
+            if (id.isBlank() || name.isBlank()) null else SearchSuggestion(id, image, name, status)
+        }.distinctBy { it.animeId }
     }
 
+    // Category filter URL confirmed by category/filter.js.
     private fun categoryQuery(filters: List<SelectedFilter>, page: Int): String {
-        if (filters.isEmpty()) return "/danh-sach?page=$page"
+        var type = "all"
+        var genres = "all"
+        var season = "all"
+        var year = "all"
+        var studio = "all"
+        var rating = "all"
+        var country = "all"
+        var sort: String? = null
 
-        val selected = filters.joinToString("&") { filter ->
-            "${urlEncode(filter.groupId)}=${urlEncode(filter.id)}"
+        filters.forEach { filter ->
+            when (filter.groupId.lowercase(Locale.ROOT)) {
+                "danh-sach", "type" -> type = filter.id
+                "genres", "genre", "the-loai" -> genres = if (genres == "all") filter.id else "$genres-${filter.id}"
+                "season", "mua" -> season = filter.id
+                "year", "nam" -> year = filter.id
+                "studio" -> studio = filter.id
+                "rating" -> rating = filter.id
+                "country", "quoc-gia" -> country = filter.id
+                "sort", "sap-xep" -> sort = filter.id
+            }
         }
 
-        return "/danh-sach?page=$page&$selected"
+        val path = "/danh-sach/$type/$genres/$season/$year/${urlEncode(studio)}/${urlEncode(rating)}/$country/"
+        return buildString {
+            append(path)
+            if (sort != null) append("?sort=").append(urlEncode(sort!!))
+            if (page > 1) append(if (contains('?')) '&' else '?').append("page=").append(page)
+        }
     }
-
     override suspend fun search(keyword: String, page: Int): CategoryPage {
         val safePage = page.coerceAtLeast(1)
         val path = "/tim-kiem/${urlEncode(keyword)}?page=$safePage"
@@ -563,6 +669,8 @@ class AnimeApi(
         return CategoryPage(items, totalPages, current, name, title)
     }
 
+    // TODO(API-FILTERS): Exact filter endpoint and option metadata are not
+    // recovered. Current implementation parses filters rendered by the page.
     override suspend fun getFilters(filters: List<SelectedFilter>): List<FilterGroup> {
         val doc = fetchHtml(categoryQuery(filters, 1)) ?: return emptyList()
 
@@ -594,6 +702,9 @@ class AnimeApi(
         }.distinctBy { it.id }
     }
 
+    // TODO(API-DETAIL): Most fields are recoverable from detail.html, but exact
+    // APK selectors/field semantics for every AnimeDetail.extra field are not
+    // fully recovered.
     override suspend fun getAnimeDetail(animeId: String): AnimeDetail {
         val doc = fetchHtml("/phim/$animeId")
             ?: throw IllegalStateException("Anime not found: $animeId")
@@ -701,6 +812,9 @@ class AnimeApi(
         )
     }
 
+    // TODO(API-CHAPTERS): Chapter links/data-id are confirmed by watch/detail
+    // HTML, but the exact APK coroutine which handles seasons, ranges and the
+    // update Triple is still unresolved.
     override suspend fun getChapters(animeId: String): ChapterData {
         val doc = fetchHtml("/phim/$animeId")
             ?: throw IllegalStateException("Anime not found: $animeId")
@@ -718,7 +832,7 @@ class AnimeApi(
         val chapters = mutableListOf<ChapterInfo>()
 
         doc.select(
-            "[data-id][data-name], .list-episode a, .episode-list a, .server-list a"
+            ".list-episode a.episode-link, [data-id][data-play], .list-episode a, .episode-list a"
         ).forEach { node ->
             val id = node.attr("data-id")
                 .ifBlank { node.attr("href") }
@@ -731,9 +845,13 @@ class AnimeApi(
                 chapters += ChapterInfo(
                     id = id,
                     name = name,
-                    extra = mapOf(
-                        "url" to node.absUrl("href").ifBlank { node.attr("href") }
-                    )
+                    extra = buildMap {
+                        put("url", node.absUrl("href").ifBlank { node.attr("href") })
+                        if (node.attr("data-hash").isNotBlank()) put("hash", node.attr("data-hash"))
+                        if (node.attr("data-source").isNotBlank()) put("source", node.attr("data-source"))
+                        if (node.attr("data-play").isNotBlank()) put("play", node.attr("data-play"))
+                        if (node.attr("data-movie").isNotBlank()) put("movie", node.attr("data-movie"))
+                    }
                 )
             }
         }
@@ -775,44 +893,37 @@ class AnimeApi(
         )
     }
 
+    // Server group and episode-link structure confirmed by watch.html.
     override suspend fun getServers(chapter: ChapterInfo): List<ServerInfo> {
-        val url = chapter.extra["url"]
-            ?: chapter.extra["link"]
-            ?: if (chapter.id.startsWith("http")) chapter.id else null
-            ?: return listOf(ServerInfo(chapter.name, mapOf("id" to chapter.id)))
-
+        val url = chapter.extra["url"] ?: return listOf(
+            ServerInfo("AnimeVsub", mapOf("chapterId" to chapter.id))
+        )
         val doc = fetchHtml(url) ?: return listOf(
-            ServerInfo(chapter.name, mapOf("url" to url, "id" to chapter.id))
+            ServerInfo("AnimeVsub", mapOf("url" to url, "chapterId" to chapter.id))
         )
 
-        val servers = doc.select(
-            "[data-server],[data-link],[data-url],.server a,.list-server a"
-        ).mapNotNull { node ->
-            val name = node.text().trim().ifBlank { "Server" }
-            val link = node.attr("data-url")
-                .ifBlank { node.attr("data-link") }
-                .ifBlank { node.absUrl("href") }
-                .ifBlank { node.attr("href") }
-
-            if (link.isBlank()) null
-            else ServerInfo(
-                name,
-                mapOf(
-                    "url" to link,
-                    "chapterId" to chapter.id,
-                    "chapterName" to chapter.name
+        val groups = doc.select(".server.server-group")
+        val result = groups.flatMap { group ->
+            val serverName = group.selectFirst(".server-name")?.text()?.trim().orEmpty().ifBlank { "AnimeVsub" }
+            group.select("a.episode-link, a[data-id][data-play]").map { node ->
+                ServerInfo(
+                    name = serverName,
+                    extra = buildMap {
+                        put("url", node.absUrl("href"))
+                        put("chapterId", node.attr("data-id").ifBlank { chapter.id })
+                        put("hash", node.attr("data-hash"))
+                        put("source", node.attr("data-source"))
+                        put("play", node.attr("data-play"))
+                        put("episode", node.attr("title").ifBlank { node.text().trim() })
+                    }
                 )
-            )
-        }.distinctBy { it.extra["url"] ?: it.name }
+            }
+        }
 
-        return if (servers.isEmpty()) {
-            listOf(ServerInfo(chapter.name, mapOf(
-                "url" to url,
-                "chapterId" to chapter.id
-            )))
-        } else servers
+        return if (result.isNotEmpty()) result.distinctBy { it.extra["url"] } else listOf(
+            ServerInfo("AnimeVsub", mapOf("url" to url, "chapterId" to chapter.id))
+        )
     }
-
     /**
      * Player reconstruction based on the recovered Java flow:
      * - resolve chapter/server URL
@@ -821,6 +932,8 @@ class AnimeApi(
      * - when a playlist endpoint is directly exposed, return it as HLS
      * - preserve X-Envelope-related metadata for the caller/interceptor.
      */
+    // PLAYER_DATA and the recovered playlist/token flow are both supported.
+    // The remaining encrypted response-envelope path from the APK is still TODO.
     override suspend fun getPlayerLink(server: ServerInfo): PlayerData {
         val serverUrl = server.extra["url"]
             ?: server.extra["link"]
@@ -839,6 +952,24 @@ class AnimeApi(
 
             val finalUrl = res.request.url.toString()
             val html = res.body?.string().orEmpty()
+
+            val playerJson = Regex("window\\.PLAYER_DATA\\s*=\\s*(\\{.*?\\})\\s*;", setOf(RegexOption.DOT_MATCHES_ALL))
+                .find(html)?.groupValues?.getOrNull(1)
+            if (!playerJson.isNullOrBlank()) {
+                runCatching {
+                    val obj = json.parseToJsonElement(playerJson).jsonObject
+                    val link = obj["link"]?.toString()?.trim('"')
+                    val tech = obj["playTech"]?.toString()?.trim('"') ?: "iframe"
+                    if (!link.isNullOrBlank()) {
+                        return PlayerData(
+                            link = link,
+                            type = if (tech.equals("hls", true)) "hls" else tech,
+                            headers = getHeaders(finalUrl),
+                            isContent = false
+                        )
+                    }
+                }
+            }
 
             // Direct playlist.
             if (finalUrl.contains(".m3u8") || serverUrl.contains(".m3u8")) {
@@ -922,6 +1053,7 @@ class AnimeApi(
         }
     }
 
+    // TODO(API-SKIP): Exact episode intro/outro endpoint/parser is unresolved.
     override suspend fun getEpisodeSkip(
         animeId: String,
         detail: AnimeDetail,
@@ -951,6 +1083,8 @@ class AnimeApi(
         ).containsMatchIn(html.lowercase())
     }
 
+    // TODO(API-FOLLOW): Exact follow/check-follow AJAX endpoint and POST field
+    // names were not recovered. Current code tries common endpoints defensively.
     override suspend fun toggleFollow(animeId: String, follow: Boolean) {
         val body = FormBody.Builder()
             .add("film_id", animeId)
@@ -1010,6 +1144,8 @@ class AnimeApi(
         fetchResponse("$baseUrl/ajax/trigger", "POST", body)?.close()
     }
 
+    // TODO(API-COMMENTS): Current JSON models are known, but exact AJAX endpoint
+    // names/POST parameters need confirmation from comment.js or APK coroutine.
     override suspend fun getComments(
         filmId: String,
         anime: AnimeDetail,
@@ -1044,6 +1180,7 @@ class AnimeApi(
         )
     }
 
+    // TODO(API-REPLIES): Exact endpoint/request parameters are not fully proven.
     override suspend fun getReplies(
         commentId: String,
         sort: FilterOption?,
@@ -1077,6 +1214,7 @@ class AnimeApi(
         )
     }
 
+    // TODO(API-POST-COMMENT): Exact endpoint/field names are not fully proven.
     override suspend fun postComment(
         filmId: String,
         content: String,
@@ -1126,6 +1264,7 @@ class AnimeApi(
         )
     }
 
+    // TODO(API-VOTE): Exact endpoint/field names are not fully proven.
     override suspend fun voteComment(
         commentId: String,
         voteType: VoteType
@@ -1170,6 +1309,7 @@ class AnimeApi(
         )
     }
 
+    // TODO(API-EDIT-COMMENT): Exact endpoint/field names are not fully proven.
     override suspend fun editComment(
         commentId: String,
         content: String,
