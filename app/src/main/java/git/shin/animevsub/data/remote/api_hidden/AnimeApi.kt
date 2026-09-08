@@ -8,8 +8,9 @@ import git.shin.animevsub.data.remote.SegmentUrlInterceptor
 import git.shin.animevsub.data.remote.api.AnimeDataSource
 import git.shin.animevsub.utils.CloudflareManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import okhttp3.FormBody
@@ -20,6 +21,7 @@ import okhttp3.Response
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.IOException
 import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
@@ -43,6 +45,14 @@ import kotlin.math.max
  * coroutine body, this implementation uses the observable data contract and
  * resilient HTML/HTTP fallbacks instead of throwing "Not implemented yet".
  */
+@Serializable
+data class LoginResponse(
+    val success: Boolean,
+    val message: String? = null,
+    val user: User? = null,
+    val token: String? = null
+)
+
 class AnimeApi(
     private val client: OkHttpClient,
     private val json: Json,
@@ -414,12 +424,10 @@ class AnimeApi(
             runCatching { parseAnimeCard(it) }.getOrNull()
         }
 
-    override fun getUser(): Flow<User?> = flowOf(null)
+    override fun getUser(): Flow<User?> = flow {
+        emit(runCatching { refreshUser() }.getOrNull())
+    }
 
-    // TODO(API-AUTH): The exact authenticated profile endpoint/HTML selectors
-    // are not recovered from the original coroutine. Login URL is known to be
-    // /account/login/, but the exact _fxRef construction and profile endpoint
-    // are still unresolved.
     override suspend fun refreshUser(): User {
         val doc = fetchHtml("/user") ?: fetchHtml("/login")
             ?: throw IllegalStateException("Unable to load user page")
@@ -456,6 +464,71 @@ class AnimeApi(
         response?.close()
         CookieManager.getInstance().removeAllCookies(null)
         CookieManager.getInstance().flush()
+    }
+
+    /**
+     * Login using the site's normal account session.
+     *
+     * The current AnimeDataSource interface does not expose login(), so this
+     * intentionally is not marked `override`; callers that have an AnimeApi
+     * instance can invoke it directly. The existing Login UI may still use
+     * its own authentication flow.
+     */
+    suspend fun login(email: String, password: String): Result<User> {
+        return runCatching {
+            val domain = ensureDomain()
+            val body = FormBody.Builder()
+                .add("email", email)
+                .add("password", password)
+                .add("remember", "1")
+                .build()
+
+            val response = fetchResponse(
+                "https://$domain/account/login/",
+                "POST",
+                body,
+                mapOf("Accept" to "application/json")
+            )
+
+            if (response == null) {
+                throw IOException("Không thể kết nối đến server")
+            }
+
+            response.use { res ->
+                val text = res.body?.string().orEmpty()
+
+                // Some deployments return JSON; try it first.
+                if (text.contains("success") || text.contains("token")) {
+                    val parsed = runCatching {
+                        json.decodeFromString<LoginResponse>(text)
+                    }.getOrNull()
+
+                    if (parsed?.success == true && parsed.user != null) {
+                        return@runCatching parsed.user
+                    }
+                }
+
+                // Normal web login returns HTML and keeps authentication in
+                // the HTTP cookie jar. Parse an error message when present.
+                val doc = Jsoup.parse(text)
+                val errorMsg = doc.selectFirst(
+                    ".alert-error, .alert-danger, .error-message"
+                )?.text()?.trim()
+                    ?: "Đăng nhập thất bại"
+
+                // OkHttp follows redirects by default. A successful redirect
+                // away from the login page means the session cookie was likely
+                // accepted; read the authenticated profile next.
+                if (res.isSuccessful &&
+                    !res.request.url.encodedPath.contains("/account/login") &&
+                    !text.contains("Đăng nhập", ignoreCase = true)
+                ) {
+                    return@runCatching refreshUser()
+                }
+
+                throw IOException(errorMsg)
+            }
+        }
     }
 
     override suspend fun getHomePage(): HomeData {
@@ -1364,6 +1437,15 @@ class AnimeApi(
 
     override fun decodeURI(url: String): String =
         runCatching { URI(url).toString() }.getOrDefault(url)
+
+    suspend fun isLoggedIn(): Boolean {
+        return try {
+            refreshUser()
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
 
     /**
      * Copy WebView cookies from one host to another.  Kept public because
