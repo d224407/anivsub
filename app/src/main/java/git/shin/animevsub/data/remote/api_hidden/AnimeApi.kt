@@ -333,9 +333,9 @@ class AnimeApi(
         val embedUrl = normalizeUrl(langEntry)
         val embedHtml = getText(embedUrl)
 
-        val master = Regex("file\\s*:\s*['\"]([^'\"]+\.m3u8[^'\"]*)['\"]", RegexOption.IGNORE_CASE)
+        val master = Regex("""file\s*:\s*['"]([^'"]+\.m3u8[^'"]*)['"]""", RegexOption.IGNORE_CASE)
             .find(embedHtml)?.groupValues?.getOrNull(1)
-            ?: Regex("https?://[^'\"\\s]+\\.m3u8[^'\"\\s]*", RegexOption.IGNORE_CASE)
+            ?: Regex("""https?://[^'"\s]+\.m3u8[^'"\s]*""", RegexOption.IGNORE_CASE)
                 .find(embedHtml)?.value
             ?: throw IllegalStateException("AniDB embed did not expose a master m3u8 URL")
 
