@@ -46,12 +46,10 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.AndroidEntryPoint
 import git.shin.animevsub.data.local.PreferencesManager
-import git.shin.animevsub.data.model.UpdateInfo
 import git.shin.animevsub.data.repository.AnimeRepository
 import git.shin.animevsub.ui.AnimeVsubAppUI
 import git.shin.animevsub.ui.components.dialogs.CloudflareBypassDialog
 import git.shin.animevsub.ui.components.dialogs.DonationDialog
-import git.shin.animevsub.ui.components.dialogs.UpdateDialog
 import git.shin.animevsub.ui.navigation.Screen
 import git.shin.animevsub.ui.theme.AnimeVsubTheme
 import git.shin.animevsub.utils.CloudflareManager
@@ -199,7 +197,6 @@ class MainActivity : ComponentActivity() {
     setContent {
       val windowSize = calculateWindowSizeClass(this)
       val context = LocalContext.current
-      val updateInfo = remember { mutableStateOf<UpdateInfo?>(null) }
       val bypassUrl by cloudflareManager.bypassUrl.collectAsState()
       var isAppActive by remember { mutableStateOf(true) }
       val pipMode by isInPipMode.collectAsState()
@@ -300,11 +297,6 @@ class MainActivity : ComponentActivity() {
           }
         }
 
-        updateManager.checkForUpdate().onSuccess { info ->
-          if (info.isNewer) {
-            updateInfo.value = info
-          }
-        }
       }
 
       AnimeVsubTheme(dynamicColor = dynamicColor) {
@@ -379,17 +371,6 @@ class MainActivity : ComponentActivity() {
                 TextButton(onClick = { exitProcess(0) }) {
                   Text(stringResource(R.string.close))
                 }
-              }
-            )
-          }
-
-          updateInfo.value?.let { info ->
-            UpdateDialog(
-              info = info,
-              onDismiss = { updateInfo.value = null },
-              onConfirm = {
-                updateManager.downloadAndInstall(info.downloadUrl, "AnimeVsub_v${info.version}.apk")
-                updateInfo.value = null
               }
             )
           }

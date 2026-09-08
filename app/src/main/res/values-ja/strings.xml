@@ -263,15 +263,6 @@
     <string name="filter_group_format">フィルター: %1$s</string>
     <string name="more">もっと見る</string>
     <string name="restored_progress">視聴状況を復元しました %1$d:%2$02d</string>
-    <string name="check_update">アップデートを確認</string>
-    <string name="update_available">新しいバージョンがあります</string>
-    <string name="update_message">新しいバージョン (%1$s) が利用可能です。今すぐアップデートしますか？</string>
-    <string name="update_now">今すぐアップデート</string>
-    <string name="no_update">最新バージョンです</string>
-    <string name="checking_update">アップデートを確認中…</string>
-    <string name="update_failed">アップデートの確認に失敗しました</string>
-    <string name="update_downloading_title">AnimeVsubの更新をダウンロード中</string>
-    <string name="update_downloading_description">新しいバージョンをダウンロードしています…</string>
     <string name="session_expired">セッションの期限が切れました。もう一度ログインしてください。</string>
 
     <!-- Comments -->

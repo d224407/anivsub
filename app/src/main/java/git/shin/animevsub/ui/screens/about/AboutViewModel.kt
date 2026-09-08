@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import git.shin.animevsub.data.local.PreferencesManager
-import git.shin.animevsub.data.model.UpdateInfo
 import git.shin.animevsub.data.remote.api.AnimeDataSource
-import git.shin.animevsub.utils.UpdateManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +16,6 @@ import java.security.MessageDigest
 import javax.inject.Inject
 
 data class AboutUiState(
-  val isCheckingUpdate: Boolean = false,
-  val updateInfo: UpdateInfo? = null,
   val error: String? = null,
   val isDeveloperMode: Boolean = false,
   val hideDonationPopup: Boolean = false,
@@ -28,7 +24,6 @@ data class AboutUiState(
 
 @HiltViewModel
 class AboutViewModel @Inject constructor(
-  private val updateManager: UpdateManager,
   private val preferencesManager: PreferencesManager,
   private val animeDataSource: AnimeDataSource
 ) : ViewModel() {
@@ -51,19 +46,6 @@ class AboutViewModel @Inject constructor(
     initialValue = AboutUiState()
   )
 
-  fun checkUpdate() {
-    viewModelScope.launch {
-      internalState.update { it.copy(isCheckingUpdate = true, error = null) }
-      updateManager.checkForUpdate()
-        .onSuccess { info ->
-          internalState.update { it.copy(isCheckingUpdate = false, updateInfo = info) }
-        }
-        .onFailure { e ->
-          internalState.update { it.copy(isCheckingUpdate = false, error = e.message) }
-        }
-    }
-  }
-
   fun enableDeveloperMode(password: String): Boolean {
     val hash = MessageDigest.getInstance("SHA-256")
       .digest(password.toByteArray())
@@ -85,11 +67,4 @@ class AboutViewModel @Inject constructor(
     }
   }
 
-  fun downloadUpdate(info: UpdateInfo) {
-    updateManager.downloadAndInstall(info.downloadUrl, "AnimeVsub_v${info.version}.apk")
-  }
-
-  fun dismissUpdate() {
-    internalState.update { it.copy(updateInfo = null) }
-  }
 }

@@ -23,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -56,7 +55,6 @@ import git.shin.animevsub.R
 import git.shin.animevsub.ui.components.account.FollowHorizontalList
 import git.shin.animevsub.ui.components.account.HistoryHorizontalList
 import git.shin.animevsub.ui.components.account.PlaylistHorizontalList
-import git.shin.animevsub.ui.components.dialogs.UpdateDialog
 import git.shin.animevsub.ui.components.filter.FiltersBottomSheet
 import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkBackground
@@ -94,7 +92,6 @@ fun AccountScreen(
     }
   }
 
-  var showUpdateDialog by remember { mutableStateOf<git.shin.animevsub.data.model.UpdateInfo?>(null) }
   var showFollowFilterSheet by remember { mutableStateOf(false) }
 
   Scaffold(
@@ -110,34 +107,6 @@ fun AccountScreen(
           )
         },
         actions = {
-          IconButton(
-            onClick = {
-              viewModel.checkForUpdate(
-                onUpdateAvailable = { showUpdateDialog = it },
-                onNoUpdate = {
-                  Toast.makeText(context, R.string.no_update, Toast.LENGTH_SHORT).show()
-                },
-                onError = {
-                  Toast.makeText(context, R.string.update_failed, Toast.LENGTH_SHORT).show()
-                }
-              )
-            },
-            enabled = !uiState.isCheckingUpdate
-          ) {
-            if (uiState.isCheckingUpdate) {
-              CircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
-                color = AccentMain,
-                strokeWidth = 2.dp
-              )
-            } else {
-              Icon(
-                imageVector = Icons.Default.Update,
-                contentDescription = stringResource(R.string.check_update),
-                tint = TextPrimary
-              )
-            }
-          }
           IconButton(onClick = onNavigateToSettings) {
             Icon(
               imageVector = Icons.Default.Settings,
@@ -331,17 +300,6 @@ fun AccountScreen(
 
         Spacer(modifier = Modifier.height(80.dp))
       }
-    }
-
-    showUpdateDialog?.let { info ->
-      UpdateDialog(
-        info = info,
-        onDismiss = { showUpdateDialog = null },
-        onConfirm = {
-          viewModel.downloadUpdate(info)
-          showUpdateDialog = null
-        }
-      )
     }
 
     if (showFollowFilterSheet) {

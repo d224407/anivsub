@@ -59,7 +59,6 @@ import coil.compose.AsyncImage
 import git.shin.animevsub.BuildConfig
 import git.shin.animevsub.R
 import git.shin.animevsub.ui.components.dialogs.DonationDialog
-import git.shin.animevsub.ui.components.dialogs.UpdateDialog
 import git.shin.animevsub.ui.theme.AccentMain
 import git.shin.animevsub.ui.theme.DarkBackground
 import git.shin.animevsub.ui.theme.DarkCard
@@ -266,22 +265,6 @@ fun AboutScreen(
 
       Spacer(modifier = Modifier.height(12.dp))
 
-      if (uiState.isCheckingUpdate) {
-        CircularProgressIndicator(
-          color = AccentMain,
-          modifier = Modifier.size(24.dp)
-        )
-      } else {
-        Button(
-          onClick = { viewModel.checkUpdate() },
-          modifier = Modifier.fillMaxWidth(),
-          colors = ButtonDefaults.buttonColors(containerColor = AccentMain),
-          shape = RoundedCornerShape(8.dp)
-        ) {
-          Text(text = stringResource(R.string.check_update), color = TextPrimary)
-        }
-      }
-
       Spacer(modifier = Modifier.height(32.dp))
 
       Text(
@@ -292,20 +275,6 @@ fun AboutScreen(
       )
 
       Spacer(modifier = Modifier.height(32.dp))
-    }
-  }
-
-  // Update Dialog
-  uiState.updateInfo?.let { info ->
-    if (info.isNewer) {
-      UpdateDialog(
-        info = info,
-        onDismiss = { viewModel.dismissUpdate() },
-        onConfirm = {
-          viewModel.downloadUpdate(info)
-          viewModel.dismissUpdate()
-        }
-      )
     }
   }
 

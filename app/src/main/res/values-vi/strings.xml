@@ -263,15 +263,6 @@
     <string name="filter_group_format">Bộ lọc: %1$s</string>
     <string name="more">Thêm</string>
     <string name="restored_progress">Đã khôi phục tiến trình xem %1$d:%2$02d</string>
-    <string name="check_update">Kiểm tra cập nhật</string>
-    <string name="update_available">Có phiên bản mới</string>
-    <string name="update_message">Phiên bản mới (%1$s) đã sẵn sàng. Bạn có muốn cập nhật ngay không?</string>
-    <string name="update_now">Cập nhật ngay</string>
-    <string name="no_update">Bạn đang sử dụng phiên bản mới nhất</string>
-    <string name="checking_update">Đang kiểm tra cập nhật…</string>
-    <string name="update_failed">Lỗi khi kiểm tra cập nhật</string>
-    <string name="update_downloading_title">Đang tải cập nhật AnimeVsub</string>
-    <string name="update_downloading_description">Phiên bản mới đang được tải xuống…</string>
     <string name="session_expired">Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</string>
 
     <string name="sleep_timer">Hẹn giờ ngủ</string>
